@@ -1,0 +1,32 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context="game.gamehelper.DominoMT.GameWindowMT">
+
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
+
+
+    <item android:id="@+id/action_new_game"
+        android:icon="@mipmap/ic_action_new_game"
+        android:title="New Game"
+        app:showAsAction="always"
+        />
+    <item android:id="@+id/action_score_board"
+        android:icon="@mipmap/ic_action_score_board"
+        android:title="Score Board"
+        app:showAsAction="always"
+        />
+    <item android:id="@+id/action_end_round"
+        android:icon="@mipmap/ic_action_end_round"
+        android:title="End Round"
+        app:showAsAction="always"
+        />
+    <item android:id="@+id/action_camera"
+        android:icon="@mipmap/ic_action_camera"
+        android:title="Camera"
+        app:showAsAction="always"
+        />
+
+</menu>

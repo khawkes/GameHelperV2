@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!--Title text-->
+            <TextView
+                android:id="@+id/new_game_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:gravity="center_horizontal"
+                android:text="Select New Game Settings"
+                android:textSize="24dp" />
+
+            <!--Select deck size-->
+            <TextView
+                android:id="@+id/max_double_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignBottom="@+id/max_double_picker"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignTop="@+id/max_double_picker"
+                android:gravity="center_vertical"
+                android:text="Domino Set"
+                android:textSize="30dp" />
+
+            <NumberPicker
+                android:id="@+id/max_double_picker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/new_game_title"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@+id/centerNG"
+
+                />
+
+            <!--Select number of players-->
+            <TextView
+                android:id="@+id/player_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignBottom="@+id/player_picker"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignTop="@+id/player_picker"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:text="Players"
+                android:textSize="30dp" />
+
+            <NumberPicker
+                android:id="@+id/player_picker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/max_double_picker"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@+id/centerNG" />
+
+            <!--Select rule type-->
+            <TextView
+                android:id="@+id/rules_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignBottom="@+id/rules_picker"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignTop="@+id/rules_picker"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:text="Rules"
+                android:textSize="30dp" />
+
+            <NumberPicker
+                android:id="@+id/rules_picker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/player_picker"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@+id/centerNG" />
+
+            <!--Center reference-->
+            <Space
+                android:id="@+id/centerNG"
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true" />
+        </RelativeLayout>
+    </ScrollView>
+
+
+</RelativeLayout>

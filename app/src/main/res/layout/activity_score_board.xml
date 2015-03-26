@@ -1,0 +1,101 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="game.gamehelper.ScoreBoard">
+
+
+    <!--<ScrollView-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content" >-->
+
+        <!--<LinearLayout-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="fill_parent"-->
+            <!--android:gravity="center_horizontal"-->
+            <!--android:id="@+id/header_area">-->
+
+    <!--<TableLayout-->
+        <!--android:id="@+id/column_header"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content" />-->
+
+    <!--<HorizontalScrollView-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content" >-->
+        <!--<TableLayout-->
+            <!--android:id="@+id/scrollable_header"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_width="fill_parent" />-->
+    <!--</HorizontalScrollView>-->
+        <!--</LinearLayout>-->
+    <!--</ScrollView>-->
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_horizontal"
+            android:id="@+id/header_area">
+            <TableLayout
+                android:id="@+id/column_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <HorizontalScrollView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/scroll_header" >
+                <TableLayout
+                    android:id="@+id/scrollable_header"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent" />
+            </HorizontalScrollView>
+
+            <TableLayout
+                android:id="@+id/column_header_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </ScrollView>
+
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_horizontal"
+            android:id="@+id/data_area">
+            <TableLayout
+                android:id="@+id/fixed_column"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <HorizontalScrollView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/scroll_data" >
+                <TableLayout
+                    android:id="@+id/scrollable_data"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent" />
+                </HorizontalScrollView>
+
+            <TableLayout
+                android:id="@+id/total_column"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            </LinearLayout>
+        </ScrollView>
+
+
+</LinearLayout>

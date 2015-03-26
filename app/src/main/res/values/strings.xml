@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Domino</string>
+    <string name="action_settings">Settings</string>
+    <string name="pictureButton">Take Picture</string>
+    <string name="CountButton">Count</string>
+    <string name="showPicture">Show Picture</string>
+    showPicture            <string name="title_activity_main_window">MainWindow</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_game_window">GameWindow</string>
+    <string name="title_activity_score_board">ScoreBoard</string>
+    <string name="remainingPoints">0</string>
+
+    <!--DialogFragmentsNames-->
+    <string name="newGame">New Game</string>
+    <string name="endSet">Set End</string>
+    <string name="deleteRow">Row Delete</string>
+    <string name="deleteColumn">Column Delete</string>
+    <string name="addRow">Add Row</string>
+    <string name="addColumn">Add Column</string>
+    <string name="editField">Edit Field</string>
+    <string name="endSelect">End Select</string>
+    <string name="draw">Draw</string>
+    <string name="newGameMT">New Game MT</string>
+    <string name="startCamera">Start Camera</string>
+
+    <!--DialogFragmentStrings-->
+    <string name="newGameText">Start a new game? \nAll data will be deleted</string>
+    <string name="endSetText">Add points to score board\nand start a new set?</string>
+    <string name="deleteRowText">Remove player:</string>
+    <string name="deleteColumnText">Remove set:</string>
+    <string name="addRowText">Create new player?</string>
+    <string name="addColumnText">Create new set?</string>
+    <string name="endSelectTitle">Please select the train head</string>
+    <string name="startCameraText">Do you want to use the camera to read your hand?</string>
+    <string name="cancel">Cancel</string>
+    <string name="add">Add</string>
+    <string name="yes">Yes</string>
+    <string name="done">Done</string>
+    <string name="remove">Remove</string>
+    <string name="nameChange">Enter new name</string>
+    <string name="dataChange">Change score</string>
+    <string name="setChange">Delete round?</string>
+
+    <!--ScoreBoard-->
+    <string name="total">Total</string>
+    <string name="set">Set</string>
+
+</resources>

@@ -1,0 +1,34 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context="game.gamehelper.ScoreBoard">
+
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/action_back"
+        android:icon="@mipmap/ic_action_back"
+        android:title="Back"
+        app:showAsAction="always"
+        />
+
+    <item android:id="@+id/action_add"
+        android:icon="@mipmap/ic_action_add"
+        android:title="Add"
+        app:showAsAction="always"
+        />
+
+    <item android:id="@+id/action_remove"
+        android:icon="@mipmap/ic_action_remove"
+        android:title="Remove"
+        app:showAsAction="always"
+        />
+
+    <item android:id="@+id/action_edit"
+        android:icon="@mipmap/ic_action_edit"
+        android:title="Edit"
+        app:showAsAction="always"
+        />
+
+</menu>

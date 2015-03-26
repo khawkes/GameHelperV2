@@ -1,0 +1,123 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="game.gamehelper.DominoMT.GameWindowMT" >
+
+
+    <Space
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginRight="100dp"
+        android:id="@+id/space" />
+
+    <!--Domino List-->
+    <GridView android:id="@+id/gridViewMain" android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/space"
+        android:layout_alignParentLeft="true"
+        android:layout_alignRight="@+id/space" />
+
+    <!--Points Remaining-->
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Title Menu Text    "
+        android:id="@+id/titleText"
+        android:layout_gravity="left|top"
+        android:singleLine="false"
+        android:inputType="text"
+        android:layout_alignLeft="@+id/space"
+        android:layout_alignRight="@+id/space"
+        android:focusableInTouchMode="false" />
+
+    <!--Point remaining value-->
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:id="@+id/remPoint"
+        android:layout_below="@+id/titleText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/titleText"
+        android:layout_alignEnd="@+id/titleText"
+        android:enabled="false"
+        android:focusableInTouchMode="false"
+        android:editable="false"
+        android:clickable="false"
+        android:inputType="text" />
+
+    <!--Last value played image-->
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView2"
+        android:layout_above="@+id/gridViewMain"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignLeft="@+id/longestRunButton" />
+
+
+    <!--Longest run button-->
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_alignParentRight="true"
+        android:text="Longest Run"
+        android:id="@+id/longestRunButton"
+        android:layout_toRightOf="@+id/gridViewMain"
+        android:layout_alignTop="@+id/gridViewMain" />
+
+    <!--Highest score button-->
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_alignParentRight="true"
+        android:text="Highest Score"
+        android:id="@+id/highestScoreButton"
+        android:layout_toRightOf="@+id/gridViewMain"
+        android:layout_below="@+id/longestRunButton" />
+
+    <!--Draw button-->
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_alignParentRight="true"
+        android:text="Draw"
+        android:id="@+id/drawButton"
+        android:layout_toRightOf="@+id/gridViewMain"
+        android:layout_below="@+id/highestScoreButton"/>
+
+    <!--Undo button-->
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_alignParentRight="true"
+        android:text="Unsorted Hand"
+        android:id="@+id/unsortedButton"
+        android:layout_toRightOf="@+id/gridViewMain"
+        android:layout_below="@+id/drawButton"/>
+
+    <!--Undo button-->
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_alignParentRight="true"
+        android:text="Undo"
+        android:id="@+id/undoButton"
+        android:layout_toRightOf="@+id/gridViewMain"
+        android:layout_below="@+id/unsortedButton"/>
+
+</RelativeLayout>

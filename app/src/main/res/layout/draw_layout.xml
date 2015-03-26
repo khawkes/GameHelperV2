@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <!--TODO make landscape mode work-->
+    <!--Title text-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create Domino"
+        android:gravity="center_horizontal"
+        android:id="@+id/textView3"
+        android:textSize="18dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <!--Piece list-->
+    <GridView android:id="@+id/gridView" android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView3"
+        android:gravity="center"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignBottom="@+id/space3" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/domSides" />
+
+    <!--Domino background image-->
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageViewBG"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/gridView"
+        android:layout_alignParentBottom="true"/>
+
+    <!--Domino left side-->
+    <ImageView
+        android:layout_width="@dimen/drawPreviewHeight"
+        android:layout_height="wrap_content"
+        android:id="@+id/leftSide"
+        android:layout_toLeftOf="@+id/space2"
+        android:layout_alignTop="@+id/imageViewBG"
+        android:layout_alignBottom="@+id/imageViewBG" />
+
+    <!--Domino right side-->
+    <ImageView
+        android:layout_width="@dimen/drawPreviewHeight"
+        android:layout_height="wrap_content"
+        android:id="@+id/rightSide"
+        android:layout_toRightOf="@+id/space2"
+        android:layout_alignTop="@+id/imageViewBG"
+        android:layout_alignBottom="@+id/imageViewBG" />
+
+    <!--center reference-->
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_alignTop="@+id/imageViewBG"
+        android:layout_alignBottom="@+id/imageViewBG"
+        android:id="@+id/space2"
+        android:visibility="invisible"/>
+
+    <!--bottom panel reference-->
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/space3"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="@dimen/drawPanelHeight"/>
+
+</RelativeLayout>
