@@ -1,14 +1,17 @@
 package game.gamehelper.DominoMT;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Pair;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
- * Created by Jacob on 3/6/2015.
+ * Created on 3/6/2015.
  * Contains run-calculating related algorithms.
  */
-public class RunController {
+public class RunController implements Parcelable {
     private final int MAX_EDGE;
     private final int TRAIN_HEAD;
     private DominoGraph graph;
@@ -67,6 +70,37 @@ public class RunController {
         currentRun = new DominoRun();
     }
 
+    RunController(Parcel p){
+        ArrayList<DominoRun> tempList = new ArrayList<>();
+
+        longest = new DominoRun();
+        mostPoints = new DominoRun();
+        mostPointRuns = new LinkedList<DominoRun>();
+        longestRuns = new LinkedList<DominoRun>();
+        currentRun = new DominoRun();
+
+        MAX_EDGE = p.readInt();
+        TRAIN_HEAD = p.readInt();
+        graph = (DominoGraph)p.readParcelable(DominoGraph.class.getClassLoader());
+        target = p.readInt();
+        midTrainTrainHeadPlaysAllowed = (p.readByte() == 1);
+        pathsAreCurrent = (p.readByte() == 1);
+        longest = (DominoRun)p.readParcelable(DominoRun.class.getClassLoader());
+        mostPoints = (DominoRun)p.readParcelable(DominoRun.class.getClassLoader());
+        p.readList(tempList, null);
+
+        for(DominoRun d: tempList)
+            mostPointRuns.add(d);
+
+        tempList.clear();
+        p.readList(tempList, null);
+
+        for(DominoRun d: tempList)
+            longestRuns.add(d);
+
+        currentRun = (DominoRun) p.readParcelable(DominoRun.class.getClassLoader());
+    }
+
     //Getter's & setters for rule field.
     public static boolean areMidTrainTrainHeadPlaysAllowed() {
         return midTrainTrainHeadPlaysAllowed;
@@ -110,10 +144,15 @@ public class RunController {
                     //if we have a start edge we can play off of, try to play on it.
                     if (startEdges[i]) {
                         currentRun.clear();
+
+                        //if we have the starting double in-hand, add it to this path.
+                        if (startEdges[TRAIN_HEAD] && i != TRAIN_HEAD)
+                            currentRun.addDomino(new Domino(TRAIN_HEAD, TRAIN_HEAD));
+
                         graph.addEdgePair(i, TRAIN_HEAD);
 
                         //early exit: if we find one that traverses whole of graph, we can exit early.
-                        if (traverse(MAX_EDGE)) {
+                        if (traverse(TRAIN_HEAD)) {
                             graph.removeEdgePair(i, TRAIN_HEAD);
                             break;
                         }
@@ -439,4 +478,49 @@ public class RunController {
     public boolean isUpToDate() {
         return pathsAreCurrent;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+
+        dest.writeInt(MAX_EDGE);
+        dest.writeInt(TRAIN_HEAD);
+        dest.writeParcelable(graph, 0);
+        dest.writeInt(target);
+        dest.writeByte((byte) (midTrainTrainHeadPlaysAllowed ? 1 : 0));
+
+        dest.writeByte((byte) (pathsAreCurrent ? 1 : 0));
+        dest.writeParcelable(longest, 0);
+        dest.writeParcelable(mostPoints, 0);
+
+        ArrayList<DominoRun> listTemp = new ArrayList<>();
+        for(DominoRun d: mostPointRuns)
+            listTemp.add(d);
+
+        dest.writeList(listTemp);
+
+        listTemp.clear();
+        for(DominoRun d: longestRuns)
+            listTemp.add(d);
+
+        dest.writeList(listTemp);
+        dest.writeParcelable(currentRun, 0);
+    }
+
+    public static Parcelable.Creator CREATOR = new Parcelable.Creator(){
+        @Override
+        public RunController createFromParcel(Parcel source) {
+            return new RunController(source);
+        }
+
+        @Override
+        public Object[] newArray(int size) {
+            return new RunController[size];
+        }
+    };
 }

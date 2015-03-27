@@ -2,6 +2,7 @@ package game.gamehelper;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -38,6 +39,8 @@ public class ScoreBoard extends ActionBarActivity implements
     public static final int MODE_REMOVE = 2;
     public static final int MODE_EDIT = 3;
 
+    private int screenWidth;
+    private int screenHeight;
     private TextView selectedField;
     private int fieldX;
     private int fieldY;
@@ -47,15 +50,18 @@ public class ScoreBoard extends ActionBarActivity implements
     private HorizontalScrollView scrollHeader;
     private HorizontalScrollView scrollData;
     private TextView recyclableTextView;
-    private int totalRows = 20;
-    private int totalColumns = 20;
-    private int rowWidthPercent = 20;
-    private int fixedPlayerWidth = 250;
-    private int fixedSetWidth = 200;
-    private int textSize = 12;
 
-    private int fixedRowHeight = 50;
-    private int fixedHeaderHeight = 50;
+    //Variables for the size of the table
+    private float playerWidthPercent = 0.35f;
+    private int playerWidth;
+    private float setWidthPercent = 0.15f;
+    private int setWidth;
+    private float rowHeightPercent = 0.25f;
+    private int rowHeight;
+    private float headerHeightPercent = 0.1f;
+    private int headerHeight;
+    private int textSize = 30;
+
     private ArrayList<GameSet> setList;
     private ArrayList<String> playerList;
     private LinkedList<LinkedList<TextView>> setListView = new LinkedList<LinkedList<TextView>>();
@@ -67,6 +73,13 @@ public class ScoreBoard extends ActionBarActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle b = getIntent().getExtras();
+        screenWidth = getResources().getDisplayMetrics().widthPixels;
+        screenHeight = getResources().getDisplayMetrics().heightPixels;
+
+        playerWidth = (int) (screenWidth * playerWidthPercent);
+        setWidth = (int) (screenWidth * setWidthPercent);
+        rowHeight = (int) (screenHeight * rowHeightPercent);
+        headerHeight = (int) (screenHeight * headerHeightPercent);
 
         //read lists from MainWindow
         if (b != null) {
@@ -88,14 +101,15 @@ public class ScoreBoard extends ActionBarActivity implements
     private void createScoreTable(){
 
         setContentView(R.layout.activity_score_board);
-        TableRow.LayoutParams tableParams = new TableRow.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        LayoutParams tableParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
         //blank space (fixed top left)
         TableLayout header = (TableLayout) findViewById(R.id.column_header);
         TableRow row = new TableRow(this);
         row.setLayoutParams(tableParams);
         row.setGravity(Gravity.CENTER);
-        row.addView(makeTableRowWithText("", fixedPlayerWidth, fixedHeaderHeight, TOTAL_FIELD, -1, -1));
+
+        row.addView(makeTableRowWithText("", playerWidth, headerHeight, TOTAL_FIELD, -1, -1));
         header.addView(row);
 
         //set list (fixed vertically, scroll horizontally)
@@ -103,11 +117,11 @@ public class ScoreBoard extends ActionBarActivity implements
         row = new TableRow(this);
         row.setLayoutParams(tableParams);
         row.setGravity(Gravity.CENTER);
-        row.setBackgroundColor(Color.YELLOW);
+        row.setBackground(row.getResources().getDrawable(R.drawable.table_label));
 
         setLabelListView = new LinkedList<TextView>();
         for(int i = 1 ; i <= setList.size() ; i++ ) {
-            TextView set = makeTableRowWithText(getString(R.string.set) + i, fixedSetWidth, fixedHeaderHeight, SET_FIELD, i-1, 0);
+            TextView set = makeTableRowWithText(getString(R.string.set) + i, setWidth, headerHeight, SET_FIELD, i-1, 0);
             setLabelListView.add(set);
             row.addView(set);
         }
@@ -119,8 +133,8 @@ public class ScoreBoard extends ActionBarActivity implements
         row = new TableRow(this);
         row.setLayoutParams(tableParams);
         row.setGravity(Gravity.CENTER);
-        row.setBackgroundColor(Color.GREEN);
-        row.addView(makeTableRowWithText(getString(R.string.total), fixedSetWidth, fixedHeaderHeight, TOTAL_FIELD, -1, -1));
+        row.setBackground(row.getResources().getDrawable(R.drawable.table_total));
+        row.addView(makeTableRowWithText(getString(R.string.total), setWidth, headerHeight, TOTAL_FIELD, -1, -1));
         header.addView(row);
 
         //Player name fields (fixed horizontally)
@@ -138,8 +152,8 @@ public class ScoreBoard extends ActionBarActivity implements
 
         for (int i = 0; i < playerList.size() ; i++) {
             //player name field
-            TextView fixedView = makeTableRowWithText(playerList.get(i), fixedPlayerWidth, fixedRowHeight, PLAYER_FIELD, 0, i);
-            fixedView.setBackgroundColor(Color.CYAN);
+            TextView fixedView = makeTableRowWithText(playerList.get(i), playerWidth, rowHeight, PLAYER_FIELD, 0, i);
+            fixedView.setBackground(fixedView.getResources().getDrawable(R.drawable.table_label));
             playerListView.add(fixedView);
             fixedColumn.addView(fixedView);
 
@@ -152,8 +166,9 @@ public class ScoreBoard extends ActionBarActivity implements
             //fill column with scores
             LinkedList<TextView> dataColumn = new LinkedList<TextView>();
             for(int j = 0 ; j < setList.size() ; j++) {
-                TextView data = makeTableRowWithText("" + setList.get(j).getScore(i), fixedSetWidth, fixedRowHeight, DATA_FIELD, j, i);
+                TextView data = makeTableRowWithText("" + setList.get(j).getScore(i), setWidth, rowHeight, DATA_FIELD, j, i);
                 dataColumn.add(data);
+                row.setBackground(row.getResources().getDrawable(R.drawable.table_data));
                 row.addView(data);
             }
 
@@ -161,8 +176,8 @@ public class ScoreBoard extends ActionBarActivity implements
             scrollableData.addView(row);
 
             //total value field
-            TextView fixedViewT = makeTableRowWithText( "" + getPlayerTotal(i), fixedSetWidth, fixedRowHeight, TOTAL_FIELD, -1, i);
-            fixedViewT.setBackgroundColor(Color.WHITE);
+            TextView fixedViewT = makeTableRowWithText( "" + getPlayerTotal(i), setWidth, rowHeight, TOTAL_FIELD, -1, i);
+            fixedViewT.setBackground(fixedViewT.getResources().getDrawable(R.drawable.table_total_data));
             totalListView.add(fixedViewT);
             totalColumn.addView(fixedViewT);
 
@@ -193,7 +208,14 @@ public class ScoreBoard extends ActionBarActivity implements
 //        recyclableTextView.setWidth(widthInPercentOfScreenWidth * screenWidth / 100);
         recyclableTextView.setWidth(width);
         recyclableTextView.setHeight(fixedHeightInPixels);
-
+        if(fieldType != PLAYER_FIELD) {
+            recyclableTextView.setGravity(Gravity.CENTER);
+            recyclableTextView.setTypeface(Typeface.SERIF);
+        }
+        else {
+            recyclableTextView.setGravity(Gravity.CENTER_VERTICAL);
+            recyclableTextView.setTypeface(Typeface.SERIF, Typeface.BOLD_ITALIC);
+        }
         //make text clickable
         recyclableTextView.setOnClickListener(new View.OnClickListener() {
             @Override

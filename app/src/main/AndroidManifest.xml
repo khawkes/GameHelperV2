@@ -26,7 +26,8 @@
         </activity>
         <activity
             android:name=".ScoreBoard"
-            android:label="@string/title_activity_score_board" >
+            android:label="@string/title_activity_score_board"
+            android:screenOrientation="landscape">
         </activity>
     </application>
 

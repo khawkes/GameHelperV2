@@ -41,6 +41,12 @@ public class Domino implements Parcelable {
 
     }
 
+    public Domino(Parcel p){
+        val1 = p.readInt();
+        val2 = p.readInt();
+        sum = val1 + val2;
+    }
+
     public int getVal1() {
         return val1;
     }
@@ -166,6 +172,18 @@ public class Domino implements Parcelable {
         }
         return side;
     }
+
+    public static Parcelable.Creator CREATOR = new Parcelable.Creator(){
+        @Override
+        public Domino createFromParcel(Parcel source) {
+            return new Domino(source);
+        }
+
+        @Override
+        public Domino[] newArray(int size) {
+            return new Domino[size];
+        }
+    };
 
 
 }

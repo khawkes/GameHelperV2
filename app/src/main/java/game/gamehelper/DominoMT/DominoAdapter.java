@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
-import game.gamehelper.DominoMT.Domino;
 import game.gamehelper.R;
 
 /**
@@ -23,6 +22,7 @@ public class DominoAdapter extends ArrayAdapter<Domino> {
     private Context context;
     private Domino[] data;
     int layoutResourceId;
+    private Bitmap[] dominoList;
 
     public DominoAdapter(Context context, int layoutResourceId, Domino[] data){
 
@@ -30,6 +30,12 @@ public class DominoAdapter extends ArrayAdapter<Domino> {
         this.context = context;
         this.data = data;
         this.layoutResourceId = layoutResourceId;
+
+        dominoList = new Bitmap[getCount()];
+        int i = 0;
+        for(Domino d: data){
+            dominoList[i++] = FileHandler.loadDomino(d.getVal1()*17 + d.getVal2());
+        }
     }
 
     //Updates view for list
@@ -47,32 +53,27 @@ public class DominoAdapter extends ArrayAdapter<Domino> {
             holder.domino = (ImageView) row.findViewById(R.id.domList);
             row.setTag(holder);
         }
-        else
-        {
+        else {
             holder = (DominoHolder) row.getTag();
         }
 
         if(data == null)
             return row;
 
-
-        piece = data[position];
-        holder.domino.setImageBitmap(buildDomino(piece, row, 50));
+        holder.domino.setImageBitmap(dominoList[position]);
         return row;
-
     }
 
     //Load background and write each side on top
-    public Bitmap buildDomino(Domino a, View view, double scale){
+    public Bitmap buildDomino(Domino a, Context context){
 
         Bitmap side1;
         Bitmap side2;
         Bitmap bg;
-        Bitmap fullTile;
 
-        bg = BitmapFactory.decodeResource(view.getResources(), R.drawable.dom_bg);
-        side1 = Domino.getSide(a.getVal1(), view.getContext());
-        side2 = Domino.getSide(a.getVal2(), view.getContext());
+        bg = BitmapFactory.decodeResource(context.getResources(), R.drawable.dom_bg);
+        side1 = Domino.getSide(a.getVal1(), context);
+        side2 = Domino.getSide(a.getVal2(), context);
 
         //copy immutable bitmap generated previously to a mutable bitmap and impose the sides
         bg = bg.copy(Bitmap.Config.ARGB_8888, true);
@@ -80,23 +81,19 @@ public class DominoAdapter extends ArrayAdapter<Domino> {
         canvas.drawBitmap(side1, 0, 0, null);
         canvas.drawBitmap(side2, side2.getWidth(), 0, null);
 
-        //scale image
-        int width = (int) (bg.getWidth() * scale/100);
-        int height = (int) (bg.getHeight() * scale/100);
-
-        fullTile = Bitmap.createScaledBitmap(bg, width, height, true);
-
         //free space
         side1.recycle();
         side2.recycle();
-        bg.recycle();
 
-        return fullTile;
+        return bg;
+    }
+    public void clear(){
+        for(Bitmap b: dominoList){
+            b.recycle();
+        }
     }
 
     private class DominoHolder{
         ImageView domino;
     }
-
-
 }

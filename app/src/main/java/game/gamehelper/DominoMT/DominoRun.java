@@ -1,5 +1,9 @@
 package game.gamehelper.DominoMT;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -7,13 +11,26 @@ import java.util.ListIterator;
  * Created by Jacob on 2/11/2015.
  * A domino run (path)
  */
-public class DominoRun {
+public class DominoRun implements Parcelable{
     private LinkedList<Domino> path;
     private int pointVal;
 
     DominoRun() {
         pointVal = 0;
         path = new LinkedList<Domino>();
+    }
+
+    DominoRun(Parcel p){
+        //constructor for loading from save state
+        ArrayList<Domino> tempList = new ArrayList<>();
+        path = new LinkedList<Domino>();
+
+        p.readList(tempList, null);
+        pointVal = p.readInt();
+
+        for(Domino d: tempList){
+            path.add(d);
+        }
     }
 
     /**
@@ -166,4 +183,29 @@ public class DominoRun {
 
     //returns the path for private functionality
     private LinkedList<Domino> getPath() { return this.path; }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        ArrayList<Domino> list = new ArrayList<Domino>();
+        for(Domino d: path){
+            list.add(d);
+        }
+
+        dest.writeList(list);
+        dest.writeInt(pointVal);
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public DominoRun createFromParcel(Parcel in){
+            return new DominoRun(in);
+        }
+        public DominoRun[] newArray(int size){
+            return new DominoRun[size];
+        }
+    };
 }

@@ -1,25 +1,21 @@
 package game.gamehelper.DominoMT;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Stack;
 
 import game.gamehelper.Hand;
-/**
- * Author History
- * Jacob
- * Mark
- * Jacob
- */
 
 /**
- * Created by Jacob on 2/11/2015.
+ * Original creation date: 2/11/2015.
  * A hand of Dominoes.
  * TODO add remove/add domino functionality.
  */
 
-public class HandMT implements Hand {
+public class HandMT implements Hand, Parcelable {
     //experimental undo history may cause problems if something goes wrong.
     private static final boolean enableExperimentalUndoHistory = true;
 
@@ -31,6 +27,7 @@ public class HandMT implements Hand {
     private int totalPointsHand = 0;
     private int totalDominos;
     private final int MAXIMUM_DOUBLE;
+    private final int ORIGINAL_TRAIN_HEAD;
     private int trainHead;
 
     //undo stuff, should probably be made into an UndoObject at this point.
@@ -42,7 +39,7 @@ public class HandMT implements Hand {
     //Initializes the hand
     //Requires maximum double possible.
     //NOTE: We have to have the largest double so the pathfinding calculates a legal path.
-    public HandMT(int[][] tileList, int totalTiles, int largestDouble) {
+    public HandMT(int[][] tileList, int totalTiles, int largestDouble, int startHead) {
         dominoHandHistory = new ArrayList<Domino>();
         currentHand = new ArrayList<Domino>();
         totalDominos = totalTiles;
@@ -57,21 +54,65 @@ public class HandMT implements Hand {
             totalPointsHand += i[0] + i[1];
         }
 
+        //sets final hand size and starting head.
         MAXIMUM_DOUBLE = largestDouble;
-        trainHead = MAXIMUM_DOUBLE;
+        ORIGINAL_TRAIN_HEAD = startHead;
 
-        runs = new RunController(this, MAXIMUM_DOUBLE);
+        //sets current trainhead.
+        trainHead = startHead;
+
+        runs = new RunController(this, ORIGINAL_TRAIN_HEAD);
     }
 
     //NOTE: We have to have the largest double so the pathfinding calculates a legal path.
-    public HandMT(int largestDouble) {
+    public HandMT(int largestDouble, int startHead) {
         dominoHandHistory = new ArrayList<Domino>();
         currentHand = new ArrayList<Domino>();
         totalDominos = 0;
-        MAXIMUM_DOUBLE = largestDouble;
-        trainHead = MAXIMUM_DOUBLE;
 
-        runs = new RunController(this, MAXIMUM_DOUBLE);
+        //sets final hand size and starting head.
+        MAXIMUM_DOUBLE = largestDouble;
+        ORIGINAL_TRAIN_HEAD = startHead;
+
+        //sets current trainhead.
+        trainHead = startHead;
+
+        runs = new RunController(this, ORIGINAL_TRAIN_HEAD);
+    }
+
+    //This allows a Hand to be retrieved from a Parcel.
+    public HandMT(Parcel p){
+        dominoHandHistory = new ArrayList<Domino>();
+        currentHand = new ArrayList<Domino>();
+        ArrayList<Domino> tempDomList = new ArrayList<>();
+        ArrayList<Integer> tempInt = new ArrayList<>();
+        ArrayList<Pair<DominoRun,DominoRun>> tempHistory = new ArrayList<>();
+
+        p.readTypedList(dominoHandHistory, Domino.CREATOR);
+        p.readTypedList(currentHand, Domino.CREATOR);
+        runs = p.readParcelable(DominoRun.class.getClassLoader());
+        totalPointsHand = p.readInt();
+        totalDominos = p.readInt();
+        MAXIMUM_DOUBLE = p.readInt();
+        ORIGINAL_TRAIN_HEAD = p.readInt();
+        trainHead = p.readInt();
+
+        p.readTypedList(tempDomList, Domino.CREATOR);
+        for(Domino d: tempDomList)
+            playHistory.push(d);
+
+        tempInt = (ArrayList<Integer>) p.readSerializable();
+        for(Integer i: tempInt)
+            trainHeadHistory.push(i);
+
+        tempInt.clear();
+        tempInt = (ArrayList<Integer>) p.readSerializable();
+        for(Integer i: tempInt)
+            positionPlayedHistory.push(i);
+
+        tempHistory = (ArrayList<Pair<DominoRun, DominoRun>>) p.readSerializable();
+        for(Pair<DominoRun,DominoRun> d: tempHistory)
+            runsHistory.push(d);
     }
 
     //Adds a domino to the hand, but only if it doesn't exist
@@ -263,6 +304,18 @@ public class HandMT implements Hand {
         return currentHand.toArray(new Domino[currentHand.size()]);
     }
 
+    //returns int[][] for saving between onCreate calls in gameWindow
+    public int[][] smallArray(){
+        int[][] list = new int[getTotalDominos()][2];
+        int i = 0;
+        for(Domino currentDomino : currentHand){
+            list[i][0] = currentDomino.getVal1();
+            list[i][1] = currentDomino.getVal2();
+            i++;
+        }
+        return list;
+    }
+
     /**
      * Gets the maximum double value, which all dominoes with that value must be played on.
      * @return Returns maximum double (the start domino)
@@ -303,4 +356,58 @@ public class HandMT implements Hand {
         else
             runsHistory.push(null);
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeTypedList(dominoHandHistory);
+        dest.writeTypedList(currentHand);
+        dest.writeParcelable(runs, 0);
+        dest.writeInt(totalPointsHand);
+        dest.writeInt(totalDominos);
+        dest.writeInt(MAXIMUM_DOUBLE);
+        dest.writeInt(ORIGINAL_TRAIN_HEAD);
+        dest.writeInt(trainHead);
+
+        ArrayList<Domino> tempDomList = new ArrayList<>();
+        ArrayList<Integer> tempInt = new ArrayList<>();
+        ArrayList<Pair<DominoRun,DominoRun>> tempHistory = new ArrayList<>();
+
+        for(Domino d: playHistory)
+            tempDomList.add(d);
+
+        dest.writeTypedList(tempDomList);
+
+        for(Integer i: trainHeadHistory)
+            tempInt.add(i);
+
+        dest.writeSerializable(tempInt);
+        tempInt.clear();
+
+        for(Integer i: positionPlayedHistory)
+            tempInt.add(i);
+
+        dest.writeSerializable(tempInt);
+
+        for(Pair<DominoRun,DominoRun> d: runsHistory)
+            tempHistory.add(d);
+
+        dest.writeSerializable(tempHistory);
+    }
+
+    public static Parcelable.Creator CREATOR = new Parcelable.Creator(){
+        @Override
+        public HandMT createFromParcel(Parcel source) {
+            return new HandMT(source);
+        }
+
+        @Override
+        public HandMT[] newArray(int size) {
+            return new HandMT[size];
+        }
+    };
 }

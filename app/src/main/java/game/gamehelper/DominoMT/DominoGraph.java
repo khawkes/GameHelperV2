@@ -1,11 +1,14 @@
 package game.gamehelper.DominoMT;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Jacob on 2/11/2015.
  * A Domino graph, made of DominoVertexes.
  * TODO reduce brute force
  */
-public class DominoGraph {
+public class DominoGraph implements Parcelable {
     private final int MAX_EDGE;
     private DominoVertex graph[];
     /**
@@ -14,6 +17,12 @@ public class DominoGraph {
      */
     DominoGraph(HandMT h) {
         this (h.getMaxDouble(), h.toArray());
+    }
+
+    DominoGraph(Parcel p){
+        MAX_EDGE = p.readInt();
+        graph = new DominoVertex[MAX_EDGE+1];
+        p.readTypedArray(graph, DominoVertex.CREATOR);
     }
 
     /**
@@ -110,4 +119,27 @@ public class DominoGraph {
     public int getEdgeNum(int v) {
         return graph[v].getEdgeNum();
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(MAX_EDGE);
+        dest.writeTypedArray(graph, 0);
+    }
+
+    public static Parcelable.Creator CREATOR = new Parcelable.Creator(){
+        @Override
+        public DominoGraph createFromParcel(Parcel source) {
+            return new DominoGraph(source);
+        }
+
+        @Override
+        public DominoGraph[] newArray(int size) {
+            return new DominoGraph[size];
+        }
+    };
 }
