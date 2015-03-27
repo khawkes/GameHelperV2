@@ -196,30 +196,7 @@ public class GameWindowMT extends ActionBarActivity implements
                 new Button.OnClickListener() {
                     public void onClick(View v) {
                         windowState = WindowContext.SHOWING_LONGEST;
-
-                        Domino temp[] = new Domino[1];
-                        temp[0] = new Domino(0, 0);
-
-//                        adapter.clear();
-//                        adapter = new DominoAdapter(v.getContext(), R.layout.hand_display_grid, temp);
-//                        listView.setAdapter(adapter);
-
-                        //set ListView adapter to display list of dominos
-                        temp = hand.getLongestRun().toArray();
-
-                        Domino viewLongestRun[] = new Domino[(temp.length < MainWindow.MAX_DOMINO_DISPLAY) ? temp.length : MainWindow.MAX_DOMINO_DISPLAY];
-
-                        //generate bitmaps for hand (first 10 values, or memory crash).
-                        for (int i = 0; i < viewLongestRun.length; i++) {
-                            viewLongestRun[i] = temp[i];
-                        }
-                        adapter.clear();
-
-                        adapter = new DominoAdapter(v.getContext(), R.layout.hand_display_grid, viewLongestRun);
-                        listView.setAdapter(adapter);
-
-                        //update point display
-                        updatePointValueText();
+                        updateUI();
                     }
                 }
         );
@@ -229,28 +206,7 @@ public class GameWindowMT extends ActionBarActivity implements
                 new Button.OnClickListener() {
                     public void onClick(View v) {
                         windowState = WindowContext.SHOWING_MOST_POINTS;
-
-                        Domino temp[] = new Domino[1];
-                        temp[0] = new Domino(0, 0);
-//                        adapter = new DominoAdapter(v.getContext(), R.layout.hand_display_grid, temp);
-//                        listView.setAdapter(adapter);
-
-                        //set ListView adapter to display list of dominos
-                        temp = hand.getMostPointRun().toArray();
-
-                        Domino viewMostPointRun[] = new Domino[(temp.length < MainWindow.MAX_DOMINO_DISPLAY) ? temp.length : MainWindow.MAX_DOMINO_DISPLAY];
-
-                        //generate bitmaps for hand (first 10 values, or memory crash).
-                        for (int i = 0; i < viewMostPointRun.length; i++) {
-                            viewMostPointRun[i] = temp[i];
-                        }
-                        adapter.clear();
-
-                        adapter = new DominoAdapter(v.getContext(), R.layout.hand_display_grid, viewMostPointRun);
-                        listView.setAdapter(adapter);
-
-                        //update point display
-                        updatePointValueText();
+                        updateUI();
                     }
                 }
         );
@@ -272,28 +228,7 @@ public class GameWindowMT extends ActionBarActivity implements
                 new Button.OnClickListener() {
                     public void onClick(View v) {
                         windowState = WindowContext.SHOWING_UNSORTED;
-
-                        Domino temp[] = new Domino[1];
-                        temp[0] = new Domino(0, 0);
-//                        adapter.clear();
-//                        adapter = new DominoAdapter(v.getContext(), R.layout.hand_display_grid, temp);
-//                        listView.setAdapter(adapter);
-
-                        //set ListView adapter to display list of dominos
-                        temp = hand.toArray();
-                        Domino viewHand[] = new Domino[(temp.length < MainWindow.MAX_DOMINO_DISPLAY) ? temp.length : MainWindow.MAX_DOMINO_DISPLAY];
-
-                        //generate bitmaps for hand
-                        for (int i = 0; i < viewHand.length; i++) {
-                            viewHand[i] = temp[i];
-                        }
-
-                        adapter.clear();
-                        adapter = new DominoAdapter(v.getContext(), R.layout.hand_display_grid, viewHand);
-                        listView.setAdapter(adapter);
-
-                        //update point display
-                        updatePointValueText();
+                        updateUI();
                     }
                 }
         );
@@ -329,6 +264,9 @@ public class GameWindowMT extends ActionBarActivity implements
                 }
         );
 
+    }
+
+    public void updateDominoAdapter(){
     }
 
     @Override
@@ -597,9 +535,10 @@ public class GameWindowMT extends ActionBarActivity implements
         updatePointValueText();
 
         //update the picture to our data array of dominoes.
-        if(adapter != null)
-            adapter.clear();
-        adapter = new DominoAdapter(this, R.layout.hand_display_grid, this.data);
+        if(adapter == null)
+            adapter = new DominoAdapter(this, R.layout.hand_display_grid, this.data);
+        else
+            adapter.changeData(data);
         listView.setAdapter(adapter);
 
         //update the train head's image

@@ -173,6 +173,7 @@ public class MainWindow extends ActionBarActivity {
     public void randomDominos(int total){
         Random generator = new Random(222);
         boolean[][] used = new boolean[13][13];
+        totalTiles = 0;
 
         if (total > (13 * 14 / 2 - 1)) {
             total = (13 * 14 / 2) - 1;

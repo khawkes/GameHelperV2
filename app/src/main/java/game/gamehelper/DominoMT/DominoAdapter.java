@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,18 @@ public class DominoAdapter extends ArrayAdapter<Domino> {
         this.layoutResourceId = layoutResourceId;
     }
 
+    @Override
+    public int getCount() {
+        return data.length;
+    }
+
+    public void changeData(Domino[] data){
+        clear();
+        this.data = data;
+        notifyDataSetChanged();
+        Log.w("dominoadapter", "DominoAdapter dominoes = " + getCount());
+    }
+
     //Updates view for list
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
@@ -52,7 +65,7 @@ public class DominoAdapter extends ArrayAdapter<Domino> {
             holder = (DominoHolder) row.getTag();
         }
 
-        if(data == null)
+        if(data == null )
             return row;
 
         holder.domino.setImageResource(R.drawable.dom_bg);
