@@ -22,6 +22,27 @@ public class Domino implements Parcelable {
     private final int val1;
     private final int val2;
     private final int sum;
+    public static final int[] domIdList = new int[]{
+            R.drawable.side_border,
+            R.drawable.dom_one,
+            R.drawable.dom_two,
+            R.drawable.dom_three,
+            R.drawable.dom_four,
+            R.drawable.dom_five,
+            R.drawable.dom_six,
+            R.drawable.dom_seven,
+            R.drawable.dom_eight,
+            R.drawable.dom_nine,
+            R.drawable.dom_ten,
+            R.drawable.dom_eleven,
+            R.drawable.dom_twelve,
+            R.drawable.dom_thirteen,
+            R.drawable.dom_fourteen,
+            R.drawable.dom_fifteen,
+            R.drawable.dom_sixteen,
+            R.drawable.dom_seventeen,
+            R.drawable.dom_eighteen
+    };
 
     @Override
     //required for Parcelable

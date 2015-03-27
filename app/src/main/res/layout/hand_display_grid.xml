@@ -1,11 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="wrap_content"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="wrap_content" tools:context="game.gamehelper.DominoMT.GameWindowMT">
 
-    <ImageView android:id="@+id/domList" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" android:gravity="center"
+    <ImageView
+        android:id="@+id/domList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_margin="5dp"
-        android:adjustViewBounds="true"/>
+        android:adjustViewBounds="true" />
 
-</FrameLayout>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8.25dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp">
+
+        <Space
+            android:id="@+id/domino_divider"
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true" />
+
+        <ImageView
+            android:id="@+id/dom_list_left"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="3.75dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/domino_divider"
+            android:adjustViewBounds="true" />
+
+        <ImageView
+            android:id="@+id/dom_list_right"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="3.5dp"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/domino_divider"
+            android:adjustViewBounds="true" />
+    </RelativeLayout>
+
+
+</RelativeLayout>

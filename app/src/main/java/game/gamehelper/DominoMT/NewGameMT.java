@@ -87,7 +87,7 @@ public class NewGameMT extends DialogFragment{
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //Add domino to hand
-                mListener.onNewGameCreate(setOption, playerOption, rulesOption);
+                mListener.onNewGameCreate(setOption, playerOption+1, rulesOption);
 
             }
         })
@@ -114,7 +114,7 @@ public class NewGameMT extends DialogFragment{
                 break;
             case PLAYER_SELECT_OPTION:
                 this.player.setText("" + option);
-                playerOption = option+1;
+                playerOption = option;
                 break;
             case RULES_SELECT_OPTION:
                 this.rules.setText(rules[option]);

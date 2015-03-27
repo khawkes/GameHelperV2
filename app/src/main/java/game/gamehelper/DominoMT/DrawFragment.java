@@ -111,27 +111,6 @@ public class DrawFragment extends DialogFragment {
         //set bitmap size
         bitmapSize = dialogWidth / numColumns;
 
-        int[] mList = new int[] {
-                R.drawable.dom_one,
-                R.drawable.dom_two,
-                R.drawable.dom_three,
-                R.drawable.dom_four,
-                R.drawable.dom_five,
-                R.drawable.dom_six,
-                R.drawable.dom_seven,
-                R.drawable.dom_eight,
-                R.drawable.dom_nine,
-                R.drawable.dom_ten,
-                R.drawable.dom_eleven,
-                R.drawable.dom_twelve,
-                R.drawable.dom_thirteen,
-                R.drawable.dom_fourteen,
-                R.drawable.dom_fifteen,
-                R.drawable.dom_sixteen,
-                R.drawable.dom_seventeen,
-                R.drawable.dom_eighteen
-        };
-
         //get imageview from top left of layout and place the domino background
         imageView = (ImageView)drawView.findViewById(R.id.imageViewBG);
         imageView.setImageResource(R.drawable.dom_bg);
@@ -145,7 +124,7 @@ public class DrawFragment extends DialogFragment {
 
         //retrieve gridview from layout, set adapter
         gridView = (GridView)drawView.findViewById(R.id.gridView);
-        bitmapAdapter = new BitmapAdapter(getActivity(), mList, deckMax);
+        bitmapAdapter = new BitmapAdapter(getActivity(), Domino.domIdList, deckMax+1);
         bitmapAdapter.setImageSize(bitmapSize);
         gridView.setAdapter(bitmapAdapter);
         gridView.setNumColumns(numColumns);
@@ -155,7 +134,6 @@ public class DrawFragment extends DialogFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //mark piece, toggle side of preview domino
-                position++;
 
                 switch(currentSide) {
                     default:

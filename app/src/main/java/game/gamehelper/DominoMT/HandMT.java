@@ -204,9 +204,9 @@ public class HandMT implements Hand, Parcelable {
      * Undoes a previous play. Re-sets the train head to the old one, and
      * adds the domino back in its old play position.
      */
-    public void undo() {
+    public boolean undo() {
         if (positionPlayedHistory.size() == 0)
-            return;
+            return false;
 
         Domino lastDomino;
         Integer position;
@@ -226,7 +226,7 @@ public class HandMT implements Hand, Parcelable {
             runs.reSetRuns(oldRuns);
 
             trainHead = savedTrainHead;
-            return;
+            return true;
         }
 
         //in the case we added something before (null), we want to remove it now.
@@ -238,7 +238,7 @@ public class HandMT implements Hand, Parcelable {
 
             //re-sets the runs if possible, saving calculation time.
             runs.reSetRuns(oldRuns);
-            return;
+            return true;
         }
 
         //add information back to hand
@@ -250,6 +250,7 @@ public class HandMT implements Hand, Parcelable {
 
         //re-sets the runs if possible, saving calculation time.
         runs.reSetRuns(oldRuns);
+        return true;
     }
 
     /**

@@ -130,7 +130,6 @@ public class GameWindowMT extends ActionBarActivity implements
         }
 
         newGame();
-        new DominoGenerator().execute(getApplicationContext());
     }
 
     //Creates hand from camera domino array
@@ -303,7 +302,9 @@ public class GameWindowMT extends ActionBarActivity implements
         undo.setOnClickListener(
                 new Button.OnClickListener() {
                     public void onClick(View v) {
-                        hand.undo();
+                        //do nothing if nothing to undo
+                        if(!hand.undo())
+                            return;
 
                         //update the pictures & score shown based on our current context
                         if (windowState == WindowContext.SHOWING_LONGEST) {
