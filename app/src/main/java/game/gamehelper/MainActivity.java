@@ -1,8 +1,6 @@
 package game.gamehelper;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -10,110 +8,65 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.LoaderCallbackInterface;
-import org.opencv.android.OpenCVLoader;
-import org.opencv.android.Utils;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.HashMap;
+import java.util.Locale;
 
-import static org.opencv.imgproc.Imgproc.approxPolyDP;
-import static org.opencv.imgproc.Imgproc.arcLength;
-import static org.opencv.imgproc.Imgproc.contourArea;
-import static org.opencv.imgproc.Imgproc.isContourConvex;
+import static android.os.Environment.DIRECTORY_PICTURES;
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
 
-    private Mat canny;
-    private Mat gray;
-    private Mat hierarchy;
-    private Mat blur;
-    private Mat rgba;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int[] VIEW_BUTTONS = new int[] {
 
-    private String CurrentPhotoPath;
+            R.id.btnProcess,
+            R.id.btnShowBlur,
+            R.id.btnShowCanny,
+            R.id.btnShowGray,
+            R.id.btnShowPicture,
+            R.id.btnShowProcessed,
+            R.id.btnTakePicture
+    };
 
-    private Button pictureButton;
-    private Button pictureButtonGray;
-    private Button pictureButtonBlur;
-    private Button pictureButtonCanny;
-    private Button pictureButtonProc;
-    private Button countButton;
+    private File currentPhotoPath;
+    private ImageProcessor imgProcessor;
 
     private TextView countText;
     private ImageView picture;
-
-    private Bitmap bitmapRgba;
-    private Bitmap bitmapGray;
-    private Bitmap bitmapBlur;
-    private Bitmap bitmapCanny;
-
-    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
-        @Override
-        public void onManagerConnected(int status) {
-            super.onManagerConnected(status);
-
-            if(status == LoaderCallbackInterface.SUCCESS) {
-
-                System.err.println("SUCCESS!");
-            }
-            else System.err.println("FAILURE");
-        }
-    };
+    private HashMap<Integer, Button> buttons = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        imgProcessor = new ImageProcessor(this);
+
         setContentView(R.layout.activity_main);
         countText = (TextView) findViewById(R.id.countText);
-        pictureButton = (Button) findViewById(R.id.pictureButton);
-        pictureButton.setOnClickListener(this);
-        countButton = (Button) findViewById(R.id.countButton);
-        countButton.setOnClickListener(this);
         picture = (ImageView) findViewById(R.id.imageView);
-        pictureButton = (Button) findViewById(R.id.showPicture);
-        pictureButton.setOnClickListener(this);
-        pictureButtonGray = (Button) findViewById(R.id.showPictureGray);
-        pictureButtonGray.setOnClickListener(this);
-        pictureButtonProc = (Button) findViewById(R.id.showPictureProcessed);
-        pictureButtonProc.setOnClickListener(this);
-        pictureButtonBlur = (Button) findViewById(R.id.showPictureBlur);
-        pictureButtonBlur.setOnClickListener(this);
-        pictureButtonCanny = (Button) findViewById(R.id.showPictureCanny);
-        pictureButtonCanny.setOnClickListener(this);
+
+        for (Integer buttonRes : VIEW_BUTTONS) {
+
+            Button button = (Button)findViewById(buttonRes);
+            button.setOnClickListener(this);
+            button.setEnabled(false);
+            buttons.put(buttonRes, button);
+        }
+
+        buttons.get(R.id.btnTakePicture).setEnabled(true);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        try {
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_10, this, mLoaderCallback);
-        }
-        catch (Exception e) {
-
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -141,71 +94,37 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch(v.getId()) {
-            case R.id.countButton:
-                String count = new String();
-                count = Integer.toString(findDominoesInPicture());
-                countText.setText(count);
-                break;
-            case R.id.pictureButton:
+            case R.id.btnTakePicture:
+                createImageFile();
                 dispatchTakePictureIntent();
+                setButtons();
                 break;
-            case R.id.showPicture:
-                Bitmap bitmap = BitmapFactory.decodeFile(CurrentPhotoPath);
-                picture.setImageBitmap(bitmap);
-                countText.setText(CurrentPhotoPath);
+            case R.id.btnShowPicture:
+                picture.setImageBitmap(imgProcessor.getBitmapImage());
+                countText.setText(currentPhotoPath.getAbsolutePath());
                 break;
-            case R.id.showPictureGray:
-                bitmapGray = Bitmap.createBitmap(gray.cols(), gray.rows(), Bitmap.Config.ARGB_8888);
-                Utils.matToBitmap(gray, bitmapGray);
-                picture.setImageBitmap(bitmapGray);
+            case R.id.btnShowProcessed:
+                picture.setImageBitmap(imgProcessor.getBitmapProcessed());
+                countText.setText("Processed");
+                break;
+            case R.id.btnShowGray:
+                picture.setImageBitmap(imgProcessor.getBitmapGray());
                 countText.setText("Gray");
                 break;
-            case R.id.showPictureBlur:
-                bitmapBlur = Bitmap.createBitmap(blur.cols(), blur.rows(), Bitmap.Config.ARGB_8888);
-                Utils.matToBitmap(blur, bitmapBlur);
-                picture.setImageBitmap(bitmapBlur);
-                countText.setText("Processed");
+            case R.id.btnShowBlur:
+                picture.setImageBitmap(imgProcessor.getBitmapBlur());
+                countText.setText("Blur");
                 break;
-            case R.id.showPictureCanny:
-                bitmapCanny = Bitmap.createBitmap(canny.cols(), canny.rows(), Bitmap.Config.ARGB_8888);
-                Utils.matToBitmap(canny, bitmapCanny);
-                picture.setImageBitmap(bitmapCanny);
-                countText.setText("Processed");
+            case R.id.btnShowCanny:
+                picture.setImageBitmap(imgProcessor.getBitmapCanny());
+                countText.setText("Canny");
                 break;
-            case R.id.showPictureProcessed:
-                bitmapRgba = Bitmap.createBitmap(rgba.cols(), rgba.rows(), Bitmap.Config.ARGB_8888);
-                Utils.matToBitmap(rgba, bitmapRgba);
-                picture.setImageBitmap(bitmapRgba);
-                countText.setText("Processed");
+            case R.id.btnProcess:
+                int count = imgProcessor.process();
+                countText.setText(Integer.toString(count));
+                setButtons();
                 break;
-
         }
-    }
-
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
-
-    private void dispatchTakePictureIntent() {
-
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                // Error occurred while creating the File
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                        Uri.fromFile(photoFile));
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-            }
-        }
-
     }
 
     @Override
@@ -214,136 +133,58 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
 
-            Bitmap bitmap = BitmapFactory.decodeFile(CurrentPhotoPath);
-            picture.setImageBitmap(bitmap);
-            //countText.setText(finddominoesInPicture());
-            // crash if processing step is added here
+            imgProcessor.setSource(currentPhotoPath);
+            imgProcessor.loadImageBitmap();
+            picture.setImageBitmap(imgProcessor.getBitmapImage());
+            setButtons();
         }
     }
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
+    private void createImageFile() {
 
-        // Save a file: path for use with ACTION_VIEW intents
-        CurrentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
-    public boolean onTouch(View v, MotionEvent event) {
-
-        return false;
-    }
-
-    public int findDominoesInPicture()
-    {
-
-        List<Rect> rectangles = new ArrayList<Rect>();
-        List<Point> circleCenters = new ArrayList<Point>();
-
-        //open picture and convert to Bitmap
-        File file = new File(CurrentPhotoPath);
-        Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-        Bitmap myBitmap32 = myBitmap.copy(Bitmap.Config.ARGB_8888, true);
-
-        //mats for picture conversion
-        rgba = new Mat(myBitmap32.getWidth(),myBitmap32.getHeight(), CvType.CV_8UC1);
-        gray = new Mat(myBitmap32.getWidth(),myBitmap32.getHeight(), CvType.CV_8UC1);
-        canny = new Mat(myBitmap32.getWidth(),myBitmap32.getHeight(), CvType.CV_8UC1);
-        blur = new Mat(myBitmap32.getWidth(),myBitmap32.getHeight(), CvType.CV_8UC1);
-        hierarchy = new Mat();
-
-        //Convert Bitmap to MAT
-        Utils.bitmapToMat(myBitmap32,rgba,true);
-
-        //Take MAT and generate grayscale
-        Imgproc.cvtColor(rgba, gray, Imgproc.COLOR_BGR2GRAY);
-        //make blur from grayscale
-        Imgproc.GaussianBlur(gray, blur, new Size(9, 9), 0);
-        //find canny edges from blurred grayscale
-        Imgproc.Canny(blur, canny, 100, 200);
-
-        //find all contours in the canny MAT
-        List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-        Imgproc.findContours(canny, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
-
-        //creat MATs needed for finding things
-        MatOfPoint2f tempMOP2f = new MatOfPoint2f();
-        MatOfPoint2f approxMOP2F = new MatOfPoint2f();
-
-        //check every contour
-        for (int i = 0; i < contours.size(); i++) {
-
-            //get approx polly
-            contours.get(i).convertTo(tempMOP2f, CvType.CV_32FC2);
-            approxPolyDP(tempMOP2f, approxMOP2F, (arcLength(tempMOP2f, true) * .02), true);
-
-            //check for samll and non-convex
-            if (/*Math.abs(contourArea(contours.get(i))) < 100 ||*/ !(isContourConvex(contours.get(i))))
-            {
-                continue;
-            }
-
-            //check for approx pollys with 4 sides
-            if(approxMOP2F.cols()== 4 )
-            {
-                //Convert to MatOfPoint
-                MatOfPoint points = new MatOfPoint( approxMOP2F.toArray() );
-
-                // Get bounding rect of contour
-                Rect rect = Imgproc.boundingRect(points);
-                //adds to list of rectangles
-                rectangles.add(rect);
-
-            }
-
-            //checks for circles
-            if(approxMOP2F.cols() > 6 )
-            {
-                double area = Imgproc.contourArea(contours.get(i));
-                Rect rect = Imgproc.boundingRect(contours.get(i));
-                double radius = rect.width / 2;
-
-                if((1 - ((double)rect.width/(double)rect.height) <= .2) && (1 - (area /Math.PI  * Math.pow(radius, 2))) <= .2)
-                {
-                    //creat a small bounding circle and save its center
-                    Point point = new Point();
-                    float[] r = new float[contours.size()];
-                    Imgproc.minEnclosingCircle(tempMOP2f, point,r);
-                    circleCenters.add(point);
-                }
-
-            }
-
-
+        try {
+            // Create an image file name
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+            String imageFileName = "JPEG_" + timeStamp + "_";
+            File storageDir = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES);
+            currentPhotoPath = File.createTempFile(
+                    imageFileName,  /* prefix */
+                    ".jpg",         /* suffix */
+                    storageDir      /* directory */
+            );
         }
-        Random rnd = new Random();
-        rnd.setSeed(7);
+        catch(IOException ioe) {
 
-        //Imgproc.drawContours(rgba, contours, - 1, new Scalar(255,0,0,255));
+            // TODO: Display error message to user, cannot process image.
+            // Use manual domino entry.
+            ioe.printStackTrace();
+        }
+    }
 
-        for( int i = 0; i< contours.size(); i++ )
-        {
-            Scalar color = new Scalar( rnd.nextInt(255), rnd.nextInt(255),  rnd.nextInt(255) );
-            Imgproc.drawContours(rgba, contours, i, color, 2, 8, hierarchy, 0, new Point(0,0));
+    private void dispatchTakePictureIntent() {
+
+        if (currentPhotoPath == null) return;
+
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(currentPhotoPath));
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    private void setButtons() {
+
+        if (imgProcessor.getBitmapImage() != null) {
+
+            buttons.get(R.id.btnShowPicture).setEnabled(true);
+            buttons.get(R.id.btnProcess).setEnabled(true);
         }
 
-
-
-
-
-
-
-        return circleCenters.size();
+        if (imgProcessor.getBitmapProcessed() != null) buttons.get(R.id.btnShowProcessed).setEnabled(true);
+        if (imgProcessor.getBitmapGray() != null) buttons.get(R.id.btnShowGray).setEnabled(true);
+        if (imgProcessor.getBitmapBlur() != null) buttons.get(R.id.btnShowBlur).setEnabled(true);
+        if (imgProcessor.getBitmapCanny() != null) buttons.get(R.id.btnShowCanny).setEnabled(true);
     }
-
-
 }
