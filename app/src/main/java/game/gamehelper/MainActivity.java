@@ -68,6 +68,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private Bitmap bitmapBlur;
     private Bitmap bitmapCanny;
 
+    static final int RULES_EXIT = 88;
+
+
+
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -130,12 +134,28 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+
+        switch (item.getItemId())
+        {
+            case R.id.menu_rules:
+            {
+                startActivityForResult(new Intent(MainActivity.this, RulesActivity.class),RULES_EXIT);
+
+                break;
+            }
+
+            case R.id.menu_exit:
+            {
+                finish();
+                System.exit( 0 );
+                break;
+            }
+
+            default:
+
         }
 
-        return super.onOptionsItemSelected(item);
+        return( super.onOptionsItemSelected(item) );
     }
 
     @Override

@@ -33,10 +33,10 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Next Game"
+        android:text="Switch Game"
         android:id="@+id/nextGameButton"
-        android:layout_below="@+id/gameTitle"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignTop="@+id/newGameButton"
+        android:layout_alignParentEnd="true" />
 
     <Button
         android:layout_width="wrap_content"
@@ -48,40 +48,6 @@
         android:layout_alignParentStart="true"
         android:layout_marginBottom="84dp" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Camera"
-        android:id="@+id/cameraButton"
-        android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/randomButton"
-        android:layout_toEndOf="@+id/randomButton" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Exit"
-        android:id="@+id/exitButton"
-        android:layout_alignTop="@+id/newGameButton"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Random Dominos"
-        android:id="@+id/randomButton"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Random ScoreBoard"
-        android:id="@+id/randomScoreBoard"
-        android:layout_alignBottom="@+id/cameraButton"
-        android:layout_toRightOf="@+id/cameraButton"
-        android:layout_toEndOf="@+id/cameraButton" />
 
 </RelativeLayout>

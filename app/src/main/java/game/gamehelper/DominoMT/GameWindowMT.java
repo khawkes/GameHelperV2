@@ -30,6 +30,7 @@ import game.gamehelper.GameSet;
 import game.gamehelper.MainActivity;
 import game.gamehelper.MainWindow;
 import game.gamehelper.R;
+import game.gamehelper.RulesActivity;
 import game.gamehelper.ScoreBoard;
 
 
@@ -88,6 +89,9 @@ public class GameWindowMT extends ActionBarActivity implements
     private boolean loadGame = false;
     private boolean gameTypeSelected = false;
     private boolean trainHeadSelected = false;
+
+    private static int RULES_EXIT;
+    static final int SCOREBOARD_EXIT = 10;
 
     /**
      * Context of a play. Whether we played on the longest, the most points, or the unsorted screen.
@@ -328,6 +332,20 @@ public class GameWindowMT extends ActionBarActivity implements
 
                 break;
 
+            case R.id.menu_rules:
+            {
+                startActivityForResult(new Intent(GameWindowMT.this, RulesActivity.class),RULES_EXIT);
+
+                break;
+            }
+
+            case R.id.menu_exit:
+            {
+                finish();
+                System.exit( 0 );
+                break;
+            }
+
             default:
                 //TODO perform other
 
@@ -470,6 +488,16 @@ public class GameWindowMT extends ActionBarActivity implements
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Bundle b;
+
+        if (requestCode == SCOREBOARD_EXIT)
+        {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK)
+            {
+                this.finish();
+            }
+        }
+
 
         if( resultCode != RESULT_OK )
             return;

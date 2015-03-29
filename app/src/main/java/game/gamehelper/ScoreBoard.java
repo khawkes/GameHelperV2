@@ -69,6 +69,8 @@ public class ScoreBoard extends ActionBarActivity implements
     private LinkedList<TextView> setLabelListView;
     private LinkedList<TextView> totalListView;
 
+    static final int RULES_EXIT = 88;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -381,6 +383,20 @@ public class ScoreBoard extends ActionBarActivity implements
             case R.id.action_back:
                 finish();
                 break;
+
+            case R.id.menu_rules:
+            {
+                startActivityForResult(new Intent(ScoreBoard.this, RulesActivity.class),RULES_EXIT);
+
+                break;
+            }
+
+            case R.id.menu_exit:
+            {
+                setResult(RESULT_OK, null);
+                finish();
+                break;
+            }
 
             default:
                 Log.w("ScoreBoard", "Unknown actionbar icon clicked");

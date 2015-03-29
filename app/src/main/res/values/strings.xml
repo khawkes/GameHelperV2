@@ -6,7 +6,7 @@
     <string name="pictureButton">Take Picture</string>
     <string name="CountButton">Count</string>
     <string name="showPicture">Show Picture</string>
-    showPicture            <string name="title_activity_main_window">MainWindow</string>
+    <string name="title_activity_main_window">MainWindow</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_game_window">GameWindow</string>
     <string name="title_activity_score_board">ScoreBoard</string>
@@ -46,5 +46,20 @@
     <!--ScoreBoard-->
     <string name="total">Total</string>
     <string name="set">Set</string>
+    <string name="rules_button">Rules</string>
+
+    <string name="about_string">About</string>
+    <string name="rules_string">Rules</string>
+
+    <string name="settings_string">Settings</string>
+    <string name="new_game_string">New Game</string>
+    <string name="score_board_string">Score Board</string>
+    <string name="exit_string">Exit</string>
+    <string name="home_string">Home</string>
+    <string name="camera_string">Camera</string>
+    <string name="rules_menu_string">Rules</string>
+    <string name="dominoes_rules_button_string">Mexican Train Dominoes</string>
+    <string name="title_activity_rules">RulesActivity</string>
+    <string name="title_activity_rule_detail">RuleDetailActivity</string>
 
 </resources>

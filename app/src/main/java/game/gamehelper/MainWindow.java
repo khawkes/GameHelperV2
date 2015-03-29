@@ -29,13 +29,15 @@ public class MainWindow extends ActionBarActivity {
     public int set = 8;
     public int selectedGame = 0;
 
+    static final int RULES_EXIT = 88;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_window);
 
-        getSupportActionBar().hide();
+        //getSupportActionBar().hide();
 
         gameList.add("Dominos:\nMexicanTrain");
         gameList.add("Other games");
@@ -43,10 +45,7 @@ public class MainWindow extends ActionBarActivity {
 
         Button newGameButton = (Button)findViewById(R.id.newGameButton);
         Button nextGameButton = (Button)findViewById(R.id.nextGameButton);
-        Button cameraButton = (Button)findViewById(R.id.cameraButton);
-        Button exitButton = (Button)findViewById(R.id.exitButton);
-        Button randomButton = (Button)findViewById(R.id.randomButton);
-        Button randomScoreBoardButton = (Button)findViewById(R.id.randomScoreBoard);
+
 
         final TextView gameTitle = (TextView) findViewById(R.id.gameTitle);
 
@@ -89,60 +88,7 @@ public class MainWindow extends ActionBarActivity {
                 }
         );
 
-        //Random Dominos Button (temp)
-        randomButton.setOnClickListener(
-                new Button.OnClickListener(){
-                    public void onClick(View v){
-                        debug = true;
 
-                        //TODO only works up to 27-ish. 28 if you want to wait a while.
-                        randomDominos(24);
-                        bundle.clear();
-                        bundle.putSerializable("dominoList", tileList);
-                        bundle.putInt("dominoTotal", totalTiles);
-                        bundle.putInt("maxDouble", maxDouble);
-                        startActivity(new Intent(MainWindow.this, GameWindowMT.class).putExtras(bundle));
-                    }
-                }
-        );
-
-        //Random Scoreboard Button (temp)
-        randomScoreBoardButton.setOnClickListener(
-                new Button.OnClickListener(){
-                    public void onClick(View v){
-                        debug = true;
-
-                        setList.clear();
-                        playerList.clear();
-                        bundle.clear();
-
-                        randomScoreBoard(player, set);
-                        bundle.putParcelableArrayList("setList", setList);
-                        bundle.putStringArrayList("playerList", playerList);
-                        startActivity(new Intent(MainWindow.this, ScoreBoard.class).putExtras(bundle));
-                    }
-                }
-        );
-
-        //Camera Button (temp)
-        cameraButton.setOnClickListener(
-                new Button.OnClickListener(){
-                    public void onClick(View v){
-                        debug = true;
-                        startActivity(new Intent(MainWindow.this, MainActivity.class));
-                    }
-                }
-        );
-
-        //Exit Button
-        exitButton.setOnClickListener(
-                new Button.OnClickListener(){
-                    public void onClick(View v){
-                        finish();
-                        System.exit(0);
-                    }
-                }
-        );
     }
 
 
@@ -158,14 +104,30 @@ public class MainWindow extends ActionBarActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        //int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId())
+        {
+            case R.id.menu_rules:
+            {
+                startActivityForResult(new Intent(MainWindow.this, RulesActivity.class),RULES_EXIT);
+
+                break;
+            }
+
+            case R.id.menu_exit:
+            {
+
+                finish();
+                System.exit( 0 );
+                break;
+            }
+
+            default:
+
         }
 
-        return super.onOptionsItemSelected(item);
+        return( super.onOptionsItemSelected(item) );
     }
 
     //generate a random set of tiles for hand
