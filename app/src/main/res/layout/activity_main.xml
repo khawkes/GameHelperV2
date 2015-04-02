@@ -1,92 +1,91 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+    android:layout_height="fill_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/activity_main_horizontal_margin"
+    android:paddingRight="@dimen/activity_main_horizontal_margin"
+    android:paddingTop="@dimen/activity_main_vertial_margin"
+    android:paddingBottom="@dimen/activity_main_vertial_margin">
 
-    <Button
-        android:id="@+id/pictureButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/pictureButton"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/countText"
-        android:layout_alignRight="@+id/imageView"
-        android:layout_alignEnd="@+id/imageView"
-        android:layout_below="@+id/countButton"
-        android:layout_above="@+id/imageView"
-        android:layout_toRightOf="@+id/pictureButton"
-        android:layout_toEndOf="@+id/pictureButton" />
+        <Button
+            android:id="@+id/btnTakePicture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txtBtnTakePicture"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/CountButton"
-        android:id="@+id/countButton"
-        android:singleLine="false"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/showPictureGray" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txtBtnOriginal"
+            android:id="@+id/btnShowPicture"
+            android:layout_alignParentStart="false"
+            android:layout_below="@+id/btnTakePicture"
+            android:layout_alignLeft="@+id/btnTakePicture" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="original"
-        android:id="@+id/showPicture"
-        android:layout_below="@+id/pictureButton"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/countText"
+            android:layout_alignBottom="@+id/btnShowPicture"
+            android:layout_alignLeft="@+id/btnShowGray" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Gray"
-        android:id="@+id/showPictureGray"
-        android:layout_alignTop="@+id/pictureButton"
-        android:layout_toRightOf="@+id/pictureButton" />
+        <Space
+            android:layout_width="15dp"
+            android:layout_height="2dp"
+            android:id="@+id/spcButtons"
+            android:layout_toRightOf="@+id/btnTakePicture" />
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Process"
-        android:id="@+id/showPictureProcessed"
-        android:layout_alignTop="@+id/showPictureBlur"
-        android:layout_toRightOf="@+id/showPictureBlur"
-        android:layout_toEndOf="@+id/showPictureBlur" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txtBtnProcess"
+            android:id="@+id/btnShowProcessed"
+            android:layout_alignTop="@+id/btnShowCanny"
+            android:layout_toRightOf="@+id/btnShowCanny" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txtBtnGray"
+            android:id="@+id/btnShowGray"
+            android:layout_toRightOf="@+id/spcButtons" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txtBtnBlur"
+            android:id="@+id/btnShowBlur"
+            android:layout_toRightOf="@+id/btnShowGray" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txtBtnCanny"
+            android:id="@+id/btnShowCanny"
+            android:layout_toRightOf="@+id/btnShowBlur" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txtBtnCount"
+            android:id="@+id/btnProcess"
+            android:singleLine="false"
+            android:layout_alignTop="@+id/btnShowProcessed"
+            android:layout_toRightOf="@+id/btnShowProcessed" />
+    </RelativeLayout>
 
     <ImageView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/imageView"
-        android:contentDescription="pictureView"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@+id/showPicture"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:contentDescription="@string/imgDescr"
+        android:layout_marginTop="5dp" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Canny"
-        android:id="@+id/showPictureCanny"
-        android:layout_alignTop="@+id/countButton"
-        android:layout_toRightOf="@+id/countButton"
-        android:layout_toEndOf="@+id/countButton" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Blur"
-        android:id="@+id/showPictureBlur"
-        android:layout_alignTop="@+id/showPictureCanny"
-        android:layout_toRightOf="@+id/showPictureCanny"
-        android:layout_toEndOf="@+id/showPictureCanny" />
-
-</RelativeLayout>
+</LinearLayout>
