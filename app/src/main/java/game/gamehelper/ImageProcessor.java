@@ -1,0 +1,214 @@
+package game.gamehelper;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import static org.opencv.imgproc.Imgproc.approxPolyDP;
+import static org.opencv.imgproc.Imgproc.arcLength;
+import static org.opencv.imgproc.Imgproc.isContourConvex;
+import static org.opencv.imgproc.Imgproc.contourArea;
+
+/**
+ * Created by khawkes on 3/29/15.
+ */
+public class ImageProcessor {
+
+    private boolean openCVReady = false;
+
+    private Bitmap bitmapImage, bitmapProcessed, bitmapGray, bitmapBlur, bitmapCanny;
+    private File sourceFile;
+
+    public ImageProcessor(Context context) {
+
+        try {
+
+            BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(context) {
+
+                @Override
+                public void onManagerConnected(int status) {
+                    super.onManagerConnected(status);
+
+                    if(status == LoaderCallbackInterface.SUCCESS) {
+
+                        System.err.println("OpenCV SUCCESS!");
+                        openCVReady = true;
+                    }
+                    else System.err.println("OpenCV FAILURE!");
+                }
+            };
+
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_10, context, mLoaderCallback);
+        }
+        catch (Exception e) {
+
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isOpenCVReady() {
+
+        return openCVReady;
+    }
+
+    public void setSource(File sourceFile) {
+
+        this.sourceFile = sourceFile;
+    }
+
+    public void loadImageBitmap() {
+
+        bitmapImage = BitmapFactory.decodeFile(sourceFile.getAbsolutePath());
+        bitmapProcessed = null;
+        bitmapGray = null;
+        bitmapBlur = null;
+        bitmapCanny = null;
+    }
+
+    public Bitmap getBitmapImage() {
+
+        return bitmapImage;
+    }
+
+    public Bitmap getBitmapProcessed() {
+
+        return bitmapProcessed;
+    }
+
+    public Bitmap getBitmapGray() {
+
+        return bitmapGray;
+    }
+
+    public Bitmap getBitmapBlur() {
+
+        return bitmapBlur;
+    }
+
+    public Bitmap getBitmapCanny() {
+
+        return bitmapCanny;
+    }
+
+    public int process() {
+
+        if (!isOpenCVReady() || bitmapImage == null) return -1;
+
+        Bitmap myBitmap32 = bitmapImage.copy(Bitmap.Config.ARGB_8888, true);
+
+        //mats for picture conversion
+        Mat rgba = new Mat(myBitmap32.getWidth(),myBitmap32.getHeight(), CvType.CV_8UC1);
+        Mat gray = new Mat(myBitmap32.getWidth(),myBitmap32.getHeight(), CvType.CV_8UC1);
+        Mat blur = new Mat(myBitmap32.getWidth(),myBitmap32.getHeight(), CvType.CV_8UC1);
+        Mat canny = new Mat(myBitmap32.getWidth(),myBitmap32.getHeight(), CvType.CV_8UC1);
+
+        //Convert Bitmap to MAT
+        Utils.bitmapToMat(myBitmap32,rgba,true);
+
+        //Take MAT and generate grayscale
+        Imgproc.cvtColor(rgba, gray, Imgproc.COLOR_BGR2GRAY);
+
+        //make blur from grayscale
+        Imgproc.GaussianBlur(gray, blur, new Size(9, 9), 0);
+
+        //find canny edges from blurred grayscale
+        Imgproc.Canny(blur, canny, 100, 200);
+
+        //find all contours in the canny MAT
+        Mat hierarchy = new Mat();
+
+        List<MatOfPoint> contours = new ArrayList<>();
+        Imgproc.findContours(canny, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        //creat MATs needed for finding things
+        MatOfPoint2f tempMOP2f = new MatOfPoint2f();
+        MatOfPoint2f approxMOP2F = new MatOfPoint2f();
+
+        List<Rect> rectangles = new ArrayList<Rect>();
+        List<Point> circleCenters = new ArrayList<Point>();
+
+        //check every contour
+        for (int i = 0; i < contours.size(); i++) {
+
+            //get approx polly
+            contours.get(i).convertTo(tempMOP2f, CvType.CV_32FC2);
+            approxPolyDP(tempMOP2f, approxMOP2F, (arcLength(tempMOP2f, true) * .02), true);
+
+            //check for samll and non-convex
+            if (/*Math.abs(contourArea(contours.get(i))) < 100 ||*/ !(isContourConvex(contours.get(i))))
+            {
+                continue;
+            }
+
+            //check for approx pollys with 4 sides
+            if(approxMOP2F.cols()== 4 )
+            {
+                //Convert to MatOfPoint
+                MatOfPoint points = new MatOfPoint( approxMOP2F.toArray() );
+
+                // Get bounding rect of contour
+                Rect rect = Imgproc.boundingRect(points);
+                //adds to list of rectangles
+                rectangles.add(rect);
+
+            }
+
+            //checks for circles
+            if(approxMOP2F.cols() > 6 )
+            {
+                double area = Imgproc.contourArea(contours.get(i));
+                Rect rect = Imgproc.boundingRect(contours.get(i));
+                double radius = rect.width / 2;
+
+                if((1 - ((double)rect.width/(double)rect.height) <= .2) && (1 - (area /Math.PI  * Math.pow(radius, 2))) <= .2)
+                {
+                    //creat a small bounding circle and save its center
+                    Point point = new Point();
+                    float[] r = new float[contours.size()];
+                    Imgproc.minEnclosingCircle(tempMOP2f, point,r);
+                    circleCenters.add(point);
+                }
+            }
+        }
+        Random rnd = new Random();
+        rnd.setSeed(7);
+
+        //Imgproc.drawContours(rgba, contours, - 1, new Scalar(255,0,0,255));
+
+        for( int i = 0; i< contours.size(); i++ )
+        {
+            Scalar color = new Scalar( rnd.nextInt(255), rnd.nextInt(255),  rnd.nextInt(255) );
+            Imgproc.drawContours(rgba, contours, i, color, 2, 8, hierarchy, 0, new Point(0,0));
+        }
+
+        bitmapProcessed = Bitmap.createBitmap(rgba.cols(), rgba.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(rgba, bitmapProcessed);
+        bitmapGray = Bitmap.createBitmap(gray.cols(), gray.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(gray, bitmapGray);
+        bitmapBlur = Bitmap.createBitmap(blur.cols(), blur.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(blur, bitmapBlur);
+        bitmapCanny = Bitmap.createBitmap(canny.cols(), canny.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(canny, bitmapCanny);
+        
+        return circleCenters.size();
+    }
+}
