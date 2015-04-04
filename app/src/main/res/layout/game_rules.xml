@@ -53,17 +53,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
                 <Button android:id="@+id/help_button2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="46dp"
+                    android:layout_height="63dp"
                     style="@style/HelpButton.Dark"
                     android:onClick="onClickHelp"
                     android:drawableTop="@drawable/scrabble_default"/>
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="248dp"
                     android:layout_height="wrap_content"
                     android:text="@string/help_text_section2"
                     android:padding="8dip"
-                    android:layout_weight="1"
                     android:id="@+id/help_text_2"
                     android:textSize="@dimen/abc_text_size_title_material"
                     android:textStyle="bold" />

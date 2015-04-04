@@ -54,14 +54,8 @@ public class RulesActivity extends ActionBarActivity
 
         switch (item.getItemId())
         {
-            case R.id.menu_rules:
-            {
-                startActivityForResult(new Intent(RulesActivity.this, RulesActivity.class),RULES_EXIT);
 
-                break;
-            }
-
-            case R.id.menu_exit:
+              case R.id.menu_exit:
             {
                 finish();
                 System.exit( 0 );

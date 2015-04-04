@@ -22,19 +22,24 @@
     <string name="topic_section1">
     <![CDATA[
          <p>
-       GENERAL:
+      <b> GENERAL:</b>
+        </p>
+        <p>
             Domino games begin by shuffling the pieces that have been turned face down so the
             "spots" do not show. Players then draw the required number of pieces. For 2,3 or 4
             players, draw 15 dominoes each; for 5 or 6 players draw 12 each; and for 7 or 8 players
             draw 11 each.
         </p>
       <p>
-        OBJECTIVE:
+        <b>OBJECTIVE:</b>
+        </p>
             To play off all your dominoes. You play off onto your own train, onto the Mexican·Train
             and onto other players\' marked trains.
        </p>
       <p>
-        FIRST PLAYER:
+        <b>FIRST PLAYER:</b>
+       </p>
+      <p>
             Open the Mexican Train station by placing your highest double in the center. You may then
             begin your train on one of the eight "sidings" of the station by playing off a domino
             matching the station number. Your train should "depart" the station heading towards you.
@@ -50,7 +55,9 @@
             have been taken, start new sidings off to the side and out of the way.)
         </p>
       <p>
-        SUBSEQUENT PLAY:
+        <b>SUBSEQUENT PLAY:</b>
+        </p>
+      <p>
             Play always rotates to the left. At your turn, play on your own traIn, on the Mexican Train,
             or on other players\' marked train. You can play off a series of dominoes only on the
             turn when you start your train. After your train "has departed" the station, play only
@@ -65,7 +72,9 @@
             elsewhere.
         </p>
       <p>
-        PLAYING DOUBLES:/n
+       <b> PLAYING DOUBLES:</b>
+        </p>
+      <p>
             When you play a double you must make another play on that double if you can. If you can\'t,
             draw one domino from the bone yard. If you can play it, that\'s fine. If not. place a marker
             on your·train (if it does not already have one) and your turn is over. In this case, the
@@ -75,14 +84,18 @@
             their drawn tile only to satisfy the double.
         </p>
       <p>
-        EXCEPTIONS TO DOUBLES REQUIREMENTS:/n
+        <b>EXCEPTIONS TO DOUBLES REQUIREMENTS:</b>
+        </p>
+      <p>
             1) The double to play on is the last domino of its number
             2) You play a double to remove the marker from your own train, with no requirement that
                you or the next players satisfy that double
             3) If the double is your last domino, ending the game immediately.
         </p>
       <p>
-        SCORING:
+        <b>SCORING:</b>
+        </p>
+      <p>
             As soon as one player is out of dominoes, all play stops and players report the sum of
             their remaining dominoes to the scorekeeper. After an agreed number of rounds, whoever
             has the lowest score is the winner. (Note: begin each round with a new player, rotating
@@ -98,7 +111,7 @@
     <string name="topic_section2">
     <![CDATA[
       <p>
-        There are no rules available for this game at this time
+        <b>There are no rules available for this game at this time</b>
         </p>
        ]]>
     </string>
