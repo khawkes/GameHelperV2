@@ -3,6 +3,7 @@ package game.gamehelper;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -109,42 +110,44 @@ public class ImageProcessor {
         return bitmapCanny;
     }
 
-    public int process() {
+    public int process(int colorReduce, int blurSize, int blurSigmaX, int threshold1, int threshold2) {
 
         if (!isOpenCVReady() || bitmapImage == null) return -1;
 
-        Bitmap myBitmap32 = bitmapImage.copy(Bitmap.Config.ARGB_8888, true);
+        Bitmap myBitmap32 = decreaseColorDepth(
+                bitmapImage.copy(Bitmap.Config.RGB_565, true),
+                colorReduce);
 
         //mats for picture conversion
-        Mat rgba = new Mat(myBitmap32.getWidth(),myBitmap32.getHeight(), CvType.CV_8UC1);
-        Mat gray = new Mat(myBitmap32.getWidth(),myBitmap32.getHeight(), CvType.CV_8UC1);
-        Mat blur = new Mat(myBitmap32.getWidth(),myBitmap32.getHeight(), CvType.CV_8UC1);
-        Mat canny = new Mat(myBitmap32.getWidth(),myBitmap32.getHeight(), CvType.CV_8UC1);
+        Mat rgba = new Mat(myBitmap32.getWidth(), myBitmap32.getHeight(), CvType.CV_8U);
+        Mat gray = new Mat(myBitmap32.getWidth(), myBitmap32.getHeight(), CvType.CV_8U);
+        Mat blur = new Mat(myBitmap32.getWidth(), myBitmap32.getHeight(), CvType.CV_8U);
+        Mat cany = new Mat(myBitmap32.getWidth(), myBitmap32.getHeight(), CvType.CV_8U);
 
         //Convert Bitmap to MAT
-        Utils.bitmapToMat(myBitmap32,rgba,true);
+        Utils.bitmapToMat(myBitmap32, rgba, true);
 
         //Take MAT and generate grayscale
         Imgproc.cvtColor(rgba, gray, Imgproc.COLOR_BGR2GRAY);
 
         //make blur from grayscale
-        Imgproc.GaussianBlur(gray, blur, new Size(9, 9), 0);
+        Imgproc.GaussianBlur(gray, blur, new Size(blurSize, blurSize), blurSigmaX);
 
         //find canny edges from blurred grayscale
-        Imgproc.Canny(blur, canny, 100, 200);
+        Imgproc.Canny(blur, cany, threshold1, threshold2);
 
         //find all contours in the canny MAT
         Mat hierarchy = new Mat();
 
         List<MatOfPoint> contours = new ArrayList<>();
-        Imgproc.findContours(canny, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(cany, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
         //creat MATs needed for finding things
         MatOfPoint2f tempMOP2f = new MatOfPoint2f();
         MatOfPoint2f approxMOP2F = new MatOfPoint2f();
 
-        List<Rect> rectangles = new ArrayList<Rect>();
-        List<Point> circleCenters = new ArrayList<Point>();
+        List<Rect> rectangles = new ArrayList<>();
+        List<Point> circleCenters = new ArrayList<>();
 
         //check every contour
         for (int i = 0; i < contours.size(); i++) {
@@ -206,9 +209,48 @@ public class ImageProcessor {
         Utils.matToBitmap(gray, bitmapGray);
         bitmapBlur = Bitmap.createBitmap(blur.cols(), blur.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(blur, bitmapBlur);
-        bitmapCanny = Bitmap.createBitmap(canny.cols(), canny.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(canny, bitmapCanny);
+        bitmapCanny = Bitmap.createBitmap(cany.cols(), cany.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(cany, bitmapCanny);
         
         return circleCenters.size();
+    }
+
+    public static Bitmap decreaseColorDepth(Bitmap src, int bitOffset) {
+
+        int width = src.getWidth();     // get image size
+        int height = src.getHeight();
+
+        Bitmap bmOut = Bitmap.createBitmap(width, height, src.getConfig()); // create output bitmap
+        int R, G, B;
+        int pixel;
+
+        // scan through all pixels
+        for (int x = 0; x < width; ++x) {
+
+            for (int y = 0; y < height; ++y) {
+
+                // get pixel color
+                pixel = src.getPixel(x, y);
+                R = Color.red(pixel);
+                G = Color.green(pixel);
+                B = Color.blue(pixel);
+
+                // round-off color offset
+                R = ((R + (bitOffset / 2)) - ((R + (bitOffset / 2)) % bitOffset) - 1);
+                if (R < 0) R = 0;
+
+                G = ((G + (bitOffset / 2)) - ((G + (bitOffset / 2)) % bitOffset) - 1);
+                if (G < 0) G = 0;
+
+                B = ((B + (bitOffset / 2)) - ((B + (bitOffset / 2)) % bitOffset) - 1);
+                if (B < 0) B = 0;
+
+                // set pixel color to output bitmap
+                bmOut.setPixel(x, y, Color.rgb(R, G, B));
+            }
+        }
+
+        // return final image
+        return bmOut;
     }
 }

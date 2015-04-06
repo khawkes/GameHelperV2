@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -137,11 +138,38 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 countText.setText("Canny");
                 break;
             case R.id.btnProcess:
-                int count = imgProcessor.process();
+                EditText ctrl = (EditText) findViewById(R.id.txtColorReduce);
+                int colorReduce = safeInt(ctrl.getText(), 32);
+
+                ctrl = (EditText) findViewById(R.id.txtBlurSize);
+                int blurSize = safeInt(ctrl.getText(), 9);
+
+                ctrl = (EditText) findViewById(R.id.txtBlurSigmaX);
+                int blurSigmaX = safeInt(ctrl.getText(), 0);
+
+                ctrl = (EditText) findViewById(R.id.txtThreshold1);
+                int threshold1 = safeInt(ctrl.getText(), 100);
+
+                ctrl = (EditText) findViewById(R.id.txtThreshold2);
+                int threshold2 = safeInt(ctrl.getText(), 200);
+
+                int count = imgProcessor.process(colorReduce, blurSize, blurSigmaX, threshold1, threshold2);
                 countText.setText(Integer.toString(count));
                 setButtons();
                 break;
         }
+    }
+
+    private int safeInt(CharSequence val, int def) {
+
+        int ret = def;
+        try {
+
+            ret = Integer.parseInt(val.toString());
+        }
+        catch (Exception e) { }
+
+        return ret;
     }
 
     @Override

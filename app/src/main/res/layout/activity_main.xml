@@ -18,29 +18,34 @@
             android:layout_height="wrap_content"
             android:text="@string/txtBtnTakePicture"
             android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/txtBtnOriginal"
-            android:id="@+id/btnShowPicture"
-            android:layout_alignParentStart="false"
-            android:layout_below="@+id/btnTakePicture"
-            android:layout_alignLeft="@+id/btnTakePicture" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/countText"
-            android:layout_alignBottom="@+id/btnShowPicture"
-            android:layout_alignLeft="@+id/btnShowGray" />
+            android:layout_alignParentStart="true" />
 
         <Space
             android:layout_width="15dp"
             android:layout_height="2dp"
             android:id="@+id/spcButtons"
-            android:layout_toRightOf="@+id/btnTakePicture" />
+            android:layout_toEndOf="@+id/btnTakePicture" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txtBtnGray"
+            android:id="@+id/btnShowGray"
+            android:layout_toEndOf="@+id/spcButtons" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txtBtnBlur"
+            android:id="@+id/btnShowBlur"
+            android:layout_toEndOf="@+id/btnShowGray" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txtBtnCanny"
+            android:id="@+id/btnShowCanny"
+            android:layout_toEndOf="@+id/btnShowBlur" />
 
         <Button
             android:layout_width="wrap_content"
@@ -48,28 +53,7 @@
             android:text="@string/txtBtnProcess"
             android:id="@+id/btnShowProcessed"
             android:layout_alignTop="@+id/btnShowCanny"
-            android:layout_toRightOf="@+id/btnShowCanny" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/txtBtnGray"
-            android:id="@+id/btnShowGray"
-            android:layout_toRightOf="@+id/spcButtons" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/txtBtnBlur"
-            android:id="@+id/btnShowBlur"
-            android:layout_toRightOf="@+id/btnShowGray" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/txtBtnCanny"
-            android:id="@+id/btnShowCanny"
-            android:layout_toRightOf="@+id/btnShowBlur" />
+            android:layout_toEndOf="@+id/btnShowCanny" />
 
         <Button
             android:layout_width="wrap_content"
@@ -78,7 +62,103 @@
             android:id="@+id/btnProcess"
             android:singleLine="false"
             android:layout_alignTop="@+id/btnShowProcessed"
-            android:layout_toRightOf="@+id/btnShowProcessed" />
+            android:layout_toEndOf="@+id/btnShowProcessed" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txtBtnOriginal"
+            android:id="@+id/btnShowPicture"
+            android:layout_alignParentStart="false"
+            android:layout_below="@+id/btnTakePicture"
+            android:layout_alignStart="@+id/btnTakePicture" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="32"
+            android:id="@+id/txtColorReduce"
+            android:minWidth="80dp"
+            android:width="80dp"
+            android:layout_alignBottom="@+id/btnShowPicture"
+            android:layout_alignStart="@+id/btnShowGray"
+            android:clickable="true"
+            android:enabled="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:inputType="numberSigned" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="9"
+            android:id="@+id/txtBlurSize"
+            android:minWidth="80dp"
+            android:width="80dp"
+            android:layout_alignBottom="@+id/btnShowPicture"
+            android:layout_toEndOf="@+id/txtColorReduce"
+            android:clickable="true"
+            android:enabled="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:inputType="numberSigned" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:id="@+id/txtBlurSigmaX"
+            android:layout_alignBottom="@+id/btnShowPicture"
+            android:layout_toEndOf="@+id/txtBlurSize"
+            android:minWidth="80dp"
+            android:width="80dp"
+            android:clickable="true"
+            android:enabled="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:inputType="numberSigned" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="100"
+            android:id="@+id/txtThreshold1"
+            android:layout_alignBottom="@+id/btnShowPicture"
+            android:layout_toEndOf="@id/txtBlurSigmaX"
+            android:minWidth="80dp"
+            android:width="80dp"
+            android:clickable="true"
+            android:enabled="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:inputType="numberSigned" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="200"
+            android:id="@+id/txtThreshold2"
+            android:layout_alignBottom="@+id/btnShowPicture"
+            android:layout_toEndOf="@+id/txtThreshold1"
+            android:minWidth="80dp"
+            android:width="80dp"
+            android:clickable="true"
+            android:enabled="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:inputType="numberSigned" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/countText"
+            android:layout_alignTop="@id/txtThreshold2"
+            android:layout_toEndOf="@+id/txtThreshold2"
+            android:maxLength="150"
+            android:minHeight="35dp"
+            android:text="countText"
+            android:minWidth="100dp" />
+
     </RelativeLayout>
 
     <ImageView
