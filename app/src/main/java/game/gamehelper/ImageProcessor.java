@@ -28,6 +28,7 @@ import static org.opencv.imgproc.Imgproc.approxPolyDP;
 import static org.opencv.imgproc.Imgproc.arcLength;
 import static org.opencv.imgproc.Imgproc.isContourConvex;
 import static org.opencv.imgproc.Imgproc.contourArea;
+import static org.opencv.imgproc.Imgproc.minEnclosingCircle;
 
 /**
  * Created by khawkes on 3/29/15.
@@ -110,6 +111,82 @@ public class ImageProcessor {
         return bitmapCanny;
     }
 
+    public int[][] createTileList(List<Rect> rectangles, List<Point> circles ) {
+
+        int[][] TileList = new int[rectangles.size()][2];
+
+        Rect tempRect1, tempRect2;
+        int tempInt1, tempInt2;
+        int tempX1, tempX2;
+        int tempY1, tempY2;
+        int tempH1, tempH2;
+        int tempW1, tempW2;
+
+        for(int i = 0; i < rectangles.size(); i++){
+
+            tempInt1 = 0;
+            tempInt2 = 0;
+
+            //Check if tall or long
+            //to split in x or y
+            if(rectangles.get(i).height > rectangles.get(i).width){
+                //if tall split by y
+                tempX1 = rectangles.get(i).x;
+                tempX2 = rectangles.get(i).x;
+
+                tempY1 = rectangles.get(i).y;//top rectangle same UL corner
+                tempY2 = (rectangles.get(i).y - (rectangles.get(i).height / 2));//bottom rectangle lower UL corner
+
+                tempW1 = rectangles.get(i).width;
+                tempW2 = rectangles.get(i).width;
+                //new half height
+                tempH1 = (rectangles.get(i).height/2);
+                tempH2 = (rectangles.get(i).height/2);
+
+                tempRect1 = new Rect(tempX1, tempY1, tempW1, tempH1);
+                tempRect2 = new Rect(tempX2, tempY2, tempW2, tempH2);
+            }else{
+                //else wide split by x
+                tempX1 = rectangles.get(i).x;//left rectangle same UL corner
+                tempX2 = (rectangles.get(i).x + (rectangles.get(i).width / 2));//right rectangle righter UL corner
+
+                tempY1 = rectangles.get(i).y;
+                tempY2 = rectangles.get(i).y;
+                //new half width
+                tempW1 = (rectangles.get(i).width/2);
+                tempW2 = (rectangles.get(i).width/2);
+
+                tempH1 = rectangles.get(i).height;
+                tempH2 = rectangles.get(i).height;
+
+                tempRect1 = new Rect(tempX1, tempY1, tempW1, tempH1);
+                tempRect2 = new Rect(tempX2, tempY2, tempW2, tempH2);
+            }
+
+            //check which circles are in these temp rectangles
+            for(int j = 0; j < circles.size(); j++){
+
+                //check first rectangle
+                if(tempRect1.contains(circles.get(i))){
+                    tempInt1++;//increment count
+                    circles.remove(i);//remove from list, each dot only in 1 domino
+                }
+
+                //check second rectangle
+                if(tempRect2.contains(circles.get(i))){
+                    tempInt2++;//increment count
+                    circles.remove(i);//remove from list, each dot only in 1 domino
+                }
+            }
+
+            //add the new domino to the list
+            TileList[i][0] = tempInt1;
+            TileList[i][1] = tempInt1;
+        }
+        return TileList;
+    }
+
+
     public int process(int colorReduce, int blurSize, int blurSigmaX, int threshold1, int threshold2) {
 
         if (!isOpenCVReady() || bitmapImage == null) return -1;
@@ -184,7 +261,7 @@ public class ImageProcessor {
 
                 if((1 - ((double)rect.width/(double)rect.height) <= .2) && (1 - (area /Math.PI  * Math.pow(radius, 2))) <= .2)
                 {
-                    //creat a small bounding circle and save its center
+                    //create a small bounding circle and save its center
                     Point point = new Point();
                     float[] r = new float[contours.size()];
                     Imgproc.minEnclosingCircle(tempMOP2f, point,r);
@@ -211,7 +288,9 @@ public class ImageProcessor {
         Utils.matToBitmap(blur, bitmapBlur);
         bitmapCanny = Bitmap.createBitmap(cany.cols(), cany.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(cany, bitmapCanny);
-        
+
+        createTileList(rectangles, circleCenters);//create the domino list
+
         return circleCenters.size();
     }
 
