@@ -462,6 +462,11 @@ public class ScoreBoard extends ActionBarActivity implements
     }
 
     @Override
+    public void onDialogNegativeClick(String s) {
+        //nothing, blank override.
+    }
+
+    @Override
     public void onDialogPositiveClick(String s, int fieldType) {
         //from FieldChangeFragment
         int score = 0;

@@ -18,6 +18,7 @@ public class ConfirmationFragment extends DialogFragment {
 
     public interface ConfirmationListener {
         public void onDialogPositiveClick(String tag);
+        public void onDialogNegativeClick(String tag);
     }
 
     String[] dialogText = new String[4];
@@ -54,7 +55,7 @@ public class ConfirmationFragment extends DialogFragment {
                 .setNegativeButton(dialogText[1], new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         //do nothing
-
+                        mListener.onDialogNegativeClick(dialogText[3]);
                     }
                 });
 
