@@ -97,10 +97,15 @@ public class GameWindowMT extends ActionBarActivity implements
      * Context of a play. Whether we played on the longest, the most points, or the unsorted screen.
      */
     public enum WindowContext {
-        SHOWING_LONGEST, SHOWING_MOST_POINTS, SHOWING_UNSORTED
+        SHOWING_LONGEST, SHOWING_MOST_POINTS, SHOWING_UNSORTED, SHOWING_UNUSED
+    }
+
+    public enum LastRunTypeShown {
+        SHOWING_LONGEST, SHOWING_MOST_POINTS
     }
 
     private WindowContext windowState;
+    private LastRunTypeShown lastWindowState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,6 +178,18 @@ public class GameWindowMT extends ActionBarActivity implements
                     + " (" + (hand.getTotalDominos())
                     + " domino" + ((hand.getTotalDominos() == 1) ? ")" : "s)"));
         }
+        else if (windowState == WindowContext.SHOWING_UNUSED) {
+            titleText.setText("Unused Dominos");
+
+            if( lastWindowState == LastRunTypeShown.SHOWING_LONGEST) {
+                pointValText.setText("Junk Value: " + (hand.getTotalPointsHand() - hand.getLongestRun().getPointVal())
+                        + " (" + (hand.getTotalDominos() - hand.getLongestRun().getLength()) + ")");
+            }
+            else if( lastWindowState == LastRunTypeShown.SHOWING_MOST_POINTS) {
+                pointValText.setText("Junk Value: " + (hand.getTotalPointsHand() - hand.getMostPointRun().getPointVal())
+                        + " (" + (hand.getTotalDominos() - hand.getMostPointRun().getLength()) + ")");
+            }
+        }
     }
 
     public void addButtonBehavior(){
@@ -182,6 +199,7 @@ public class GameWindowMT extends ActionBarActivity implements
         Button draw = (Button)findViewById(R.id.drawButton);
         Button unsorted = (Button)findViewById(R.id.unsortedButton);
         Button undo = (Button)findViewById(R.id.undoButton);
+        Button unused = (Button)findViewById(R.id.unusedButton);
 
         //Train head image behavior
         trainHeadImage.setOnClickListener(
@@ -200,6 +218,7 @@ public class GameWindowMT extends ActionBarActivity implements
                 new Button.OnClickListener() {
                     public void onClick(View v) {
                         windowState = WindowContext.SHOWING_LONGEST;
+                        lastWindowState = LastRunTypeShown.SHOWING_LONGEST;
                         updateUI();
                     }
                 }
@@ -210,6 +229,7 @@ public class GameWindowMT extends ActionBarActivity implements
                 new Button.OnClickListener() {
                     public void onClick(View v) {
                         windowState = WindowContext.SHOWING_MOST_POINTS;
+                        lastWindowState = LastRunTypeShown.SHOWING_MOST_POINTS;
                         updateUI();
                     }
                 }
@@ -264,6 +284,16 @@ public class GameWindowMT extends ActionBarActivity implements
 
                         //re-sets the old train head.
                         trainHeadImage.setImageBitmap(Domino.getSide(hand.getTrainHead(), getApplicationContext()));
+                    }
+                }
+        );
+
+
+        unused.setOnClickListener(
+                new Button.OnClickListener() {
+                    public void onClick(View v) {
+                        windowState = WindowContext.SHOWING_UNUSED;
+                        updateUI();
                     }
                 }
         );
@@ -558,6 +588,14 @@ public class GameWindowMT extends ActionBarActivity implements
         }
         else if (windowState == WindowContext.SHOWING_UNSORTED) {
             data = hand.toArray();
+        }
+        else if (windowState == WindowContext.SHOWING_UNUSED) {
+            if(lastWindowState == LastRunTypeShown.SHOWING_LONGEST) {
+                data = UnusedFinder.FindUnused(hand.getLongestRun(), hand);
+            }
+            else if (lastWindowState == LastRunTypeShown.SHOWING_MOST_POINTS) {
+                data = UnusedFinder.FindUnused(hand.getMostPointRun(), hand);
+            }
         }
 
         updatePointValueText();

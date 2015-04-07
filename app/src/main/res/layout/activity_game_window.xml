@@ -120,4 +120,13 @@
         android:layout_toRightOf="@+id/gridViewMain"
         android:layout_below="@+id/unsortedButton"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Unused"
+        android:id="@+id/unusedButton"
+        android:layout_below="@+id/undoButton"
+        android:layout_alignEnd="@+id/undoButton"
+        android:layout_alignStart="@+id/undoButton" />
+
 </RelativeLayout>
