@@ -289,8 +289,8 @@ public class ImageProcessor {
         bitmapCanny = Bitmap.createBitmap(cany.cols(), cany.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(cany, bitmapCanny);
 
-        createTileList(rectangles, circleCenters);//create the domino list
-
+        int[][] tileList = createTileList(rectangles, circleCenters);//create the domino list
+        
         return circleCenters.size();
     }
 
