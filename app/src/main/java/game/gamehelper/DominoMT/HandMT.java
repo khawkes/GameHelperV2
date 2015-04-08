@@ -31,6 +31,7 @@ public class HandMT implements Hand, Parcelable {
     private int trainHead;
 
     //undo stuff, should probably be made into an UndoObject at this point.
+    //Or rely on the Command pattern.
     private Stack<Domino> playHistory = new Stack<>();
     private Stack<Integer> trainHeadHistory = new Stack<>();
     private Stack<Integer> positionPlayedHistory = new Stack<>();
@@ -235,6 +236,7 @@ public class HandMT implements Hand, Parcelable {
 
             //re-set train head to the saved one, fixes a bug where the runs decides to "play" the domino.
             trainHead = savedTrainHead;
+            runs.setTrainHead(trainHead);
 
             //re-sets the runs if possible, saving calculation time.
             runs.reSetRuns(oldRuns);
@@ -267,16 +269,6 @@ public class HandMT implements Hand, Parcelable {
      */
     public DominoRun getMostPointRun() {
         return runs.getMostPointPath();
-    }
-
-    //will be used for the not in run button.
-    public Domino[] notLongestRun() {
-        return null;
-    }
-
-    //will also be used for the not in run button.
-    public Domino[] notMostPointsRun() {
-        return null;
     }
 
     //Returns true if the paths in the run controller are up to date.
