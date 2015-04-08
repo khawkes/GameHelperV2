@@ -4,14 +4,24 @@
     android:layout_height="fill_parent" >
 
     <!--Side value grid-->
-    <GridView android:id="@+id/gridView" android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <GridView
         android:gravity="center"
+        android:id="@+id/gridView"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
         />
 
     <ImageView
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
         android:id="@+id/domSides" />
 
 </RelativeLayout>

@@ -29,9 +29,9 @@
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
             android:layout_alignParentTop="true"
-            android:layout_marginLeft="3.75dp"
+            android:layout_marginStart="3.75dp"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/domino_divider"
+            android:layout_toStartOf="@+id/domino_divider"
             android:adjustViewBounds="true" />
 
         <ImageView
@@ -40,11 +40,10 @@
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
             android:layout_alignParentTop="true"
-            android:layout_marginRight="3.5dp"
+            android:layout_marginEnd="3.5dp"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/domino_divider"
+            android:layout_toEndOf="@+id/domino_divider"
             android:adjustViewBounds="true" />
     </RelativeLayout>
-
 
 </RelativeLayout>

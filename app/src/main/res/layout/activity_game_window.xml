@@ -11,30 +11,29 @@
         android:layout_width="fill_parent"
         android:layout_height="100dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginRight="100dp"
+        android:layout_marginEnd="100dp"
         android:id="@+id/space" />
 
     <!--Domino List-->
     <GridView android:id="@+id/gridViewMain" android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/space"
-        android:layout_alignParentLeft="true"
-        android:layout_alignRight="@+id/space" />
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/space" />
 
     <!--Points Remaining-->
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Title Menu Text    "
+        android:text="@string/actGameWindow_txtTitle"
         android:id="@+id/titleText"
-        android:layout_gravity="left|top"
+        android:layout_gravity="start|top"
         android:singleLine="false"
         android:inputType="text"
-        android:layout_alignLeft="@+id/space"
-        android:layout_alignRight="@+id/space"
+        android:layout_alignStart="@+id/space"
+        android:layout_alignEnd="@+id/space"
         android:focusableInTouchMode="false" />
 
     <!--Point remaining value-->
@@ -44,13 +43,10 @@
         android:ems="10"
         android:id="@+id/remPoint"
         android:layout_below="@+id/titleText"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/titleText"
         android:layout_alignEnd="@+id/titleText"
         android:enabled="false"
         android:focusableInTouchMode="false"
-        android:editable="false"
         android:clickable="false"
         android:inputType="text" />
 
@@ -61,8 +57,8 @@
         android:id="@+id/imageView2"
         android:layout_above="@+id/gridViewMain"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignLeft="@+id/longestRunButton" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignStart="@+id/longestRunButton" />
 
 
     <!--Longest run button-->
@@ -70,10 +66,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:layout_alignParentRight="true"
-        android:text="Longest Run"
+        android:layout_alignParentEnd="true"
+        android:text="@string/actGameWindow_btnLongestRun"
         android:id="@+id/longestRunButton"
-        android:layout_toRightOf="@+id/gridViewMain"
+        android:layout_toEndOf="@+id/gridViewMain"
         android:layout_alignTop="@+id/gridViewMain" />
 
     <!--Highest score button-->
@@ -81,10 +77,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:layout_alignParentRight="true"
-        android:text="Highest Score"
+        android:layout_alignParentEnd="true"
+        android:text="@string/actGameWindow_btnHighestScore"
         android:id="@+id/highestScoreButton"
-        android:layout_toRightOf="@+id/gridViewMain"
+        android:layout_toEndOf="@+id/gridViewMain"
         android:layout_below="@+id/longestRunButton" />
 
     <!--Draw button-->
@@ -92,21 +88,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:layout_alignParentRight="true"
-        android:text="Draw"
+        android:layout_alignParentEnd="true"
+        android:text="@string/actGameWindow_btnDraw"
         android:id="@+id/drawButton"
-        android:layout_toRightOf="@+id/gridViewMain"
+        android:layout_toEndOf="@+id/gridViewMain"
         android:layout_below="@+id/highestScoreButton"/>
 
-    <!--Undo button-->
+    <!--Unsorted button-->
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:layout_alignParentRight="true"
-        android:text="Unsorted Hand"
+        android:layout_alignParentEnd="true"
+        android:text="@string/actGameWindow_btnUnsorted"
         android:id="@+id/unsortedButton"
-        android:layout_toRightOf="@+id/gridViewMain"
+        android:layout_toEndOf="@+id/gridViewMain"
         android:layout_below="@+id/drawButton"/>
 
     <!--Undo button-->
@@ -114,16 +110,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:layout_alignParentRight="true"
-        android:text="Undo"
+        android:layout_alignParentEnd="true"
+        android:text="@string/actGameWindow_btnUndo"
         android:id="@+id/undoButton"
-        android:layout_toRightOf="@+id/gridViewMain"
+        android:layout_toEndOf="@+id/gridViewMain"
         android:layout_below="@+id/unsortedButton"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Unused"
+        android:text="@string/actGameWindow_btnUnused"
         android:id="@+id/unusedButton"
         android:layout_below="@+id/undoButton"
         android:layout_alignEnd="@+id/undoButton"

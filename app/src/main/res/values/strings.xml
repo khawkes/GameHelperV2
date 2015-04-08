@@ -67,4 +67,22 @@
     <string name="title_activity_rules">RulesActivity</string>
     <string name="title_activity_rule_detail">RuleDetailActivity</string>
 
+    <!--Activity Game Window-->
+    <string name="actGameWindow_txtTitle">Title Menu Text</string>
+    <string name="actGameWindow_btnLongestRun">Longest Run</string>
+    <string name="actGameWindow_btnHighestScore">Highest Score</string>
+    <string name="actGameWindow_btnDraw">Draw</string>
+    <string name="actGameWindow_btnUnsorted">Unsorted Hand</string>
+    <string name="actGameWindow_btnUndo">Undo</string>
+    <string name="actGameWindow_btnUnused">Unused</string>
+
+    <!--New Game Layout-->
+    <string name="actNewGame_txtTitle">Select New Game Settings</string>
+    <string name="actNewGame_txtDominoSetLabel">Domino Set</string>
+    <string name="actNewGame_txtDominoSet">Double Nine</string>
+    <string name="actNewGame_txtPlayersLabel">Players</string>
+    <string name="actNewGame_txtPlayers">1</string>
+    <string name="actNewGame_txtRulesLabel">Rules</string>
+    <string name="actNewGame_txtRules">Traditional</string>
+
 </resources>

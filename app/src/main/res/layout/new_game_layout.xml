@@ -4,110 +4,99 @@
     android:layout_height="wrap_content"
     android:id="@+id/new_game_fragment">
 
-    <ScrollView
+    <!--Title text-->
+    <TextView
+        android:id="@+id/new_game_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:gravity="center_horizontal"
+        android:text="@string/actNewGame_txtTitle"
+        android:textSize="24sp" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+    <!--Select deck size-->
+    <TextView
+        android:id="@+id/max_double_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/max_double_picker"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/max_double_picker"
+        android:layout_marginStart="20dp"
+        android:gravity="center_vertical"
+        android:text="@string/actNewGame_txtDominoSetLabel"
+        android:textSize="25sp" />
 
-            <!--Title text-->
-            <TextView
-                android:id="@+id/new_game_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:gravity="center_horizontal"
-                android:text="Select New Game Settings"
-                android:textSize="24dp" />
+    <TextView
+        android:id="@+id/max_double_picker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/new_game_title"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@+id/centerNG"
+        android:text="@string/actNewGame_txtDominoSet"
+        android:textSize="20sp"
+        android:padding="5dp"
+        android:background="@drawable/side_border"
+        />
 
-            <!--Select deck size-->
-            <TextView
-                android:id="@+id/max_double_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/max_double_picker"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignTop="@+id/max_double_picker"
-                android:gravity="center_vertical"
-                android:text="Domino Set"
-                android:textSize="25dp" />
+    <!--Select number of players-->
+    <TextView
+        android:id="@+id/player_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/player_picker"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/player_picker"
+        android:layout_marginStart="20dp"
+        android:gravity="center_vertical"
+        android:text="@string/actNewGame_txtPlayersLabel"
+        android:textSize="25sp" />
 
-            <TextView
-                android:id="@+id/max_double_picker"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/new_game_title"
-                android:layout_marginTop="10dp"
-                android:layout_toRightOf="@+id/centerNG"
-                android:text="Double Nine"
-                android:textSize="20dp"
-                android:padding="5dp"
-                android:background="@drawable/side_border"
-                />
+    <TextView
+        android:id="@+id/player_picker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/max_double_picker"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@+id/centerNG"
+        android:text="@string/actNewGame_txtPlayers"
+        android:textSize="20sp"
+        android:padding="5dp"
+        android:background="@drawable/side_border"/>
 
-            <!--Select number of players-->
-            <TextView
-                android:id="@+id/player_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/player_picker"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignTop="@+id/player_picker"
-                android:gravity="center_vertical"
-                android:text="Players"
-                android:textSize="25dp" />
+    <!--Select rule type-->
+    <TextView
+        android:id="@+id/rules_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/rules_picker"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/rules_picker"
+        android:layout_marginStart="20dp"
+        android:gravity="center_vertical"
+        android:text="@string/actNewGame_txtRulesLabel"
+        android:textSize="25sp" />
 
-            <TextView
-                android:id="@+id/player_picker"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/max_double_picker"
-                android:layout_marginTop="10dp"
-                android:layout_toRightOf="@+id/centerNG"
-                android:text="1"
-                android:textSize="20dp"
-                android:padding="5dp"
-                android:background="@drawable/side_border"/>
+    <TextView
+        android:id="@+id/rules_picker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/player_picker"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@+id/centerNG"
+        android:text="@string/actNewGame_txtRules"
+        android:textSize="20sp"
+        android:padding="5dp"
+        android:background="@drawable/side_border" />
 
-            <!--Select rule type-->
-            <TextView
-                android:id="@+id/rules_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/rules_picker"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignTop="@+id/rules_picker"
-                android:gravity="center_vertical"
-                android:text="Rules"
-                android:textSize="25dp" />
-
-            <TextView
-                android:id="@+id/rules_picker"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/player_picker"
-                android:layout_marginTop="10dp"
-                android:layout_toRightOf="@+id/centerNG"
-                android:text="Traditional"
-                android:textSize="20dp"
-                android:padding="5dp"
-                android:background="@drawable/side_border" />
-
-            <!--Center reference-->
-            <Space
-                android:id="@+id/centerNG"
-                android:layout_width="0px"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true" />
-        </RelativeLayout>
-    </ScrollView>
-
+    <!--Center reference-->
+    <Space
+        android:id="@+id/centerNG"
+        android:layout_width="0px"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
 
 </RelativeLayout>
