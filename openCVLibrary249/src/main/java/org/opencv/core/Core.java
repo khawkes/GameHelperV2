@@ -12,11 +12,11 @@ import org.opencv.utils.Converters;
 public class Core {
 
     // these constants are wrapped inside functions to prevent inlining
-    private static String getVersion() { return "2.4.10.0"; }
-    private static String getNativeLibraryName() { return "opencv_java2410"; }
+    private static String getVersion() { return "2.4.9.0"; }
+    private static String getNativeLibraryName() { return "opencv_java249"; }
     private static int getVersionEpoch() { return 2; }
     private static int getVersionMajor() { return 4; }
-    private static int getVersionMinor() { return 10; }
+    private static int getVersionMinor() { return 9; }
     private static int getVersionRevision() { return 0; }
 
     public static final String VERSION = getVersion();
@@ -965,57 +965,6 @@ public class Core {
     {
 
         addWeighted_1(src1.nativeObj, alpha, src2.nativeObj, beta, gamma, dst.nativeObj);
-
-        return;
-    }
-
-
-    //
-    // C++:  void arrowedLine(Mat& img, Point pt1, Point pt2, Scalar color, int thickness = 1, int line_type = 8, int shift = 0, double tipLength = 0.1)
-    //
-
-/**
- * <p>Draws a arrow segment pointing from the first point to the second one.</p>
- *
- * <p>The function <code>arrowedLine</code> draws an arrow between <code>pt1</code>
- * and <code>pt2</code> points in the image. See also "line".</p>
- *
- * @param img Image.
- * @param pt1 The point the arrow starts from.
- * @param pt2 The point the arrow points to.
- * @param color Line color.
- * @param thickness Line thickness.
- * @param line_type a line_type
- * @param shift Number of fractional bits in the point coordinates.
- * @param tipLength The length of the arrow tip in relation to the arrow length
- *
- * @see <a href="http://docs.opencv.org/modules/core/doc/drawing_functions.html#arrowedline">org.opencv.core.Core.arrowedLine</a>
- */
-    public static void arrowedLine(Mat img, Point pt1, Point pt2, Scalar color, int thickness, int line_type, int shift, double tipLength)
-    {
-
-        arrowedLine_0(img.nativeObj, pt1.x, pt1.y, pt2.x, pt2.y, color.val[0], color.val[1], color.val[2], color.val[3], thickness, line_type, shift, tipLength);
-
-        return;
-    }
-
-/**
- * <p>Draws a arrow segment pointing from the first point to the second one.</p>
- *
- * <p>The function <code>arrowedLine</code> draws an arrow between <code>pt1</code>
- * and <code>pt2</code> points in the image. See also "line".</p>
- *
- * @param img Image.
- * @param pt1 The point the arrow starts from.
- * @param pt2 The point the arrow points to.
- * @param color Line color.
- *
- * @see <a href="http://docs.opencv.org/modules/core/doc/drawing_functions.html#arrowedline">org.opencv.core.Core.arrowedLine</a>
- */
-    public static void arrowedLine(Mat img, Point pt1, Point pt2, Scalar color)
-    {
-
-        arrowedLine_1(img.nativeObj, pt1.x, pt1.y, pt2.x, pt2.y, color.val[0], color.val[1], color.val[2], color.val[3]);
 
         return;
     }
@@ -3682,7 +3631,7 @@ public class Core {
 
 
     //
-    // C++:  void gemm(Mat src1, Mat src2, double alpha, Mat src3, double beta, Mat& dst, int flags = 0)
+    // C++:  void gemm(Mat src1, Mat src2, double alpha, Mat src3, double gamma, Mat& dst, int flags = 0)
     //
 
 /**
@@ -3709,7 +3658,7 @@ public class Core {
  * @param alpha weight of the matrix product.
  * @param src3 third optional delta matrix added to the matrix product; it
  * should have the same type as <code>src1</code> and <code>src2</code>.
- * @param beta weight of <code>src3</code>.
+ * @param gamma a gamma
  * @param dst output matrix; it has the proper size and the same type as input
  * matrices.
  * @param flags operation flags:
@@ -3723,10 +3672,10 @@ public class Core {
  * @see org.opencv.core.Core#mulTransposed
  * @see org.opencv.core.Core#transform
  */
-    public static void gemm(Mat src1, Mat src2, double alpha, Mat src3, double beta, Mat dst, int flags)
+    public static void gemm(Mat src1, Mat src2, double alpha, Mat src3, double gamma, Mat dst, int flags)
     {
 
-        gemm_0(src1.nativeObj, src2.nativeObj, alpha, src3.nativeObj, beta, dst.nativeObj, flags);
+        gemm_0(src1.nativeObj, src2.nativeObj, alpha, src3.nativeObj, gamma, dst.nativeObj, flags);
 
         return;
     }
@@ -3755,7 +3704,7 @@ public class Core {
  * @param alpha weight of the matrix product.
  * @param src3 third optional delta matrix added to the matrix product; it
  * should have the same type as <code>src1</code> and <code>src2</code>.
- * @param beta weight of <code>src3</code>.
+ * @param gamma a gamma
  * @param dst output matrix; it has the proper size and the same type as input
  * matrices.
  *
@@ -3763,10 +3712,10 @@ public class Core {
  * @see org.opencv.core.Core#mulTransposed
  * @see org.opencv.core.Core#transform
  */
-    public static void gemm(Mat src1, Mat src2, double alpha, Mat src3, double beta, Mat dst)
+    public static void gemm(Mat src1, Mat src2, double alpha, Mat src3, double gamma, Mat dst)
     {
 
-        gemm_1(src1.nativeObj, src2.nativeObj, alpha, src3.nativeObj, beta, dst.nativeObj);
+        gemm_1(src1.nativeObj, src2.nativeObj, alpha, src3.nativeObj, gamma, dst.nativeObj);
 
         return;
     }
@@ -4262,14 +4211,7 @@ public class Core {
  * opencv_source_code/samples/python2/kmeans.py
  * </ul>
  *
- * @param data Data for clustering. An array of N-Dimensional points with float
- * coordinates is needed. Examples of this array can be:
- * <ul>
- *   <li> <code>Mat points(count, 2, CV_32F);</code>
- *   <li> <code>Mat points(count, 1, CV_32FC2);</code>
- *   <li> <code>Mat points(1, count, CV_32FC2);</code>
- *   <li> <code>std.vector<cv.Point2f> points(sampleCount);</code>
- * </ul>
+ * @param data Data for clustering.
  * @param K Number of clusters to split the set by.
  * @param bestLabels a bestLabels
  * @param criteria The algorithm termination criteria, that is, the maximum
@@ -4331,14 +4273,7 @@ public class Core {
  * opencv_source_code/samples/python2/kmeans.py
  * </ul>
  *
- * @param data Data for clustering. An array of N-Dimensional points with float
- * coordinates is needed. Examples of this array can be:
- * <ul>
- *   <li> <code>Mat points(count, 2, CV_32F);</code>
- *   <li> <code>Mat points(count, 1, CV_32FC2);</code>
- *   <li> <code>Mat points(1, count, CV_32FC2);</code>
- *   <li> <code>std.vector<cv.Point2f> points(sampleCount);</code>
- * </ul>
+ * @param data Data for clustering.
  * @param K Number of clusters to split the set by.
  * @param bestLabels a bestLabels
  * @param criteria The algorithm termination criteria, that is, the maximum
@@ -6280,7 +6215,7 @@ public class Core {
  * <code>FONT_HERSHEY_COMPLEX</code>, <code>FONT_HERSHEY_TRIPLEX</code>,
  * <code>FONT_HERSHEY_COMPLEX_SMALL</code>, <code>FONT_HERSHEY_SCRIPT_SIMPLEX</code>,
  * or <code>FONT_HERSHEY_SCRIPT_COMPLEX</code>, where each of the font ID's can
- * be combined with <code>FONT_ITALIC</code> to get the slanted letters.
+ * be combined with <code>FONT_HERSHEY_ITALIC</code> to get the slanted letters.
  * @param fontScale Font scale factor that is multiplied by the font-specific
  * base size.
  * @param color Text color.
@@ -6315,7 +6250,7 @@ public class Core {
  * <code>FONT_HERSHEY_COMPLEX</code>, <code>FONT_HERSHEY_TRIPLEX</code>,
  * <code>FONT_HERSHEY_COMPLEX_SMALL</code>, <code>FONT_HERSHEY_SCRIPT_SIMPLEX</code>,
  * or <code>FONT_HERSHEY_SCRIPT_COMPLEX</code>, where each of the font ID's can
- * be combined with <code>FONT_ITALIC</code> to get the slanted letters.
+ * be combined with <code>FONT_HERSHEY_ITALIC</code> to get the slanted letters.
  * @param fontScale Font scale factor that is multiplied by the font-specific
  * base size.
  * @param color Text color.
@@ -6347,7 +6282,7 @@ public class Core {
  * <code>FONT_HERSHEY_COMPLEX</code>, <code>FONT_HERSHEY_TRIPLEX</code>,
  * <code>FONT_HERSHEY_COMPLEX_SMALL</code>, <code>FONT_HERSHEY_SCRIPT_SIMPLEX</code>,
  * or <code>FONT_HERSHEY_SCRIPT_COMPLEX</code>, where each of the font ID's can
- * be combined with <code>FONT_ITALIC</code> to get the slanted letters.
+ * be combined with <code>FONT_HERSHEY_ITALIC</code> to get the slanted letters.
  * @param fontScale Font scale factor that is multiplied by the font-specific
  * base size.
  * @param color Text color.
@@ -7951,10 +7886,6 @@ public class Core {
     private static native void addWeighted_0(long src1_nativeObj, double alpha, long src2_nativeObj, double beta, double gamma, long dst_nativeObj, int dtype);
     private static native void addWeighted_1(long src1_nativeObj, double alpha, long src2_nativeObj, double beta, double gamma, long dst_nativeObj);
 
-    // C++:  void arrowedLine(Mat& img, Point pt1, Point pt2, Scalar color, int thickness = 1, int line_type = 8, int shift = 0, double tipLength = 0.1)
-    private static native void arrowedLine_0(long img_nativeObj, double pt1_x, double pt1_y, double pt2_x, double pt2_y, double color_val0, double color_val1, double color_val2, double color_val3, int thickness, int line_type, int shift, double tipLength);
-    private static native void arrowedLine_1(long img_nativeObj, double pt1_x, double pt1_y, double pt2_x, double pt2_y, double color_val0, double color_val1, double color_val2, double color_val3);
-
     // C++:  void batchDistance(Mat src1, Mat src2, Mat& dist, int dtype, Mat& nidx, int normType = NORM_L2, int K = 0, Mat mask = Mat(), int update = 0, bool crosscheck = false)
     private static native void batchDistance_0(long src1_nativeObj, long src2_nativeObj, long dist_nativeObj, int dtype, long nidx_nativeObj, int normType, int K, long mask_nativeObj, int update, boolean crosscheck);
     private static native void batchDistance_1(long src1_nativeObj, long src2_nativeObj, long dist_nativeObj, int dtype, long nidx_nativeObj, int normType, int K);
@@ -8080,9 +8011,9 @@ public class Core {
     // C++:  void flip(Mat src, Mat& dst, int flipCode)
     private static native void flip_0(long src_nativeObj, long dst_nativeObj, int flipCode);
 
-    // C++:  void gemm(Mat src1, Mat src2, double alpha, Mat src3, double beta, Mat& dst, int flags = 0)
-    private static native void gemm_0(long src1_nativeObj, long src2_nativeObj, double alpha, long src3_nativeObj, double beta, long dst_nativeObj, int flags);
-    private static native void gemm_1(long src1_nativeObj, long src2_nativeObj, double alpha, long src3_nativeObj, double beta, long dst_nativeObj);
+    // C++:  void gemm(Mat src1, Mat src2, double alpha, Mat src3, double gamma, Mat& dst, int flags = 0)
+    private static native void gemm_0(long src1_nativeObj, long src2_nativeObj, double alpha, long src3_nativeObj, double gamma, long dst_nativeObj, int flags);
+    private static native void gemm_1(long src1_nativeObj, long src2_nativeObj, double alpha, long src3_nativeObj, double gamma, long dst_nativeObj);
 
     // C++:  string getBuildInformation()
     private static native String getBuildInformation_0();

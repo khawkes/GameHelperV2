@@ -378,8 +378,8 @@ public class Highgui {
  * (<code>CV_16U</code>) in case of PNG, JPEG 2000, and TIFF) single-channel or
  * 3-channel (with 'BGR' channel order) images can be saved using this function.
  * If the format, depth or channel order is different, use "Mat.convertTo", and
- * "cvtColor" to convert it before saving. Or, use the universal "FileStorage"
- * I/O functions to save the image to XML or YAML format.
+ * "cvtColor" to convert it before saving. Or, use the universal XML I/O
+ * functions to save the image to XML or YAML format.
  * It is possible to store PNG images with an alpha channel using this function.
  * To do this, create 8-bit (or 16-bit) 4-channel image BGRA, where the alpha
  * channel goes last. Fully transparent pixels should have alpha set to 0, fully
@@ -487,8 +487,8 @@ public class Highgui {
  * (<code>CV_16U</code>) in case of PNG, JPEG 2000, and TIFF) single-channel or
  * 3-channel (with 'BGR' channel order) images can be saved using this function.
  * If the format, depth or channel order is different, use "Mat.convertTo", and
- * "cvtColor" to convert it before saving. Or, use the universal "FileStorage"
- * I/O functions to save the image to XML or YAML format.
+ * "cvtColor" to convert it before saving. Or, use the universal XML I/O
+ * functions to save the image to XML or YAML format.
  * It is possible to store PNG images with an alpha channel using this function.
  * To do this, create 8-bit (or 16-bit) 4-channel image BGRA, where the alpha
  * channel goes last. Fully transparent pixels should have alpha set to 0, fully

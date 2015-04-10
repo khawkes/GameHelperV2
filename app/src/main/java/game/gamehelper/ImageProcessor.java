@@ -59,7 +59,7 @@ public class ImageProcessor {
                 }
             };
 
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_10, context, mLoaderCallback);
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, context, mLoaderCallback);
         }
         catch (Exception e) {
 

@@ -616,20 +616,15 @@ public class Calib3d {
  * <p>The function computes various useful camera characteristics from the
  * previously estimated camera matrix.</p>
  *
- * <p>Note:</p>
- *
- * <p>Do keep in mind that the unity measure 'mm' stands for whatever unit of
- * measure one chooses for the chessboard pitch (it can thus be any value).</p>
- *
  * @param cameraMatrix Input camera matrix that can be estimated by
  * "calibrateCamera" or "stereoCalibrate".
  * @param imageSize Input image size in pixels.
- * @param apertureWidth Physical width in mm of the sensor.
- * @param apertureHeight Physical height in mm of the sensor.
+ * @param apertureWidth Physical width of the sensor.
+ * @param apertureHeight Physical height of the sensor.
  * @param fovx Output field of view in degrees along the horizontal sensor axis.
  * @param fovy Output field of view in degrees along the vertical sensor axis.
  * @param focalLength Focal length of the lens in mm.
- * @param principalPoint Principal point in mm.
+ * @param principalPoint Principal point in pixels.
  * @param aspectRatio <em>f_y/f_x</em>
  *
  * @see <a href="http://docs.opencv.org/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html#calibrationmatrixvalues">org.opencv.calib3d.Calib3d.calibrationMatrixValues</a>
@@ -1511,9 +1506,9 @@ public class Calib3d {
  * value 0, the function uses all the point pairs to compute an initial
  * homography estimate with a simple least-squares scheme.</p>
  *
- * <p>However, if not all of the point pairs (<em>srcPoints_i</em>,
- * <em>dstPoints_i</em>) fit the rigid perspective transformation (that is,
- * there are some outliers), this initial estimate will be poor.
+ * <p>However, if not all of the point pairs (<em>srcPoints_i</em>,<em>dstPoints_i</em>)
+ * fit the rigid perspective transformation (that is, there are some outliers),
+ * this initial estimate will be poor.
  * In this case, you can use one of the two robust methods. Both methods,
  * <code>RANSAC</code> and <code>LMeDS</code>, try many different random subsets
  * of the corresponding point pairs (of four pairs each), estimate the
@@ -1536,8 +1531,7 @@ public class Calib3d {
  *
  * <p>The function is used to find initial intrinsic and extrinsic matrices.
  * Homography matrix is determined up to a scale. Thus, it is normalized so that
- * <em>h_33=1</em>. Note that whenever an H matrix cannot be estimated, an empty
- * one will be returned.</p>
+ * <em>h_33=1</em>.</p>
  *
  * <p>Note:</p>
  * <ul>
@@ -1602,9 +1596,9 @@ public class Calib3d {
  * value 0, the function uses all the point pairs to compute an initial
  * homography estimate with a simple least-squares scheme.</p>
  *
- * <p>However, if not all of the point pairs (<em>srcPoints_i</em>,
- * <em>dstPoints_i</em>) fit the rigid perspective transformation (that is,
- * there are some outliers), this initial estimate will be poor.
+ * <p>However, if not all of the point pairs (<em>srcPoints_i</em>,<em>dstPoints_i</em>)
+ * fit the rigid perspective transformation (that is, there are some outliers),
+ * this initial estimate will be poor.
  * In this case, you can use one of the two robust methods. Both methods,
  * <code>RANSAC</code> and <code>LMeDS</code>, try many different random subsets
  * of the corresponding point pairs (of four pairs each), estimate the
@@ -1627,8 +1621,7 @@ public class Calib3d {
  *
  * <p>The function is used to find initial intrinsic and extrinsic matrices.
  * Homography matrix is determined up to a scale. Thus, it is normalized so that
- * <em>h_33=1</em>. Note that whenever an H matrix cannot be estimated, an empty
- * one will be returned.</p>
+ * <em>h_33=1</em>.</p>
  *
  * <p>Note:</p>
  * <ul>
@@ -1691,9 +1684,9 @@ public class Calib3d {
  * value 0, the function uses all the point pairs to compute an initial
  * homography estimate with a simple least-squares scheme.</p>
  *
- * <p>However, if not all of the point pairs (<em>srcPoints_i</em>,
- * <em>dstPoints_i</em>) fit the rigid perspective transformation (that is,
- * there are some outliers), this initial estimate will be poor.
+ * <p>However, if not all of the point pairs (<em>srcPoints_i</em>,<em>dstPoints_i</em>)
+ * fit the rigid perspective transformation (that is, there are some outliers),
+ * this initial estimate will be poor.
  * In this case, you can use one of the two robust methods. Both methods,
  * <code>RANSAC</code> and <code>LMeDS</code>, try many different random subsets
  * of the corresponding point pairs (of four pairs each), estimate the
@@ -1716,8 +1709,7 @@ public class Calib3d {
  *
  * <p>The function is used to find initial intrinsic and extrinsic matrices.
  * Homography matrix is determined up to a scale. Thus, it is normalized so that
- * <em>h_33=1</em>. Note that whenever an H matrix cannot be estimated, an empty
- * one will be returned.</p>
+ * <em>h_33=1</em>.</p>
  *
  * <p>Note:</p>
  * <ul>
@@ -2930,11 +2922,6 @@ public class Calib3d {
  * <p>The function reconstructs 3-dimensional points (in homogeneous coordinates)
  * by using their observations with a stereo camera. Projections matrices can be
  * obtained from "stereoRectify".</p>
- *
- * <p>Note:</p>
- *
- * <p>Keep in mind that all input data should be of float type in order for this
- * function to work.</p>
  *
  * @param projMatr1 3x4 projection matrix of the first camera.
  * @param projMatr2 3x4 projection matrix of the second camera.

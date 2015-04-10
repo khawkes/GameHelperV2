@@ -58,8 +58,8 @@ import org.opencv.core.Mat;
  *
  * <p>};</p>
  *
- * <p>The class implements the modified S. G. Kosov algorithm [KTS09] that differs
- * from the original one as follows: </code></p>
+ * <p>The class implements the modified S. G. Kosov algorithm [Publication] that
+ * differs from the original one as follows: </code></p>
  * <ul>
  *   <li> The automatic initialization of method's parameters is added.
  *   <li> The method of Smart Iteration Distribution (SID) is implemented.

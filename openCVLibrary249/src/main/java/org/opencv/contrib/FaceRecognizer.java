@@ -60,18 +60,6 @@ import org.opencv.utils.Converters;
  *
  * <p>virtual void load(const FileStorage& fs) = 0;</p>
  *
- * <p>// Sets additional information as pairs label - info.</p>
- *
- * <p>void setLabelsInfo(const std.map<int, string>& labelsInfo);</p>
- *
- * <p>// Gets string information by label</p>
- *
- * <p>string getLabelInfo(const int &label);</p>
- *
- * <p>// Gets labels by string</p>
- *
- * <p>vector<int> getLabelsByString(const string& str);</p>
- *
  * <p>};</p>
  *
  * @see <a href="http://docs.opencv.org/modules/contrib/doc/facerec_api.html#facerecognizer">org.opencv.contrib.FaceRecognizer : public Algorithm</a>

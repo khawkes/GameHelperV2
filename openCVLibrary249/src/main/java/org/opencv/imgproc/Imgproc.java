@@ -4188,7 +4188,7 @@ public class Imgproc {
  *   <li> 8-bit images
  * </ul>
  *
- * <p><em>L <- 255/100 L, u <- 255/354(u + 134), v <- 255/262(v + 140)</em></p>
+ * <p><em>L <- 255/100 L, u <- 255/354(u + 134), v <- 255/256(v + 140)</em></p>
  *
  * <ul>
  *   <li> 16-bit images (currently not supported)
@@ -4545,7 +4545,7 @@ public class Imgproc {
  *   <li> 8-bit images
  * </ul>
  *
- * <p><em>L <- 255/100 L, u <- 255/354(u + 134), v <- 255/262(v + 140)</em></p>
+ * <p><em>L <- 255/100 L, u <- 255/354(u + 134), v <- 255/256(v + 140)</em></p>
  *
  * <ul>
  *   <li> 16-bit images (currently not supported)
@@ -5716,9 +5716,7 @@ public class Imgproc {
  * <code>binary</code>. You can use "compare", "inRange", "threshold",
  * "adaptiveThreshold", "Canny", and others to create a binary image out of a
  * grayscale or color one. The function modifies the <code>image</code> while
- * extracting the contours. If mode equals to <code>CV_RETR_CCOMP</code> or
- * <code>CV_RETR_FLOODFILL</code>, the input can also be a 32-bit integer image
- * of labels (<code>CV_32SC1</code>).
+ * extracting the contours.
  * @param contours Detected contours. Each contour is stored as a vector of
  * points.
  * @param hierarchy Optional output vector, containing information about the
@@ -5810,9 +5808,7 @@ public class Imgproc {
  * <code>binary</code>. You can use "compare", "inRange", "threshold",
  * "adaptiveThreshold", "Canny", and others to create a binary image out of a
  * grayscale or color one. The function modifies the <code>image</code> while
- * extracting the contours. If mode equals to <code>CV_RETR_CCOMP</code> or
- * <code>CV_RETR_FLOODFILL</code>, the input can also be a 32-bit integer image
- * of labels (<code>CV_32SC1</code>).
+ * extracting the contours.
  * @param contours Detected contours. Each contour is stored as a vector of
  * points.
  * @param hierarchy Optional output vector, containing information about the
@@ -6066,15 +6062,13 @@ public class Imgproc {
  * @param image Input/output 1- or 3-channel, 8-bit, or floating-point image. It
  * is modified by the function unless the <code>FLOODFILL_MASK_ONLY</code> flag
  * is set in the second variant of the function. See the details below.
- * @param mask Operation mask that should be a single-channel 8-bit image, 2
- * pixels wider and 2 pixels taller than <code>image</code>. Since this is both
- * an input and output parameter, you must take responsibility of initializing
- * it. Flood-filling cannot go across non-zero pixels in the input mask. For
- * example, an edge detector output can be used as a mask to stop filling at
- * edges. On output, pixels in the mask corresponding to filled pixels in the
- * image are set to 1 or to the a value specified in <code>flags</code> as
- * described below. It is therefore possible to use the same mask in multiple
- * calls to the function to make sure the filled areas do not overlap.
+ * @param mask (For the second function only) Operation mask that should be a
+ * single-channel 8-bit image, 2 pixels wider and 2 pixels taller. The function
+ * uses and updates the mask, so you take responsibility of initializing the
+ * <code>mask</code> content. Flood-filling cannot go across non-zero pixels in
+ * the mask. For example, an edge detector output can be used as a mask to stop
+ * filling at edges. It is possible to use the same mask in multiple calls to
+ * the function to make sure the filled area does not overlap.
  *
  * <p>Note: Since the mask is larger than the filled image, a pixel <em>(x, y)</em>
  * in <code>image</code> corresponds to the pixel <em>(x+1, y+1)</em> in the
@@ -6089,25 +6083,17 @@ public class Imgproc {
  * @param upDiff Maximal upper brightness/color difference between the currently
  * observed pixel and one of its neighbors belonging to the component, or a seed
  * pixel being added to the component.
- * @param flags Operation flags. The first 8 bits contain a connectivity value.
- * The default value of 4 means that only the four nearest neighbor pixels
- * (those that share an edge) are considered. A connectivity value of 8 means
- * that the eight nearest neighbor pixels (those that share a corner) will be
- * considered. The next 8 bits (8-16) contain a value between 1 and 255 with
- * which to fill the <code>mask</code> (the default value is 1). For example,
- * <code>4 | (255 << 8)</code> will consider 4 nearest neighbours and fill the
- * mask with a value of 255. The following additional options occupy higher bits
- * and therefore may be further combined with the connectivity and mask fill
- * values using bit-wise or (<code>|</code>):
+ * @param flags Operation flags. Lower bits contain a connectivity value, 4
+ * (default) or 8, used within the function. Connectivity determines which
+ * neighbors of a pixel are considered. Upper bits can be 0 or a combination of
+ * the following flags:
  * <ul>
  *   <li> FLOODFILL_FIXED_RANGE If set, the difference between the current pixel
  * and seed pixel is considered. Otherwise, the difference between neighbor
  * pixels is considered (that is, the range is floating).
  *   <li> FLOODFILL_MASK_ONLY If set, the function does not change the image
- * (<code>newVal</code> is ignored), and only fills the mask with the value
- * specified in bits 8-16 of <code>flags</code> as described above. This option
- * only make sense in function variants that have the <code>mask</code>
- * parameter.
+ * (<code>newVal</code> is ignored), but fills the mask. The flag can be used
+ * for the second variant only.
  * </ul>
  *
  * @see <a href="http://docs.opencv.org/modules/imgproc/doc/miscellaneous_transformations.html#floodfill">org.opencv.imgproc.Imgproc.floodFill</a>
@@ -6195,15 +6181,13 @@ public class Imgproc {
  * @param image Input/output 1- or 3-channel, 8-bit, or floating-point image. It
  * is modified by the function unless the <code>FLOODFILL_MASK_ONLY</code> flag
  * is set in the second variant of the function. See the details below.
- * @param mask Operation mask that should be a single-channel 8-bit image, 2
- * pixels wider and 2 pixels taller than <code>image</code>. Since this is both
- * an input and output parameter, you must take responsibility of initializing
- * it. Flood-filling cannot go across non-zero pixels in the input mask. For
- * example, an edge detector output can be used as a mask to stop filling at
- * edges. On output, pixels in the mask corresponding to filled pixels in the
- * image are set to 1 or to the a value specified in <code>flags</code> as
- * described below. It is therefore possible to use the same mask in multiple
- * calls to the function to make sure the filled areas do not overlap.
+ * @param mask (For the second function only) Operation mask that should be a
+ * single-channel 8-bit image, 2 pixels wider and 2 pixels taller. The function
+ * uses and updates the mask, so you take responsibility of initializing the
+ * <code>mask</code> content. Flood-filling cannot go across non-zero pixels in
+ * the mask. For example, an edge detector output can be used as a mask to stop
+ * filling at edges. It is possible to use the same mask in multiple calls to
+ * the function to make sure the filled area does not overlap.
  *
  * <p>Note: Since the mask is larger than the filled image, a pixel <em>(x, y)</em>
  * in <code>image</code> corresponds to the pixel <em>(x+1, y+1)</em> in the
@@ -7962,7 +7946,7 @@ public class Imgproc {
  *
  * @param src Source image. The number of channels can be arbitrary. The depth
  * should be one of <code>CV_8U</code>, <code>CV_16U</code>, <code>CV_16S</code>,
- * <code>CV_32F</code> or <code>CV_64F</code>.
+ * <code>CV_32F" or </code>CV_64F".
  * @param dst Destination image of the same size and type as <code>src</code>.
  * @param op Type of a morphological operation that can be one of the following:
  * <ul>
@@ -8030,7 +8014,7 @@ public class Imgproc {
  *
  * @param src Source image. The number of channels can be arbitrary. The depth
  * should be one of <code>CV_8U</code>, <code>CV_16U</code>, <code>CV_16S</code>,
- * <code>CV_32F</code> or <code>CV_64F</code>.
+ * <code>CV_32F" or </code>CV_64F".
  * @param dst Destination image of the same size and type as <code>src</code>.
  * @param op Type of a morphological operation that can be one of the following:
  * <ul>
@@ -8094,7 +8078,7 @@ public class Imgproc {
  *
  * @param src Source image. The number of channels can be arbitrary. The depth
  * should be one of <code>CV_8U</code>, <code>CV_16U</code>, <code>CV_16S</code>,
- * <code>CV_32F</code> or <code>CV_64F</code>.
+ * <code>CV_32F" or </code>CV_64F".
  * @param dst Destination image of the same size and type as <code>src</code>.
  * @param op Type of a morphological operation that can be one of the following:
  * <ul>
@@ -8420,13 +8404,6 @@ public class Imgproc {
 /**
  * <p>Blurs an image and downsamples it.</p>
  *
- * <p>By default, size of the output image is computed as <code>Size((src.cols+1)/2,
- * (src.rows+1)/2)</code>, but in any case, the following conditions should be
- * satisfied:</p>
- *
- * <p><em> ltBR gt| dstsize.width *2-src.cols| <= 2
- * |dstsize.height *2-src.rows| <= 2 </em></p>
- *
  * <p>The function performs the downsampling step of the Gaussian pyramid
  * construction. First, it convolves the source image with the kernel:</p>
  *
@@ -8441,9 +8418,13 @@ public class Imgproc {
  * @param src input image.
  * @param dst output image; it has the specified size and the same type as
  * <code>src</code>.
- * @param dstsize size of the output image.
- * @param borderType Pixel extrapolation method (BORDER_CONSTANT don't
- * supported). See "borderInterpolate" for details.
+ * @param dstsize size of the output image; by default, it is computed as
+ * <code>Size((src.cols+1)/2, (src.rows+1)/2)</code>, but in any case, the
+ * following conditions should be satisfied:
+ *
+ * <p><em> ltBR gt| dstsize.width *2-src.cols| <= 2
+ * |dstsize.height *2-src.rows| <= 2 </em></p>
+ * @param borderType a borderType
  *
  * @see <a href="http://docs.opencv.org/modules/imgproc/doc/filtering.html#pyrdown">org.opencv.imgproc.Imgproc.pyrDown</a>
  */
@@ -8458,13 +8439,6 @@ public class Imgproc {
 /**
  * <p>Blurs an image and downsamples it.</p>
  *
- * <p>By default, size of the output image is computed as <code>Size((src.cols+1)/2,
- * (src.rows+1)/2)</code>, but in any case, the following conditions should be
- * satisfied:</p>
- *
- * <p><em> ltBR gt| dstsize.width *2-src.cols| <= 2
- * |dstsize.height *2-src.rows| <= 2 </em></p>
- *
  * <p>The function performs the downsampling step of the Gaussian pyramid
  * construction. First, it convolves the source image with the kernel:</p>
  *
@@ -8479,7 +8453,12 @@ public class Imgproc {
  * @param src input image.
  * @param dst output image; it has the specified size and the same type as
  * <code>src</code>.
- * @param dstsize size of the output image.
+ * @param dstsize size of the output image; by default, it is computed as
+ * <code>Size((src.cols+1)/2, (src.rows+1)/2)</code>, but in any case, the
+ * following conditions should be satisfied:
+ *
+ * <p><em> ltBR gt| dstsize.width *2-src.cols| <= 2
+ * |dstsize.height *2-src.rows| <= 2 </em></p>
  *
  * @see <a href="http://docs.opencv.org/modules/imgproc/doc/filtering.html#pyrdown">org.opencv.imgproc.Imgproc.pyrDown</a>
  */
@@ -8493,13 +8472,6 @@ public class Imgproc {
 
 /**
  * <p>Blurs an image and downsamples it.</p>
- *
- * <p>By default, size of the output image is computed as <code>Size((src.cols+1)/2,
- * (src.rows+1)/2)</code>, but in any case, the following conditions should be
- * satisfied:</p>
- *
- * <p><em> ltBR gt| dstsize.width *2-src.cols| <= 2
- * |dstsize.height *2-src.rows| <= 2 </em></p>
  *
  * <p>The function performs the downsampling step of the Gaussian pyramid
  * construction. First, it convolves the source image with the kernel:</p>
@@ -8661,13 +8633,6 @@ public class Imgproc {
 /**
  * <p>Upsamples an image and then blurs it.</p>
  *
- * <p>By default, size of the output image is computed as <code>Size(src.cols*2,
- * (src.rows*2)</code>, but in any case, the following conditions should be
- * satisfied:</p>
- *
- * <p><em> ltBR gt| dstsize.width -src.cols*2| <= (dstsize.width mod 2)
- * |dstsize.height -src.rows*2| <= (dstsize.height mod 2) </em></p>
- *
  * <p>The function performs the upsampling step of the Gaussian pyramid
  * construction, though it can actually be used to construct the Laplacian
  * pyramid. First, it upsamples the source image by injecting even zero rows and
@@ -8683,9 +8648,13 @@ public class Imgproc {
  * @param src input image.
  * @param dst output image. It has the specified size and the same type as
  * <code>src</code>.
- * @param dstsize size of the output image.
- * @param borderType Pixel extrapolation method (only BORDER_DEFAULT supported).
- * See "borderInterpolate" for details.
+ * @param dstsize size of the output image; by default, it is computed as
+ * <code>Size(src.cols*2, (src.rows*2)</code>, but in any case, the following
+ * conditions should be satisfied:
+ *
+ * <p><em> ltBR gt| dstsize.width -src.cols*2| <= (dstsize.width mod 2)
+ * |dstsize.height -src.rows*2| <= (dstsize.height mod 2) </em></p>
+ * @param borderType a borderType
  *
  * @see <a href="http://docs.opencv.org/modules/imgproc/doc/filtering.html#pyrup">org.opencv.imgproc.Imgproc.pyrUp</a>
  */
@@ -8700,13 +8669,6 @@ public class Imgproc {
 /**
  * <p>Upsamples an image and then blurs it.</p>
  *
- * <p>By default, size of the output image is computed as <code>Size(src.cols*2,
- * (src.rows*2)</code>, but in any case, the following conditions should be
- * satisfied:</p>
- *
- * <p><em> ltBR gt| dstsize.width -src.cols*2| <= (dstsize.width mod 2)
- * |dstsize.height -src.rows*2| <= (dstsize.height mod 2) </em></p>
- *
  * <p>The function performs the upsampling step of the Gaussian pyramid
  * construction, though it can actually be used to construct the Laplacian
  * pyramid. First, it upsamples the source image by injecting even zero rows and
@@ -8722,7 +8684,12 @@ public class Imgproc {
  * @param src input image.
  * @param dst output image. It has the specified size and the same type as
  * <code>src</code>.
- * @param dstsize size of the output image.
+ * @param dstsize size of the output image; by default, it is computed as
+ * <code>Size(src.cols*2, (src.rows*2)</code>, but in any case, the following
+ * conditions should be satisfied:
+ *
+ * <p><em> ltBR gt| dstsize.width -src.cols*2| <= (dstsize.width mod 2)
+ * |dstsize.height -src.rows*2| <= (dstsize.height mod 2) </em></p>
  *
  * @see <a href="http://docs.opencv.org/modules/imgproc/doc/filtering.html#pyrup">org.opencv.imgproc.Imgproc.pyrUp</a>
  */
@@ -8736,13 +8703,6 @@ public class Imgproc {
 
 /**
  * <p>Upsamples an image and then blurs it.</p>
- *
- * <p>By default, size of the output image is computed as <code>Size(src.cols*2,
- * (src.rows*2)</code>, but in any case, the following conditions should be
- * satisfied:</p>
- *
- * <p><em> ltBR gt| dstsize.width -src.cols*2| <= (dstsize.width mod 2)
- * |dstsize.height -src.rows*2| <= (dstsize.height mod 2) </em></p>
  *
  * <p>The function performs the upsampling step of the Gaussian pyramid
  * construction, though it can actually be used to construct the Laplacian
