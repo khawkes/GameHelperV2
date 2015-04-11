@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
@@ -21,17 +22,34 @@ class AsyncServiceHelper
             final LoaderCallbackInterface Callback)
     {
         AsyncServiceHelper helper = new AsyncServiceHelper(Version, AppContext, Callback);
-        Intent intent = new Intent("org.opencv.engine.BIND");
-        intent.setPackage("org.opencv.engine");
-        if (AppContext.bindService(intent, helper.mServiceConnection, Context.BIND_AUTO_CREATE))
-        {
-            return true;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+            Intent intent = new Intent("org.opencv.engine.BIND");
+            intent.setPackage("org.opencv.engine");
+            if (AppContext.bindService(intent, helper.mServiceConnection, Context.BIND_AUTO_CREATE))
+            {
+                return true;
+            }
+            else
+            {
+                AppContext.unbindService(helper.mServiceConnection);
+                InstallService(AppContext, Callback);
+                return false;
+            }
         }
-        else
-        {
-            AppContext.unbindService(helper.mServiceConnection);
-            InstallService(AppContext, Callback);
-            return false;
+        else {
+
+            if (AppContext.bindService(new Intent("org.opencv.engine.BIND"),
+                    helper.mServiceConnection, Context.BIND_AUTO_CREATE))
+            {
+                return true;
+            }
+            else
+            {
+                AppContext.unbindService(helper.mServiceConnection);
+                InstallService(AppContext, Callback);
+                return false;
+            }
         }
     }
 

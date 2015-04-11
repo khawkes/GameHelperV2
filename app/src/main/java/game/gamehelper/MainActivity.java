@@ -2,6 +2,7 @@ package game.gamehelper;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
@@ -66,6 +67,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
 
         buttons.get(R.id.btnTakePicture).setEnabled(true);
+        String s = String.format("%s - %d", Build.VERSION.RELEASE, Build.VERSION.SDK_INT);
+        countText.setText(s);
     }
 
     @Override
