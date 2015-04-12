@@ -24,6 +24,8 @@ public class DetectedShape {
 
     double lengthThreshold = .25;
     double circleThreshold = .25;
+    double upperAreaThreshold = 2.5;
+    double lowerAreaThreshold = .25;
 
     ArrayList<Point[]> circles = new ArrayList();
 
@@ -44,7 +46,7 @@ public class DetectedShape {
         corners[3] = d;
 
         //find midpoints of long sides
-        if(ab > bc){
+        if(getLength(a, b) > getLength(b, c)){
             mpTop = new Point((a.x+b.x)/2, (a.y+b.y)/2);
             mpBottom = new Point((d.x+c.x)/2, (c.y+d.y)/2);
         } else {
@@ -131,6 +133,51 @@ public class DetectedShape {
         }
 
         return count;
+    }
+
+    public void deleteOutliers(){
+        //filter out any static that got through the width and height ratio test
+        //check that all rectangles and circles are about the same size
+
+        double recAvgArea = 0;
+        double circleAvgArea = 0;
+        ArrayList<Point[]> toRemove = new ArrayList<>();
+
+        for(Point[] r: rectangles){
+            recAvgArea += (getLength(r[0],r[1]) * getLength(r[1],r[2]));
+        }
+        recAvgArea /= rectangles.size();
+
+        for(Point[] c: circles){
+            //area of bounding box is good enough
+            circleAvgArea += (getLength(c[0],c[1]) * getLength(c[1],c[2]));
+        }
+        circleAvgArea /= circles.size();
+
+        //remove rectangles that are substantially larger or smaller than the average
+        for(Point[] r: rectangles){
+            if( (getLength(r[0],r[1]) * getLength(r[1],r[2])) > (upperAreaThreshold * recAvgArea)
+                    || (getLength(r[0],r[1]) * getLength(r[1],r[2])) < (lowerAreaThreshold * recAvgArea) ) {
+                toRemove.add(r);
+            }
+        }
+        for(Point[] r: toRemove)
+            rectangles.remove(r);
+
+        toRemove.clear();
+
+        //remove circles that are substantially larger or smaller than the average
+        for(Point[] c: circles){
+            if( (getLength(c[0],c[1]) * getLength(c[1],c[2])) > (upperAreaThreshold * circleAvgArea)
+                    || (getLength(c[0],c[1]) * getLength(c[1],c[2])) < (lowerAreaThreshold * circleAvgArea) ){
+                toRemove.add(c);
+            }
+        }
+
+        for(Point[] c: toRemove)
+            circles.remove(c);
+
+        toRemove.clear();
     }
 
     public int[][] getDominoes(){

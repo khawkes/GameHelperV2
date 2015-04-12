@@ -77,9 +77,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 break;
             case 2:
                 //returned from photo window
-                file = BitmapFactory.decodeFile(currentPhotoPath.getAbsolutePath());
-                file = Bitmap.createScaledBitmap(file, (int)(file.getWidth()*.1), (int)(file.getHeight()*.1), false);
-                picture.setImageBitmap(file);
+                processPicture();
                 break;
             default:
 
@@ -222,6 +220,18 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         return ret;
     }
 
+    private double safeDouble(CharSequence val, double def) {
+
+        double ret = def;
+        try {
+
+            ret = Double.parseDouble(val.toString());
+        }
+        catch (Exception e) { }
+
+        return ret;
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -229,16 +239,42 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             photoTaken = 2;
 
-            //read file and scale to 10% (if image is too large the stack will overflow on edge detection)
-            //size picked arbitrarily, don't know optimal size
-            file = BitmapFactory.decodeFile(currentPhotoPath.getAbsolutePath());
-            file = Bitmap.createScaledBitmap(file, (int)(file.getWidth()*.1), (int)(file.getHeight()*.1), false);
-            picture.setImageBitmap(file);
-
-            //begin processing
-            testimg = new testdetection(file);
-            setButtons();
+            processPicture();
         }
+    }
+
+    private void processPicture(){
+
+        //read file and scale to 10% (if image is too large the stack will overflow on edge detection)
+        //size picked arbitrarily, don't know optimal size
+        file = BitmapFactory.decodeFile(currentPhotoPath.getAbsolutePath());
+        file = Bitmap.createScaledBitmap(file, (int)(file.getWidth()*.1), (int)(file.getHeight()*.1), false);
+        picture.setImageBitmap(file);
+
+        //sig
+        EditText ctrl = (EditText) findViewById(R.id.txtColorReduce);
+        double sigma = safeDouble(ctrl.getText(), 1.0);
+
+        //size of the mask for applying blur
+        ctrl = (EditText) findViewById(R.id.txtBlurSize);
+        int maskSize = safeInt(ctrl.getText(), 20);
+
+        //pathfinding limit on edge detection
+        ctrl = (EditText) findViewById(R.id.txtBlurSigmaX);
+        int limit = safeInt(ctrl.getText(), 100);
+
+        //amount of blank spaces that can be skipped when looking for contiguous edges
+        ctrl = (EditText) findViewById(R.id.txtThreshold1);
+        int checkLimit = safeInt(ctrl.getText(), 2);
+
+        //percent of total pixels used to determine the high and low threshold
+        //use -1 for automatic detection
+        ctrl = (EditText) findViewById(R.id.txtThreshold1);
+        double percent = safeDouble(ctrl.getText(), 9);
+
+        //begin processing
+        testimg = new testdetection(file, sigma, maskSize, limit, checkLimit, percent);
+        setButtons();
     }
 
     private void createImageFile() {

@@ -41,7 +41,7 @@ public class testdetection {
     public DetectedShape rectangle;
     
     //size of mask for performing gaussian blur
-    private int  MAXMASK = 20;
+    public int  MAXMASK = 20;
     
     //pathfinding limiter
     private int stopcheck = 0;
@@ -52,21 +52,30 @@ public class testdetection {
     public ArrayList<Point> points = new ArrayList<Point>();
     
     //number of empty spaces object finder can pass over
-    int checkLimit = 2;
+    private int checkLimit = 2;
 
     //not used
     int low = 150;
     int high = 240;
     
-    //for determining high and low
-    int percent = 9;
+    //for determining high and low, set to -1 for automatic detection
+    private double percent = 9;
+
+    //sig
+    private double sig = 1.0;
     
     //number of pixels that are larger than neighbors
     int peakCount = 0;
 
-    public testdetection(Bitmap file){
+    public testdetection(Bitmap file, double sigma, int maskSize, int limit, int checkLimit, double percent){
         int     i,j,p,q,mr,centx,centy;
-        double  maskval,sum1, sum2,sig = 0.0,maxival = 0, slope = 0, percent = 0,sigsigtwo,twopiesigfour,sigMod;
+        double  maskval,sum1, sum2,maxival = 0, slope = 0,sigsigtwo,twopiesigfour,sigMod;
+
+        sig = sigma;
+        this.MAXMASK = maskSize;
+        this.limit = limit;
+        this.checkLimit = checkLimit;
+        this.percent = percent;
 
         picWidth = file.getWidth();
         picHeight = file.getHeight();
@@ -110,11 +119,9 @@ public class testdetection {
             }
         }
 
-        sig = 1.0;
 
         //determine how many pixels are in the x percent
         percent = (picWidth * picWidth - 1) * (percent / 100);
-
 
         //variables for mask calculations
         sigsigtwo = (sig*sig*-2);
@@ -504,6 +511,17 @@ public class testdetection {
                 rectangle.addCircle(rightTop, rightBottom, leftBottom, leftTop);
             }
         }
+        //remove wrongly added shapes
+        rectangle.deleteOutliers();
+    }
+
+    public void updateValues(double sigma, int maskSize, int limit, int checkLimit, double percent){
+
+        sig = sigma;
+        this.MAXMASK = maskSize;
+        this.limit = limit;
+        this.checkLimit = checkLimit;
+        this.percent = percent;
     }
 
 }

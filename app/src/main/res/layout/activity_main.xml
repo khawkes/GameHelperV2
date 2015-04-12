@@ -92,7 +92,7 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="32"
+            android:text="1.0"
             android:id="@+id/txtColorReduce"
             android:minWidth="80dp"
             android:width="80dp"
@@ -102,12 +102,12 @@
             android:enabled="true"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:inputType="numberSigned" />
+            android:inputType="numberDecimal" />
 
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="9"
+            android:text="20"
             android:id="@+id/txtBlurSize"
             android:minWidth="80dp"
             android:width="80dp"
@@ -122,7 +122,7 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0"
+            android:text="100"
             android:id="@+id/txtBlurSigmaX"
             android:layout_alignBottom="@+id/btnShowPicture"
             android:layout_toEndOf="@+id/txtBlurSize"
@@ -137,7 +137,7 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="100"
+            android:text="2"
             android:id="@+id/txtThreshold1"
             android:layout_alignBottom="@+id/btnShowPicture"
             android:layout_toEndOf="@id/txtBlurSigmaX"
@@ -152,7 +152,7 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="200"
+            android:text="9.0"
             android:id="@+id/txtThreshold2"
             android:layout_alignBottom="@+id/btnShowPicture"
             android:layout_toEndOf="@+id/txtThreshold1"
@@ -162,7 +162,7 @@
             android:enabled="true"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:inputType="numberSigned" />
+            android:inputType="numberDecimal" />
 
         <TextView
             android:layout_width="fill_parent"
@@ -170,7 +170,7 @@
             android:id="@+id/countText"
             android:layout_alignTop="@id/txtThreshold2"
             android:layout_toEndOf="@+id/txtThreshold2"
-            android:maxLength="150"
+            android:maxLength="100"
             android:minHeight="35dp"
             android:text="countText"
             android:minWidth="100dp" />

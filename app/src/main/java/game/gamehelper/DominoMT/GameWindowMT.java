@@ -307,9 +307,6 @@ public class GameWindowMT extends ActionBarActivity implements
 
     }
 
-    public void updateDominoAdapter(){
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -365,7 +362,7 @@ public class GameWindowMT extends ActionBarActivity implements
 
             case R.id.action_camera:
                 //camera call, overwrite hand
-                startActivityForResult(new Intent(GameWindowMT.this, MainActivity.class),0);
+                startActivityForResult(new Intent(GameWindowMT.this, MainActivity.class),1);
 
                 break;
 
@@ -583,12 +580,13 @@ public class GameWindowMT extends ActionBarActivity implements
 
                 if(b != null){
                     //read from camera information
-                    convertSerializable(b);
                     dominoTotal = b.getInt("dominoTotal");
+                    dominoList = new int[dominoTotal][2];
+                    convertSerializable(b);
 
-                    saveInformation();
-                    newSet(originalStartHead);
                     createHand();
+                    this.data = hand.toArray();
+                    saveInformation();
                     updateUI();
                     return;
                 }
@@ -773,6 +771,7 @@ public class GameWindowMT extends ActionBarActivity implements
 
     @Override
     public void setOption(int option, int caller) {
+        //opens dialog within new game window for selecting values for each option
         NewGameMT fragment = (NewGameMT)getSupportFragmentManager().findFragmentByTag(getString(R.string.newGameMT));
         fragment.setOption(option, caller);
     }
