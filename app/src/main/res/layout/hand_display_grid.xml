@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+   - COP4331C - Class Project - The Game Helper App
+   - Spring 2015
+   -
+   - Project authors:
+   -   Mark Andrews
+   -   Jacob Cassagnol
+   -   Kurt Hawkes
+   -   Tim McCarthy
+   -   Andrew McKenzie
+   -   Amber Stewart
+-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="wrap_content" tools:context="game.gamehelper.DominoMT.GameWindowMT">

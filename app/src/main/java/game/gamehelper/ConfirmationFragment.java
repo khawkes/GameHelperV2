@@ -1,3 +1,16 @@
+/*
+ * COP4331C - Class Project - The Game Helper App
+ * Spring 2015
+ *
+ * Project authors:
+ *   Mark Andrews
+ *   Jacob Cassagnol
+ *   Kurt Hawkes
+ *   Tim McCarthy
+ *   Andrew McKenzie
+ *   Amber Stewart
+ */
+
 package game.gamehelper;
 
 import android.app.Activity;
@@ -6,8 +19,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-
-import game.gamehelper.R;
 
 /**
  * Created by Mark Andrews on 2/23/2015.

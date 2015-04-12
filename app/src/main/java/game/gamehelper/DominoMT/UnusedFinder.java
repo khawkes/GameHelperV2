@@ -1,3 +1,17 @@
+/*
+ * COP4331C - Class Project - The Game Helper App
+ * Spring 2015
+ *
+ *
+ * Project authors:
+ *   Mark Andrews
+ *   Jacob Cassagnol
+ *   Kurt Hawkes
+ *   Tim McCarthy
+ *   Andrew McKenzie
+ *   Amber Stewart
+ */
+
 package game.gamehelper.DominoMT;
 
 /**

@@ -1,3 +1,16 @@
+/*
+ * COP4331C - Class Project - The Game Helper App
+ * Spring 2015
+ *
+ * Project authors:
+ *   Mark Andrews
+ *   Jacob Cassagnol
+ *   Kurt Hawkes
+ *   Tim McCarthy
+ *   Andrew McKenzie
+ *   Amber Stewart
+ */
+
 package game.gamehelper;
 
 import android.content.Intent;
@@ -13,7 +26,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -251,29 +263,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         file = Bitmap.createScaledBitmap(file, (int)(file.getWidth()*.1), (int)(file.getHeight()*.1), false);
         picture.setImageBitmap(file);
 
-//        //sig
-//        EditText ctrl = (EditText) findViewById(R.id.txtColorReduce);
-//        double sigma = safeDouble(ctrl.getText(), 1.0);
-//
-//        //size of the mask for applying blur
-//        ctrl = (EditText) findViewById(R.id.txtBlurSize);
-//        int maskSize = safeInt(ctrl.getText(), 20);
-//
-//        //pathfinding limit on edge detection
-//        ctrl = (EditText) findViewById(R.id.txtBlurSigmaX);
-//        int limit = safeInt(ctrl.getText(), 100);
-//
-//        //amount of blank spaces that can be skipped when looking for contiguous edges
-//        ctrl = (EditText) findViewById(R.id.txtThreshold1);
-//        int checkLimit = safeInt(ctrl.getText(), 2);
-//
-//        //percent of total pixels used to determine the high and low threshold
-//        //use -1 for automatic detection
-//        ctrl = (EditText) findViewById(R.id.txtThreshold1);
-//        double percent = safeDouble(ctrl.getText(), 9);
-
-        //begin processing
-//        testimg = new testdetection(file, maskSize, limit, checkLimit, percent);
         testimg = new testdetection(file, 1,20,100,2,9);
         setButtons();
     }

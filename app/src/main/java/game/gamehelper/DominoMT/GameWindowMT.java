@@ -1,7 +1,16 @@
-/**Window containing a visual representation of a hand, with options
- * to change arrangement
+/*
+ * COP4331C - Class Project - The Game Helper App
+ * Spring 2015
  *
+ * Project authors:
+ *   Mark Andrews
+ *   Jacob Cassagnol
+ *   Kurt Hawkes
+ *   Tim McCarthy
+ *   Andrew McKenzie
+ *   Amber Stewart
  */
+
 
 package game.gamehelper.DominoMT;
 
@@ -33,6 +42,10 @@ import game.gamehelper.R;
 import game.gamehelper.RulesActivity;
 import game.gamehelper.ScoreBoard;
 
+/**Window containing a visual representation of a hand, with options
+ * to change arrangement
+ *
+ */
 
 public class GameWindowMT extends ActionBarActivity implements
         ConfirmationFragment.ConfirmationListener,
