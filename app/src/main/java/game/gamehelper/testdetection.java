@@ -1,7 +1,6 @@
 package game.gamehelper;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
@@ -10,9 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.Log;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 import game.gamehelper.DominoMT.DetectedShape;
 
@@ -20,29 +17,13 @@ import game.gamehelper.DominoMT.DetectedShape;
  * Created by Mark Andrews on 4/11/2015.
  */
 public class testdetection {
-    private int  PICSIZEW = 256;
-    private int  PICSIZEH = 256;
-    private int  MAXMASK = 20;
-    private double PIE = 3.14159;
-    private int stopcheck = 0;
-    private int limit = 100;
-
-    public Bitmap bwfile;
-    public Bitmap histogramfile;
-    public Bitmap peaksfile;
-    public Bitmap finalfile;
-    public Bitmap shapesfile;
-    public DetectedShape rectangle;
-    public ArrayList<DetectedShape> dominoList = new ArrayList<>();
-    public ArrayList<ArrayList<Point>> objectList = new ArrayList<>();
-    public ArrayList<Point> points = new ArrayList<Point>();
-    //number of empty spaces object finder can pass over
-    int checkLimit = 2;
+    private final int picWidth;
+    private final int picHeight;
+    private final double PIE = 3.14159;
 
     int    [][]pic;
     double [][]outpicx;
     double [][]outpicy;
-    int    [][]edgeflag;
     int    []histogram;
     double [][]maskx;
     double [][]masky;
@@ -50,50 +31,65 @@ public class testdetection {
     double [][]ival2;
     double [][]peaks;
     double [][]finalPic;
-    double [][]finalPic2;
     double [][]conv;
 
+    public Bitmap bwfile;
+    public Bitmap histogramfile;
+    public Bitmap peaksfile;
+    public Bitmap finalfile;
+    public Bitmap shapesfile;
+    public DetectedShape rectangle;
+    
+    //size of mask for performing gaussian blur
+    private int  MAXMASK = 20;
+    
+    //pathfinding limiter
+    private int stopcheck = 0;
+    private int limit = 100;
+
+    //list of list of contiguous points
+    public ArrayList<ArrayList<Point>> objectList = new ArrayList<>();
+    public ArrayList<Point> points = new ArrayList<Point>();
+    
+    //number of empty spaces object finder can pass over
+    int checkLimit = 2;
+
+    //not used
     int low = 150;
     int high = 240;
+    
+    //for determining high and low
+    int percent = 9;
+    
+    //number of pixels that are larger than neighbors
     int peakCount = 0;
 
     public testdetection(Bitmap file){
-        int     i,j,p,q,s,t,mr,centx,centy;
-        double  maskval,sum1, sum2,sig = 0.0,maxival = 0, slope = 0, percent = 0,minival,maxval,ZEROTOL,sigsigtwo,twopiesigfour,sigMod;
-        File fo1, fo2, fo3,fp1;
-        char[]    foobar;
-        char[]    str = new char[10];
-        int currentPixel = 0;
+        int     i,j,p,q,mr,centx,centy;
+        double  maskval,sum1, sum2,sig = 0.0,maxival = 0, slope = 0, percent = 0,sigsigtwo,twopiesigfour,sigMod;
 
-        PICSIZEW = file.getWidth();
-        PICSIZEH = file.getHeight();
+        picWidth = file.getWidth();
+        picHeight = file.getHeight();
 
-        int width, height;
-        height = file.getHeight();
-        width = file.getWidth();
-
-
-
-        pic = new int[PICSIZEW][PICSIZEH];
-        outpicx = new double[PICSIZEW][PICSIZEH];
-        outpicy = new double[PICSIZEW][PICSIZEH];
-        edgeflag = new int[PICSIZEW][PICSIZEH];
-        histogram = new int[PICSIZEW];
+        pic = new int[picWidth][picHeight];
+        outpicx = new double[picWidth][picHeight];
+        outpicy = new double[picWidth][picHeight];
+        histogram = new int[256];
         maskx = new double[MAXMASK][MAXMASK];
         masky = new double[MAXMASK][MAXMASK];
-        ival = new double[PICSIZEW][PICSIZEH];
-        ival2 = new double[PICSIZEW][PICSIZEH];
-        peaks = new double[PICSIZEW][PICSIZEH];
-        finalPic = new double[PICSIZEW][PICSIZEH];
-        conv = new double[PICSIZEW][PICSIZEH];
+        ival = new double[picWidth][picHeight];
+        ival2 = new double[picWidth][picHeight];
+        peaks = new double[picWidth][picHeight];
+        finalPic = new double[picWidth][picHeight];
+        conv = new double[picWidth][picHeight];
 
-        histogramfile = Bitmap.createBitmap(PICSIZEW, PICSIZEH, Bitmap.Config.ARGB_8888);
-        peaksfile = Bitmap.createBitmap(PICSIZEW, PICSIZEH, Bitmap.Config.ARGB_8888);
-        finalfile = Bitmap.createBitmap(PICSIZEW, PICSIZEH, Bitmap.Config.ARGB_8888);
-        shapesfile = Bitmap.createBitmap(PICSIZEW, PICSIZEH, Bitmap.Config.ARGB_8888);
+        histogramfile = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
+        peaksfile = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
+        finalfile = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
+        shapesfile = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
 
-
-        bwfile = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        //create grayscale image
+        bwfile = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(bwfile);
         Paint paint = new Paint();
         ColorMatrix cm = new ColorMatrix();
@@ -102,24 +98,22 @@ public class testdetection {
         paint.setColorFilter(f);
         c.drawBitmap(file, 0, 0, paint);
 
-        for(i = 0 ; i < PICSIZEW  ; i++ ){
-            for(j = 0 ; j < PICSIZEH ; j++){
+        //convert RGB grayscale bitmap to 1 channel int array
+        for(i = 0 ; i < picWidth  ; i++ ){
+            for(j = 0 ; j < picHeight ; j++){
                 int pixel = bwfile.getPixel(i,j);
                 int red = Color.red(pixel);
                 int blue = Color.blue(pixel);
                 int green = Color.green(pixel);
                 int black = (int) (0.21*red + 0.72*green + 0.07*blue);
-//                int black = (int) (red + green + blue) /3;
-//                bwfile.setPixel(i,j, getBlack(black));
                 pic[i][j] = black;
             }
         }
 
         sig = 1.0;
 
-        percent = 9;
-
-        percent = (PICSIZEW * PICSIZEW - 1) * (percent / 100);
+        //determine how many pixels are in the x percent
+        percent = (picWidth * picWidth - 1) * (percent / 100);
 
 
         //variables for mask calculations
@@ -144,10 +138,10 @@ public class testdetection {
             }
         }
 
-
-        for (i=mr; i<=(PICSIZEW - 1)-mr; i++)
+        //gaussian blur
+        for (i=mr; i<=(picWidth - 1)-mr; i++)
         {
-            for (j=mr; j<=(PICSIZEH - 1)-mr; j++)
+            for (j=mr; j<=(picHeight - 1)-mr; j++)
             {
                 sum1 = 0;
                 sum2 = 0;
@@ -164,10 +158,10 @@ public class testdetection {
             }
         }
 
-
-        for (i=mr; i<PICSIZEW-mr; i++)
+        //gaussian blur cont.
+        for (i=mr; i<picWidth-mr; i++)
         {
-            for (j=mr; j<PICSIZEH-mr; j++)
+            for (j=mr; j<picHeight-mr; j++)
             {
                 ival[i][j]= Math.sqrt((double) ((outpicx[i][j] * outpicx[i][j]) +
                         (outpicy[i][j] * outpicy[i][j])));
@@ -177,21 +171,23 @@ public class testdetection {
             }
         }
 
-        //print part 1, create histogram
-        for (i=0; i<PICSIZEW; i++)
+        //create histogram
+        for (i=0; i<picWidth; i++)
         {
-            for (j=0; j<PICSIZEH; j++)
+            for (j=0; j<picHeight; j++)
             {
+                //counts how many pixels are at each value 0-255
                 ival2[i][j] = ((double)ival[i][j] / maxival) * (255);
                 histogram[(int)ival2[i][j]] += 1;
+                //blurred image
                 histogramfile.setPixel(i,j, getBlack((int)ival2[i][j]));
             }
         }
 
-        //part 2
-        for(i = mr ; i < PICSIZEW - mr ; i++)
+        //Checking pixel neighbors and marking pixel as peak if it is the largest
+        for(i = mr ; i < picWidth - mr ; i++)
         {
-            for (j = mr ; j<PICSIZEH - mr ; j++)
+            for (j = mr ; j<picHeight - mr ; j++)
             {
                 if( (outpicy[i][j] == 0) )
                 {
@@ -231,9 +227,9 @@ public class testdetection {
         }
 
         //print part 2, count possible peaks
-        for (i=0; i<PICSIZEW; i++)
+        for (i=0; i<picWidth; i++)
         {
-            for (j=0; j<PICSIZEH; j++)
+            for (j=0; j<picHeight; j++)
             {
                 peaksfile.setPixel(i,j,getBlack((int)peaks[i][j]));
                 if( peaks[i][j] > 0 )
@@ -245,14 +241,16 @@ public class testdetection {
         high = 0;
 
         // negative entered for percent will automatically find a percent to use
+            //this formula is in no way perfect, I literally made arbitrary calculations until
+            //the generated percent worked well for different pictures
         if( percent < 0)
         {
             mr /= 3;
             sigMod = mr*Math.log(mr * mr);
             percent = sigMod > 1 ? sigMod : 1;
-            percent = (percent * peakCount) / (PICSIZEW*PICSIZEH)*100 - mr*3.3;
+            percent = (percent * peakCount) / (picWidth*picHeight)*100 - mr*3.3;
             Log.w("testdetection", String.format("Using percent: %f\n", percent));
-            percent = (percent / 100) * (PICSIZEW*PICSIZEH);
+            percent = (percent / 100) * (picWidth*picHeight);
         }
 
         //starting from 255, add the total number of pixels with each value until it exceeds the
@@ -268,10 +266,12 @@ public class testdetection {
             }
         }
 
-        //part 3
-        for(i=0; i<PICSIZEW; i++)
+        //double thresholding, if the blurred image's pixel is larger than threshold set it
+        //as an edge, if it between high and low then check neighbors for pixels that are edges
+        //and if found make pixel an edge
+        for(i=0; i<picWidth; i++)
         {
-            for (j=0; j<PICSIZEH; j++)
+            for (j=0; j<picHeight; j++)
             {
                 {
                     stopcheck = 0;
@@ -281,9 +281,9 @@ public class testdetection {
         }
 
         //print part 3
-        for (i=0; i<PICSIZEW; i++)
+        for (i=0; i<picWidth; i++)
         {
-            for (j=0; j<PICSIZEH; j++)
+            for (j=0; j<picHeight; j++)
             {
                    finalfile.setPixel(i,j, (int)finalPic[i][j]<<24);
 //                fprintf(fo3,"%c",(char)((int)(finalPic[i][j])));
@@ -303,7 +303,7 @@ public class testdetection {
         stopcheck++;
         if(stopcheck > limit)
             return;
-        if(i < 0 || j < 0 || i > (PICSIZEW - 1) || j > (PICSIZEH - 1))
+        if(i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
             return;
         if(peaks[i][j] == (255))
         {
@@ -328,12 +328,12 @@ public class testdetection {
     }
 
 
+    //iterate through image until an edge is found then look for other edges nearby and group as
+    //a single object
     void findShapes()
     {
-        finalPic2 = finalPic.clone();
-
-        for(int i = 0 ; i < PICSIZEW ; i++){
-            for(int j = 0 ; j < PICSIZEH ; j++){
+        for(int i = 0 ; i < picWidth ; i++){
+            for(int j = 0 ; j < picHeight ; j++){
                 if(finalPic[i][j] >=  (1))
                 {
                     stopcheck = 0;
@@ -344,17 +344,9 @@ public class testdetection {
                     start.set(i, j);
                     points.add(start);
                     finalPic[i][j] = 0;
-//                    if(i > 1 && i < PICSIZEW-1 && j > 1 && j < PICSIZEH-1){
-//                        if(finalPic[i][j-1] == 255 ) {
-//                            j++;
-//
-//                        }if (finalPic[i+1][j] == 255){
-//                            checkRight(i+1,j,0);
-//                        } if (finalPic[])
-//
-//
-//
-//                    }
+
+                    //workaround for stack issues, continue looking for edges around new edges until
+                    //no new edges are found
                     for(int k = 0 ; k < pointCount ; k = pointCount2 ){
                         for(int m = k ; m < pointCount ; m++) {
                             Point p = points.get(m);
@@ -366,11 +358,16 @@ public class testdetection {
                             pointCount2 = pointCount;
                             pointCount = points.size();
                     }
+
+                    //threshold for possible static picked up
                     if(points.size() > 20){
                         objectList.add(points);
+
+                        //write the edges found to be part of a larger object to image
                         for(Point p: points){
                             shapesfile.setPixel(p.x, p.y, 255<<24);
                         }
+
                     } else {
                         points.clear();
                     }
@@ -378,16 +375,16 @@ public class testdetection {
                 }
             }
         }
-
-        finalPic = finalPic2;
     }
 
+    //traversal functions, check is the number of empty spaces skipped over, checkLimit being how many
+    //pixels this program is allowed to skip
     void checkUp(int i, int j, int check){
         check++;
         if(check > checkLimit){
             return;
         }
-        if(i < 0 || j < 0 || i > (PICSIZEW - 1) || j > (PICSIZEH - 1))
+        if(i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
             return;
 
         if(finalPic[i][j] >=  (1)) {
@@ -407,7 +404,7 @@ public class testdetection {
         if(check > checkLimit){
             return;
         }
-        if(i < 0 || j < 0 || i > (PICSIZEW - 1) || j > (PICSIZEH - 1))
+        if(i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
             return;
 
         if(finalPic[i][j] >=  (1)) {
@@ -427,7 +424,7 @@ public class testdetection {
         if(check > checkLimit){
             return;
         }
-        if(i < 0 || j < 0 || i > (PICSIZEW - 1) || j > (PICSIZEH - 1))
+        if(i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
             return;
 
         if(finalPic[i][j] >=  (1)) {
@@ -447,7 +444,7 @@ public class testdetection {
         if(check > checkLimit){
             return;
         }
-        if(i < 0 || j < 0 || i > (PICSIZEW - 1) || j > (PICSIZEH - 1))
+        if(i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
             return;
 
         if(finalPic[i][j] >=  (1)) {
@@ -465,11 +462,14 @@ public class testdetection {
     void makeShapes(){
         rectangle = new DetectedShape();
         for(ArrayList<Point> i: objectList){
+            //iterate through the objects found and find the corners of rectangles or sides of circles
+
             Point leftBottom = new Point(-1,-1);
             Point leftTop = new Point(-1,-1);
             Point rightBottom = new Point(-1,-1);
             Point rightTop = new Point(-1,-1);
             for(Point j: i){
+
                 if(leftBottom.x == -1 || (j.y >= leftBottom.y)){
                     leftBottom.x = j.x;
                     leftBottom.y = j.y;
@@ -485,17 +485,22 @@ public class testdetection {
                     rightBottom.y = j.y;
                 }
 
-
                 if(rightTop.x == -1 || (j.y <= rightTop.y )){
                     rightTop.x = j.x;
                     rightTop.y = j.y;
                 }
             }
+
+            //checking if length is about twice as long as height
             boolean check1 = rectangle.checkLong(leftBottom, leftTop, rightBottom, rightTop);
+
+            //checking if length is about the same as height
             boolean check2 = rectangle.checkSquare(rightTop, rightBottom, leftBottom, leftTop);
-            if(rectangle.checkLong(leftBottom, leftTop, rightBottom, rightTop)) {
+
+            //add object to corresponding list
+            if(check1) {
                 rectangle.addRectangle(leftBottom, leftTop, rightBottom, rightTop);
-            }else if(rectangle.checkSquare(rightTop, rightBottom, leftBottom, leftTop)){
+            }else if(check2){
                 rectangle.addCircle(rightTop, rightBottom, leftBottom, leftTop);
             }
         }

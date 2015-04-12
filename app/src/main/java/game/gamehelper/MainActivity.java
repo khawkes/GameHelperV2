@@ -43,7 +43,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     };
     private Bitmap file;
     private File currentPhotoPath;
-    private ImageProcessor imgProcessor;
     private testdetection testimg;
     int[][] domList = null;
 
@@ -65,18 +64,31 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
         currentPhotoPath = new File(savedInstanceState.getString("currentPhotoPath"));
         photoTaken = savedInstanceState.getInt("photoTaken");
-        if(photoTaken >= 1)
-            onActivityResult(RESULT_OK, REQUEST_IMAGE_CAPTURE, null);
-        super.onRestoreInstanceState(savedInstanceState);
+
+        //attempt to handle reconstruction
+        switch(photoTaken){
+            case 1:
+                //photo window called
+                onActivityResult(RESULT_OK, REQUEST_IMAGE_CAPTURE, null);
+                break;
+            case 2:
+                //returned from photo window
+                file = BitmapFactory.decodeFile(currentPhotoPath.getAbsolutePath());
+                file = Bitmap.createScaledBitmap(file, (int)(file.getWidth()*.1), (int)(file.getHeight()*.1), false);
+                picture.setImageBitmap(file);
+                break;
+            default:
+
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        imgProcessor = new ImageProcessor(this);
 
         setContentView(R.layout.activity_main);
         countText = (TextView) findViewById(R.id.countText);
@@ -142,60 +154,49 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 dispatchTakePictureIntent();
                 setButtons();
                 break;
-//            case R.id.btnShowPicture:
-//                picture.setImageBitmap(imgProcessor.getBitmapImage());
-//                countText.setText(currentPhotoPath.getAbsolutePath());
-//                break;
-//            case R.id.btnShowProcessed:
-//                picture.setImageBitmap(imgProcessor.getBitmapProcessed());
-//                countText.setText("Processed");
-//                break;
-//            case R.id.btnShowGray:
-//                picture.setImageBitmap(imgProcessor.getBitmapGray());
-//                countText.setText("Gray");
-//                break;
-//            case R.id.btnShowBlur:
-//                picture.setImageBitmap(imgProcessor.getBitmapBlur());
-//                countText.setText("Blur");
-//                break;
-//            case R.id.btnShowCanny:
-//                picture.setImageBitmap(imgProcessor.getBitmapCanny());
-//                countText.setText("Canny");
             case R.id.btnShowPicture:
                 picture.setImageBitmap(file);
                 countText.setText(currentPhotoPath.getAbsolutePath());
                 break;
             case R.id.btnShowProcessed:
+                //show double thresholded image
                 picture.setImageBitmap(testimg.finalfile);
                 countText.setText("Processed");
                 break;
             case R.id.btnShowGray:
+                //show grayscale image
                 picture.setImageBitmap(testimg.bwfile);
                 countText.setText("Gray");
                 break;
             case R.id.btnShowBlur:
+                //show normalized gradient
                 picture.setImageBitmap(testimg.histogramfile);
                 countText.setText("Blur");
                 break;
             case R.id.btnShowCanny:
+                //show peaks image
                 picture.setImageBitmap(testimg.peaksfile);
                 countText.setText("Canny");
                 break;
             case R.id.btnProcess:
+                //convert bitmap to list of points[]s representing contiguous segments
                 testimg.findShapes();
                 Log.w("finding shapes", "finished");
                 picture.setImageBitmap(testimg.shapesfile);
                 buttons.get(R.id.btnShapes).setEnabled(true);
                 break;
             case R.id.btnShapes:
+                //find corners of point[]s and determine if rectangle circle or neither
                 testimg.makeShapes();
                 if(testimg.rectangle != null) {
+                    //iterate through rectangle list and find circles that are within each side
                     domList = testimg.rectangle.getDominoes();
                     countText.setText(Integer.toString(domList.length));
                     buttons.get(R.id.btnReturn).setEnabled(true);
                 }
                 break;
             case R.id.btnReturn:
+                //return results to caller
                 Bundle b = new Bundle();
                 Intent intent = getIntent();
 
@@ -227,12 +228,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             photoTaken = 2;
-//            imgProcessor.setSource(currentPhotoPath);
-//            imgProcessor.loadImageBitmap();
-//            picture.setImageBitmap(imgProcessor.getBitmapImage());
+
+            //read file and scale to 10% (if image is too large the stack will overflow on edge detection)
+            //size picked arbitrarily, don't know optimal size
             file = BitmapFactory.decodeFile(currentPhotoPath.getAbsolutePath());
             file = Bitmap.createScaledBitmap(file, (int)(file.getWidth()*.1), (int)(file.getHeight()*.1), false);
             picture.setImageBitmap(file);
+
+            //begin processing
             testimg = new testdetection(file);
             setButtons();
         }
@@ -276,17 +279,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private void setButtons() {
 
-//        if (imgProcessor.getBitmapImage() != null) {
-//
-//            buttons.get(R.id.btnShowPicture).setEnabled(true);
-//            buttons.get(R.id.btnProcess).setEnabled(true);
-//        }
-//
-//        if (imgProcessor.getBitmapProcessed() != null) buttons.get(R.id.btnShowProcessed).setEnabled(true);
-//        if (imgProcessor.getBitmapGray() != null) buttons.get(R.id.btnShowGray).setEnabled(true);
-//        if (imgProcessor.getBitmapBlur() != null) buttons.get(R.id.btnShowBlur).setEnabled(true);
-//        if (imgProcessor.getBitmapCanny() != null) buttons.get(R.id.btnShowCanny).setEnabled(true);
-
+        buttons.get(R.id.btnShowPicture).setEnabled(true);
         buttons.get(R.id.btnProcess).setEnabled(true);
         buttons.get(R.id.btnShowProcessed).setEnabled(true);
         buttons.get(R.id.btnShowGray).setEnabled(true);

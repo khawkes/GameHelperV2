@@ -9,27 +9,21 @@ import java.util.ArrayList;
  */
 public class DetectedShape {
     ArrayList<Point[]> rectangles = new ArrayList();
-    //corners of rectangle
+    //corners of rectangle and midpoints of long sides
     Point a;
     Point b;
     Point c;
     Point d;
+    Point mpTop;
+    Point mpBottom;
 
-    double abSlope = 0;
-    double bcSlope = 0;
-    double cdSlope = 0;
-    double daSlope = 0;
-    double abLength = 0;
-    double bcLength = 0;
-    double cdLength = 0;
-    double daLength = 0;
+    double ab = 0;
+    double bc = 0;
+    double cd = 0;
+    double da = 0;
 
     double lengthThreshold = .25;
     double circleThreshold = .25;
-
-    Point mpTop;
-    Point mpBottom;
-    double mpSlope = 0;
 
     ArrayList<Point[]> circles = new ArrayList();
 
@@ -37,37 +31,32 @@ public class DetectedShape {
     }
 
     public boolean addRectangle(Point lb, Point lt, Point rb, Point rt) {
+        //redundant but makes it easier to visualize
         a = lt;
         b = rt;
         c = rb;
         d = lb;
+
         Point[] corners = new Point[7];
         corners[0] = a;
         corners[1] = b;
         corners[2] = c;
         corners[3] = d;
 
-        abLength = Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
-        bcLength = Math.sqrt(Math.pow(b.x - c.x, 2) + Math.pow(b.y - c.y, 2));
-        cdLength = Math.sqrt(Math.pow(c.x - d.x, 2) + Math.pow(c.y - d.y, 2));
-        daLength = Math.sqrt(Math.pow(d.x - a.x, 2) + Math.pow(d.y - a.y, 2));
-
-        abSlope = (double) (a.y - b.y) / (a.x - b.x);
-        bcSlope = (double) (b.y - c.y) / (b.x - c.x);
-        cdSlope = (double) (c.y - d.y) / (c.x - d.x);
-        daSlope = (double) (d.y - a.y) / (d.x - a.x);
-
-        if(abLength > bcLength){
+        //find midpoints of long sides
+        if(ab > bc){
             mpTop = new Point((a.x+b.x)/2, (a.y+b.y)/2);
             mpBottom = new Point((d.x+c.x)/2, (c.y+d.y)/2);
         } else {
             mpTop = new Point((c.x + b.x) / 2, (b.y + c.y) / 2);
             mpBottom = new Point((d.x + a.x) / 2, (d.y + a.y) / 2);
         }
+
+        //corners 4 and 5 are midpoints, corner 6 is the center of the rectangle
         corners[4] = mpTop;
         corners[5] = mpBottom;
         corners[6] = new Point( (a.x + c.x) / 2, (b.y + d.y) / 2);
-        mpSlope = (double) (mpTop.y - mpBottom.y) / (mpTop.x - mpBottom.x);
+
         rectangles.add(corners);
         return true;
     }
@@ -79,13 +68,8 @@ public class DetectedShape {
         circle[2] = b;
         circle[3] = l;
 
-
+        //circle center
         circle[4] = new Point((l.x + r.x) / 2, (t.y + b.y) / 2);
-//        if( (b.y - t.y) - (r.x - l.x) < 5 && (b.y - t.y) - (r.x - l.x)  > -5){
-//            if( isInside(circle[4], a, b, c, d) ) {
-//                circles.add(circle);
-//            }
-//        }
 
         circles.add(circle);
         return true;
@@ -107,20 +91,24 @@ public class DetectedShape {
         double side1 = getLength(a,b);
         double side2 = getLength(b,c);
         double sidetoside = side1/side2;
-        //must be rectangle
 
+        //must be rectangle
         if(sidetoside > 2.25 || (sidetoside < 1.75 && sidetoside > .625) || sidetoside < .375)
             return false;
         return true;
     }
 
     public int countSide(int side, Point[] a){
+        //counts the number of circles on one side of a rectangle
         int count = 0;
         switch(side){
             case 1:
                 for(Point[] e: circles){
+                    //ignore if circle is found in the center of the rectangle
                     if(getLength(e[4], a[6]) < 10)
                         continue;
+
+                    //check if center circle is inside rectangle ABCD
                     if(isInside(e[4], a[0], a[4], a[5], a[3])) {
                         count++;
                     }
@@ -128,8 +116,11 @@ public class DetectedShape {
                 break;
             case 2:
                 for(Point[] e: circles){
+                    //ignore if circle is found in the center of the rectangle
                     if(getLength(e[4], a[6]) < 10)
                         continue;
+
+                    //check if center circle is inside rectangle ABCD
                     if(isInside(e[4], a[4], a[1], a[2], a[5])){
                         count++;
                     }
@@ -145,6 +136,8 @@ public class DetectedShape {
     public int[][] getDominoes(){
         int[][] domlist = new int[rectangles.size()][2];
         int i = 0;
+
+        //iterate through rectangles and record sides
         for(Point[] a: rectangles){
             domlist[i][0] = countSide(1, a);
             domlist[i++][1] = countSide(2, a);
@@ -153,28 +146,31 @@ public class DetectedShape {
     }
 
     public boolean isInside(Point e, Point a, Point b, Point c, Point d){
+    //using heron's formula to determine if point is inside shape
 
-        abLength = getLength(a,b);
-        bcLength = getLength(b,c);
-        cdLength = getLength(c,d);
-        daLength = getLength(d,a);
+        //if the sum of the areas of all triangles generated using point e is larger than the area
+        //of the rectangle, then the point is outside
+        ab = getLength(a,b);
+        bc = getLength(b,c);
+        cd = getLength(c,d);
+        da = getLength(d,a);
 
-        double aeLength = getLength(a,e);
-        double beLength = getLength(b, e);
-        double ceLength = getLength(c, e);
-        double deLength = getLength(d, e);
+        double ae = getLength(a,e);
+        double be = getLength(b, e);
+        double ce = getLength(c, e);
+        double de = getLength(d, e);
 
-        double u1 = (abLength + aeLength + beLength) / 2;
-        double u2 = (bcLength + beLength + ceLength) / 2;
-        double u3 = (cdLength + ceLength + deLength) / 2;
-        double u4 = (daLength + deLength + aeLength) / 2;
+        double u1 = (ab + ae + be) / 2;
+        double u2 = (bc + be + ce) / 2;
+        double u3 = (cd + ce + de) / 2;
+        double u4 = (da + de + ae) / 2;
 
-        double a1 = Math.sqrt(u1*(u1 - abLength)*(u1 - aeLength)*(u1 - beLength));
-        double a2 = Math.sqrt(u2*(u2 - bcLength)*(u2 - beLength)*(u2 - ceLength));
-        double a3 = Math.sqrt(u3*(u3 - cdLength)*(u3 - ceLength)*(u3 - deLength));
-        double a4 = Math.sqrt(u4*(u4 - daLength)*(u4 - deLength)*(u4 - aeLength));
+        double a1 = Math.sqrt(u1*(u1 - ab)*(u1 - ae)*(u1 - be));
+        double a2 = Math.sqrt(u2*(u2 - bc)*(u2 - be)*(u2 - ce));
+        double a3 = Math.sqrt(u3*(u3 - cd)*(u3 - ce)*(u3 - de));
+        double a4 = Math.sqrt(u4*(u4 - da)*(u4 - de)*(u4 - ae));
 
-        double area = (abLength * bcLength);
+        double area = (ab * bc);
         double area2 = a1+a2+a3+a4;
 
         if(area2 > area*1.05){
