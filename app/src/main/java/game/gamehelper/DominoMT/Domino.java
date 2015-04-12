@@ -31,11 +31,12 @@ import game.gamehelper.R;
  * Created by Jacob on 2/11/2015.
  * A domino: defined as value 1, value 2, and sum of values.
  */
-public class Domino implements Parcelable {
+public class Domino implements Parcelable
+{
     private final int val1;
     private final int val2;
     private final int sum;
-    public static final int[] domIdList = new int[]{
+    public static final int[] domIdList = new int[] {
             R.drawable.side_border,
             R.drawable.dom_one,
             R.drawable.dom_two,
@@ -59,47 +60,58 @@ public class Domino implements Parcelable {
 
     @Override
     //required for Parcelable
-    public int describeContents() {
+    public int describeContents()
+    {
         return 0;
     }
 
     /**
      * Constructor. Creates the Domino.
+     *
      * @param value1 Pair value 1.
      * @param value2 Pair value 2.
      */
-    public Domino(int value1, int value2) {
+    public Domino(int value1, int value2)
+    {
         val1 = value1;
         val2 = value2;
         sum = getVal1() + getVal2();
 
     }
 
-    public Domino(Parcel p){
+    public Domino(Parcel p)
+    {
         val1 = p.readInt();
         val2 = p.readInt();
         sum = val1 + val2;
     }
 
-    public int getVal1() {
+    public int getVal1()
+    {
         return val1;
     }
 
-    public int getVal2() {
+    public int getVal2()
+    {
         return val2;
     }
 
     //returns the oppositve value than the one given on this domino.
     //Assumes that we give it one of the sides on this domino.
-    public int getOtherVal(int val) { return (val == val1) ? val2 : val1; }
+    public int getOtherVal(int val)
+    {
+        return (val == val1) ? val2 : val1;
+    }
 
-    public int getSum() {
+    public int getSum()
+    {
         return sum;
     }
 
     //Allows comparison between other dominoes
-    public boolean compareTo(Domino a) {
-        if( a == null )
+    public boolean compareTo(Domino a)
+    {
+        if (a == null)
             return false;
         if (val1 == a.getVal1() && val2 == a.getVal2())
             return true;
@@ -110,14 +122,16 @@ public class Domino implements Parcelable {
 
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    public void writeToParcel(Parcel dest, int flags)
+    {
         dest.writeInt(val1);
         dest.writeInt(val2);
     }
 
     @Override
     //So we can search for this in an arrayList.
-    public boolean equals(Object obj) {
+    public boolean equals(Object obj)
+    {
         if (obj == null)
             return false;
 
@@ -133,18 +147,20 @@ public class Domino implements Parcelable {
 
     @Override
     //Because you always have to override both equals and hashcode if you overide one.
-    public int hashCode() {
+    public int hashCode()
+    {
         //multiplied by a small prime.
         return getSum() * 137;
     }
 
 
     //Load image for domino side value
-    public static Bitmap getSide(int value, Context context){
-
+    public static Bitmap getSide(int value, Context context)
+    {
         Bitmap side;
 
-        switch(value){
+        switch (value)
+        {
             case 1:
                 side = BitmapFactory.decodeResource(context.getResources(), R.drawable.dom_one);
                 break;
@@ -201,20 +217,23 @@ public class Domino implements Parcelable {
                 break;
             case 0:
             default:
-                side = Bitmap.createBitmap(200,200,Bitmap.Config.ARGB_8888);
+                side = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888);
                 break;
         }
         return side;
     }
 
-    public static Parcelable.Creator CREATOR = new Parcelable.Creator(){
+    public static Parcelable.Creator CREATOR = new Parcelable.Creator()
+    {
         @Override
-        public Domino createFromParcel(Parcel source) {
+        public Domino createFromParcel(Parcel source)
+        {
             return new Domino(source);
         }
 
         @Override
-        public Domino[] newArray(int size) {
+        public Domino[] newArray(int size)
+        {
             return new Domino[size];
         }
     };

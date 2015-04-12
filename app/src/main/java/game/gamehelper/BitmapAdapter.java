@@ -23,41 +23,51 @@ import android.widget.ImageView;
 /* Class for handling bitmap images in an Array
  */
 
-public class BitmapAdapter extends BaseAdapter {
+public class BitmapAdapter extends BaseAdapter
+{
     private Context context;
     private int[] imageIds;
     private int imageSize = 200;
     private int deckSize = 12;
 
-    public BitmapAdapter(Context c, int[] data, int size) {
+    public BitmapAdapter(Context c, int[] data, int size)
+    {
         context = c;
         imageIds = data;
         deckSize = size;
     }
 
-    public int getCount() {
+    public int getCount()
+    {
         return deckSize;
     }
 
-    public Object getItem(int position) {
+    public Object getItem(int position)
+    {
         return imageIds[position];
     }
 
-    public long getItemId(int position) {
+    public long getItemId(int position)
+    {
         return 0;
     }
 
-    public void setImageSize(int size){
+    public void setImageSize(int size)
+    {
         imageSize = size;
     }
 
-    public View getView(int position, View view, ViewGroup parent) {
+    public View getView(int position, View view, ViewGroup parent)
+    {
         ImageView iview;
-        if (view == null) {
+        if (view == null)
+        {
             iview = new ImageView(context);
-            iview.setLayoutParams(new GridView.LayoutParams(imageSize,imageSize));
+            iview.setLayoutParams(new GridView.LayoutParams(imageSize, imageSize));
             iview.setPadding(0, 0, 0, 0);
-        } else {
+        }
+        else
+        {
             iview = (ImageView) view;
         }
 

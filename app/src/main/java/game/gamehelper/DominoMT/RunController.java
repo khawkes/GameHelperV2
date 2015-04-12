@@ -25,7 +25,8 @@ import java.util.LinkedList;
  * Created on 3/6/2015.
  * Contains run-calculating related algorithms.
  */
-public class RunController implements Parcelable {
+public class RunController implements Parcelable
+{
     private final int MAX_EDGE;
     private final int TRAIN_HEAD;
     private DominoGraph graph;
@@ -50,20 +51,24 @@ public class RunController implements Parcelable {
 
     /**
      * Generates a RunController from a domino edge array.
-     * @param h The hand to use to initialize the graph.
+     *
+     * @param h           The hand to use to initialize the graph.
      * @param startDouble The starting double to target.
      */
-    RunController(HandMT h, int startDouble) {
-        this (h.getMaxDouble(), h.toArray(), startDouble);
+    RunController(HandMT h, int startDouble)
+    {
+        this(h.getMaxDouble(), h.toArray(), startDouble);
     }
 
     /**
      * Generates a RunController from a domino edge array.
+     *
      * @param maximumDouble The biggest double possible (if double 8) -> 8.
-     * @param edges The array of edges to use to initialize the graph.
-     * @param startDouble The starting double to target.
+     * @param edges         The array of edges to use to initialize the graph.
+     * @param startDouble   The starting double to target.
      */
-    RunController(int maximumDouble, Domino edges[], int startDouble) {
+    RunController(int maximumDouble, Domino edges[], int startDouble)
+    {
         MAX_EDGE = maximumDouble;
 
         graph = new DominoGraph(maximumDouble, edges);
@@ -84,7 +89,8 @@ public class RunController implements Parcelable {
         currentRun = new DominoRun();
     }
 
-    RunController(Parcel p){
+    RunController(Parcel p)
+    {
         ArrayList<DominoRun> tempList = new ArrayList<>();
 
         longest = new DominoRun();
@@ -95,38 +101,45 @@ public class RunController implements Parcelable {
 
         MAX_EDGE = p.readInt();
         TRAIN_HEAD = p.readInt();
-        graph = (DominoGraph)p.readParcelable(DominoGraph.class.getClassLoader());
+        graph = (DominoGraph) p.readParcelable(DominoGraph.class.getClassLoader());
         target = p.readInt();
         midTrainTrainHeadPlaysAllowed = (p.readByte() == 1);
         pathsAreCurrent = (p.readByte() == 1);
-        longest = (DominoRun)p.readParcelable(DominoRun.class.getClassLoader());
-        mostPoints = (DominoRun)p.readParcelable(DominoRun.class.getClassLoader());
+        longest = (DominoRun) p.readParcelable(DominoRun.class.getClassLoader());
+        mostPoints = (DominoRun) p.readParcelable(DominoRun.class.getClassLoader());
         p.readList(tempList, null);
 
-        for(DominoRun d: tempList)
+        for (DominoRun d : tempList)
+        {
             mostPointRuns.add(d);
+        }
 
         tempList.clear();
         p.readList(tempList, null);
 
-        for(DominoRun d: tempList)
+        for (DominoRun d : tempList)
+        {
             longestRuns.add(d);
+        }
 
         currentRun = (DominoRun) p.readParcelable(DominoRun.class.getClassLoader());
     }
 
     //Getter's & setters for rule field.
-    public static boolean areMidTrainTrainHeadPlaysAllowed() {
+    public static boolean areMidTrainTrainHeadPlaysAllowed()
+    {
         return midTrainTrainHeadPlaysAllowed;
     }
 
-    public static void setMidTrainTrainHeadPlaysAllowed(boolean midTrainTrainHeadPlaysAllowed) {
+    public static void setMidTrainTrainHeadPlaysAllowed(boolean midTrainTrainHeadPlaysAllowed)
+    {
         RunController.midTrainTrainHeadPlaysAllowed = midTrainTrainHeadPlaysAllowed;
     }
 
 
     //recalculates longest/most point path. Uses brute force.
-    private void recalculatePaths() {
+    private void recalculatePaths()
+    {
         currentRun = new DominoRun();
         mostPoints = new DominoRun();
         longest = new DominoRun();
@@ -142,21 +155,26 @@ public class RunController implements Parcelable {
         currentRun.clear();
 
         //potential for rule change
-        if (!midTrainTrainHeadPlaysAllowed) {
+        if (!midTrainTrainHeadPlaysAllowed)
+        {
             //Start edges must be played on the the start.
             boolean startEdges[] = graph.dumpEdges(TRAIN_HEAD);
 
             //We blank out the start edges; we can only ever play one off of that one.
-            for (int i = 0; i <= MAX_EDGE; i++) {
+            for (int i = 0; i <= MAX_EDGE; i++)
+            {
                 graph.removeEdgePair(TRAIN_HEAD, i);
             }
 
             //We need to start on the main domino, so we go through each possible lead-off individually.
             //Remember, edges that map to the main domino must be played on the main domino.
-            if (target == TRAIN_HEAD) {
-                for (int i = MAX_EDGE; i >= 0; i--) {
+            if (target == TRAIN_HEAD)
+            {
+                for (int i = MAX_EDGE; i >= 0; i--)
+                {
                     //if we have a start edge we can play off of, try to play on it.
-                    if (startEdges[i]) {
+                    if (startEdges[i])
+                    {
                         currentRun.clear();
 
                         //if we have the starting double in-hand, add it to this path.
@@ -166,7 +184,8 @@ public class RunController implements Parcelable {
                         graph.addEdgePair(i, TRAIN_HEAD);
 
                         //early exit: if we find one that traverses whole of graph, we can exit early.
-                        if (traverse(TRAIN_HEAD)) {
+                        if (traverse(TRAIN_HEAD))
+                        {
                             graph.removeEdgePair(i, TRAIN_HEAD);
                             break;
                         }
@@ -175,29 +194,34 @@ public class RunController implements Parcelable {
                 }
             }
             //Normal case: we don't have to play off the main domino.
-            else {
+            else
+            {
                 currentRun.clear();
                 traverse(target);
             }
 
             //Re-add the edges to the main domino at the end.
-            for (int i = 0; i <= MAX_EDGE; i++) {
+            for (int i = 0; i <= MAX_EDGE; i++)
+            {
                 if (startEdges[i])
                     graph.addEdgePair(TRAIN_HEAD, i);
             }
         }
         //If mid-train trainHead plays area allowed, always default toward this.
-        else {
+        else
+        {
             currentRun.clear();
             traverse(target);
         }
 
         //simple heuristic to remove copy runs. Still will need more processing.
-        for (DominoRun run : mostPointRuns) {
+        for (DominoRun run : mostPointRuns)
+        {
             if (run.isShorterThan(mostPoints))
                 mostPoints = run.deepCopy();
         }
-        for (DominoRun run : longestRuns) {
+        for (DominoRun run : longestRuns)
+        {
             if (run.hasMorePointsThan(longest))
                 longest = run.deepCopy();
         }
@@ -215,17 +239,21 @@ public class RunController implements Parcelable {
     //Does a pseudo-DFS of the graph.
     //is O(e^n), where n is the number of dominoes in the graph.
     //TODO sorta fixed. works with up to 27 dominoes.
-    private boolean traverse(int startVertex) {
+    private boolean traverse(int startVertex)
+    {
         numVisited++;
         //the current run has ended! Calculate runs!
-        if (graph.getEdgeNum(startVertex) == 0) {
+        if (graph.getEdgeNum(startVertex) == 0)
+        {
             pathsFound++;
             //this run isn't useful in terms of points, skip it.
-            if (mostPoints.hasMorePointsThan(currentRun)) {
+            if (mostPoints.hasMorePointsThan(currentRun))
+            {
                 ;
             }
             //this run is so useful in terms of points, we have to get rid of the other runs.
-            else if (currentRun.hasMorePointsThan(mostPoints)) {
+            else if (currentRun.hasMorePointsThan(mostPoints))
+            {
                 mostPointRuns.clear();
                 mostPointRuns.add(currentRun.deepCopy());
                 mostPoints = currentRun.deepCopy();
@@ -233,10 +261,12 @@ public class RunController implements Parcelable {
                 repeatPointsFound = 0;
             }
             //this run has the same point value as the other runs.
-            else {
+            else
+            {
                 //We only want to get rid of the other run if this one is shorter.
                 // If it's shorter, it's getting rid of points faster (on average).
-                if (currentRun.isShorterThan(mostPoints)) {
+                if (currentRun.isShorterThan(mostPoints))
+                {
                     mostPointRuns.clear();
                     mostPointRuns.add(currentRun.deepCopy());
                     mostPoints = currentRun.deepCopy();
@@ -248,11 +278,13 @@ public class RunController implements Parcelable {
             }
 
             //this run isn't useful in terms of length, skip it.
-            if (longest.isLongerThan(currentRun)) {
+            if (longest.isLongerThan(currentRun))
+            {
                 ;
             }
             //this run is so useful in terms of length, we have to get rid of the other runs.
-            else if (currentRun.isLongerThan(longest)) {
+            else if (currentRun.isLongerThan(longest))
+            {
                 longestRuns.clear();
                 longestRuns.add(currentRun.deepCopy());
                 longest = currentRun.deepCopy();
@@ -265,10 +297,12 @@ public class RunController implements Parcelable {
                 repeatLensFound = 0;
             }
             //this run has the same length as the other runs.
-            else {
+            else
+            {
                 //We want to get rid of the other run if this one is worth more points.
                 // If it's worth more points, this one is getting rid of the points faster (on average).
-                if (currentRun.hasMorePointsThan(longest)) {
+                if (currentRun.hasMorePointsThan(longest))
+                {
                     longestRuns.clear();
                     longestRuns.add(currentRun.deepCopy());
                     longest = currentRun.deepCopy();
@@ -283,12 +317,14 @@ public class RunController implements Parcelable {
         }
 
         //we should always use the self-double first. There will never be a case where we shouldn't.
-        if (graph.hasEdge(startVertex, startVertex)) {
+        if (graph.hasEdge(startVertex, startVertex))
+        {
             graph.toggleEdgePair(startVertex, startVertex);
             currentRun.addDomino(new Domino(startVertex, startVertex));
 
             //traverse down the graph; if we visit the whole graph, return early.
-            if (traverse(startVertex)) {
+            if (traverse(startVertex))
+            {
                 graph.toggleEdgePair(startVertex, startVertex);
                 return true;
             }
@@ -298,13 +334,16 @@ public class RunController implements Parcelable {
         }
 
         //Look at the edges in this vertex.
-        for (int i = MAX_EDGE; i >= 0; i--) {
-            if (graph.hasEdge(startVertex, i)) {
+        for (int i = MAX_EDGE; i >= 0; i--)
+        {
+            if (graph.hasEdge(startVertex, i))
+            {
                 graph.toggleEdgePair(startVertex, i);
                 currentRun.addDomino(new Domino(startVertex, i));
 
                 //traverse down the graph; if we visit the whole graph, return early.
-                if (traverse(i)) {
+                if (traverse(i))
+                {
                     graph.toggleEdgePair(startVertex, i);
                     return true;
                 }
@@ -317,7 +356,8 @@ public class RunController implements Parcelable {
     }
 
     //returns the longest path, does pathfinding if necessary.
-    public DominoRun getLongestPath() {
+    public DominoRun getLongestPath()
+    {
         if (!pathsAreCurrent)
             recalculatePaths();
 
@@ -325,7 +365,8 @@ public class RunController implements Parcelable {
     }
 
     //Returns the most-points path, does pathfinding if necessary.
-    public DominoRun getMostPointPath() {
+    public DominoRun getMostPointPath()
+    {
         if (!pathsAreCurrent)
             recalculatePaths();
 
@@ -334,19 +375,24 @@ public class RunController implements Parcelable {
 
     /**
      * Adds another domino to this graph.
+     *
      * @param d The domino to add.
      */
-    public void addDomino(Domino d) {
+    public void addDomino(Domino d)
+    {
         if (d.getVal1() > MAX_EDGE || d.getVal2() > MAX_EDGE)
             throw new AssertionError("New domino is too large.");
 
         //re-set paths if the domino isn't already in the graph.
         //TODO: Add BFS to determine if we need to re-calculate or not
-        if (!graph.hasEdge(d.getVal1(), d.getVal2())) {
+        if (!graph.hasEdge(d.getVal1(), d.getVal2()))
+        {
             //double-domino check, worth the O(n) time search for a potential O(2^n) savings.
-            if (pathsAreCurrent && d.getVal1() == d.getVal2()) {
+            if (pathsAreCurrent && d.getVal1() == d.getVal2())
+            {
                 //checks the two runs for equality up till the match, and adds to run if so.
-                if (longest.addMidRunDouble(mostPoints, d.getVal1(), target)) {
+                if (longest.addMidRunDouble(mostPoints, d.getVal1(), target))
+                {
                     graph.addEdgePair(d.getVal1(), d.getVal1());
                     totalEdgeNum++;
                     return;
@@ -363,11 +409,11 @@ public class RunController implements Parcelable {
      * Re-adds a domino to this graph. Note: Performance-wise, there's really nothing we can do here,
      * as we don't know if the old value was in both longest and most points runs.
      *
-     * @param d The domino to re-add.
+     * @param d         The domino to re-add.
      * @param targetVal The new target value.
-     *
      */
-    public void reAddDomino(Domino d, int targetVal) {
+    public void reAddDomino(Domino d, int targetVal)
+    {
         if (d.getVal1() > MAX_EDGE || d.getVal2() > MAX_EDGE)
             throw new AssertionError("New domino is too large.");
 
@@ -380,11 +426,14 @@ public class RunController implements Parcelable {
 
     /**
      * In the case where we want to re-set runs to a previous save, this might save computation time.
+     *
      * @param oldRuns The pair of ordered runs (longest, mostPoints)
      */
-    public void reSetRuns(Pair<DominoRun, DominoRun> oldRuns) {
+    public void reSetRuns(Pair<DominoRun, DominoRun> oldRuns)
+    {
         //skip if we've already re-calculated, or we didn't have the runs at the time.
-        if (pathsAreCurrent || oldRuns == null) {
+        if (pathsAreCurrent || oldRuns == null)
+        {
             return;
         }
 
@@ -397,31 +446,39 @@ public class RunController implements Parcelable {
     /**
      * Removes a domino in this graph.
      * Will only throw exceptions when the domino is larger than the maximum domino.
+     *
      * @param d The domino to remove.
      */
-    public void removeDomino(Domino d) {
+    public void removeDomino(Domino d)
+    {
         if (d.getVal1() > MAX_EDGE || d.getVal2() > MAX_EDGE)
             throw new AssertionError("Tried to delete domino larger than max domino.");
 
         //re-set paths if we're deleting something in the graph
-        if (graph.hasEdge(d.getVal1(), d.getVal2())) {
+        if (graph.hasEdge(d.getVal1(), d.getVal2()))
+        {
             //check to see if we can just de-queue the front of the pre-calculated runs.
-            if (pathsAreCurrent && d.compareTo(getMostPointPath().peekFront())) {
+            if (pathsAreCurrent && d.compareTo(getMostPointPath().peekFront()))
+            {
                 dequeueMostPoints();
             }
-            else if (pathsAreCurrent && d.compareTo(getLongestPath().peekFront())) {
+            else if (pathsAreCurrent && d.compareTo(getLongestPath().peekFront()))
+            {
                 dequeueLongest();
             }
             //since we can't just de-queue the front, we have to delete the value and re-calculate.
-            else {
+            else
+            {
                 pathsAreCurrent = false;
                 totalEdgeNum--;
 
                 //check to make sure we didn't delete the target, and if so, re-adjust target.
-                if (d.getVal1() == target) {
+                if (d.getVal1() == target)
+                {
                     target = d.getVal2();
                 }
-                else if (d.getVal2() == target) {
+                else if (d.getVal2() == target)
+                {
                     target = d.getVal1();
                 }
 
@@ -432,9 +489,11 @@ public class RunController implements Parcelable {
 
     /**
      * Dequeues the longest front, has to re-calculate for the most point path if it wasn't the other path's front.
+     *
      * @return The previous front of the longest list.
      */
-    public Domino dequeueLongest() {
+    public Domino dequeueLongest()
+    {
         Domino retVal;
 
         //get the front domino
@@ -454,9 +513,11 @@ public class RunController implements Parcelable {
 
     /**
      * Dequeues the most point front, has to re-calculate for the longest path if it wasn't the other path's front.
+     *
      * @return The previous front of the most point path.
      */
-    public Domino dequeueMostPoints() {
+    public Domino dequeueMostPoints()
+    {
         Domino retVal;
 
         //get the front domino
@@ -476,10 +537,13 @@ public class RunController implements Parcelable {
 
     /**
      * Causes this train to use a new head.
+     *
      * @param head The new head to use. Ignores if no change (same head).
      */
-    public void setTrainHead(int head){
-        if (head != target) {
+    public void setTrainHead(int head)
+    {
+        if (head != target)
+        {
             target = head;
             pathsAreCurrent = false;
         }
@@ -487,19 +551,23 @@ public class RunController implements Parcelable {
 
     /**
      * Let's everyone know if the paths in this runcontroller are up-to-date.
+     *
      * @return Returns true if the paths are up to date, false if not.
      */
-    public boolean isUpToDate() {
+    public boolean isUpToDate()
+    {
         return pathsAreCurrent;
     }
 
     @Override
-    public int describeContents() {
+    public int describeContents()
+    {
         return 0;
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    public void writeToParcel(Parcel dest, int flags)
+    {
 
 
         dest.writeInt(MAX_EDGE);
@@ -513,27 +581,34 @@ public class RunController implements Parcelable {
         dest.writeParcelable(mostPoints, 0);
 
         ArrayList<DominoRun> listTemp = new ArrayList<>();
-        for(DominoRun d: mostPointRuns)
+        for (DominoRun d : mostPointRuns)
+        {
             listTemp.add(d);
+        }
 
         dest.writeList(listTemp);
 
         listTemp.clear();
-        for(DominoRun d: longestRuns)
+        for (DominoRun d : longestRuns)
+        {
             listTemp.add(d);
+        }
 
         dest.writeList(listTemp);
         dest.writeParcelable(currentRun, 0);
     }
 
-    public static Parcelable.Creator CREATOR = new Parcelable.Creator(){
+    public static Parcelable.Creator CREATOR = new Parcelable.Creator()
+    {
         @Override
-        public RunController createFromParcel(Parcel source) {
+        public RunController createFromParcel(Parcel source)
+        {
             return new RunController(source);
         }
 
         @Override
-        public Object[] newArray(int size) {
+        public Object[] newArray(int size)
+        {
             return new RunController[size];
         }
     };

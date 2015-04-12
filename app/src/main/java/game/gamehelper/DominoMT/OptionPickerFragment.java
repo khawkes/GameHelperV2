@@ -29,9 +29,11 @@ import game.gamehelper.R;
 /**
  * Created by Mark Andrews on 3/24/2015.
  */
-public class OptionPickerFragment extends DialogFragment{
+public class OptionPickerFragment extends DialogFragment
+{
 
-    public interface OptionPickerListener {
+    public interface OptionPickerListener
+    {
         public void setOption(int option, int caller);
     }
 
@@ -40,11 +42,15 @@ public class OptionPickerFragment extends DialogFragment{
     NumberPicker optionPicker;
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Activity activity)
+    {
         super.onAttach(activity);
-        try {
+        try
+        {
             mListener = (OptionPickerListener) activity;
-        } catch ( ClassCastException e){
+        }
+        catch (ClassCastException e)
+        {
             throw new ClassCastException(getActivity().toString()
                     + " must implement interface OptionPickerListener");
         }
@@ -52,11 +58,13 @@ public class OptionPickerFragment extends DialogFragment{
 
     @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public Dialog onCreateDialog(Bundle savedInstanceState)
+    {
         Bundle b = getArguments();
         final int option;
 
-        if(b == null){
+        if (b == null)
+        {
             Log.w("OptionPickerFragment", "no arguments found, integer required for picker type");
             dismiss();
         }
@@ -65,15 +73,16 @@ public class OptionPickerFragment extends DialogFragment{
         optionPickerView = View.inflate(getActivity(), R.layout.picker_layout, null);
 
         //retrieve pickers
-        optionPicker = (NumberPicker)optionPickerView.findViewById(R.id.new_game_picker);
+        optionPicker = (NumberPicker) optionPickerView.findViewById(R.id.new_game_picker);
         optionPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
-        switch (option){
+        switch (option)
+        {
             case NewGameMT.SET_SELECT_OPTION:
                 //Picker for domino set
                 optionPicker.setMinValue(0);
                 optionPicker.setMaxValue(3);
-                optionPicker.setDisplayedValues(new String[]{"Double Nine", "Double Twelve", "Double Fifteen", "Double Eighteen"});
+                optionPicker.setDisplayedValues(new String[] {"Double Nine", "Double Twelve", "Double Fifteen", "Double Eighteen"});
                 break;
             case NewGameMT.PLAYER_SELECT_OPTION:
                 //Picker for player number
@@ -84,7 +93,7 @@ public class OptionPickerFragment extends DialogFragment{
                 //picker for rule type
                 optionPicker.setMinValue(0);
                 optionPicker.setMaxValue(1);
-                optionPicker.setDisplayedValues(new String[]{"Traditional", "Custom"});
+                optionPicker.setDisplayedValues(new String[] {"Traditional", "Custom"});
                 break;
             default:
                 Log.w("OptionPickerFragment", "Unknown option type found: " + option);
@@ -94,15 +103,19 @@ public class OptionPickerFragment extends DialogFragment{
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(optionPickerView);
 
-        builder.setPositiveButton(getString(R.string.done), new DialogInterface.OnClickListener(){
+        builder.setPositiveButton(getString(R.string.done), new DialogInterface.OnClickListener()
+        {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int which)
+            {
                 //return option selected and caller
                 mListener.setOption(optionPicker.getValue(), option);
             }
-        }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+        }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener()
+        {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int which)
+            {
                 //do nothing
             }
         });

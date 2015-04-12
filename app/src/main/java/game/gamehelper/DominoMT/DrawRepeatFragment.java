@@ -38,17 +38,21 @@ import game.gamehelper.R;
  *
  * TODO make parent class to minimize duplicate code in DrawFragment and EndSelectFragment
  */
-public class DrawRepeatFragment extends DialogFragment {
+public class DrawRepeatFragment extends DialogFragment
+{
 
-    public interface DrawListener {
+    public interface DrawListener
+    {
         public void onDrawRepeatClose(Domino added);
+
         public void onClose(int var1, int var2);
     }
 
-    /** @param DIALOG_SIZE_COMPENSATION adjust for dialog window being smaller than the specified size
-     *  @param PAGE_MARGIN_PERCENT percent of the screen width to be used for side margins
-     *  @param PORTRAIT_COLUMNS columns for portrait mode
-     *  @param LANDSCAPE_COLUMNS = columns for landscape mode
+    /**
+     * @param DIALOG_SIZE_COMPENSATION adjust for dialog window being smaller than the specified size
+     * @param PAGE_MARGIN_PERCENT percent of the screen width to be used for side margins
+     * @param PORTRAIT_COLUMNS columns for portrait mode
+     * @param LANDSCAPE_COLUMNS = columns for landscape mode
      */
     private static final float DIALOG_SIZE_COMPENSATION = 1.1f;
     private final float PAGE_MARGIN_PERCENT = 0.1f;
@@ -74,18 +78,23 @@ public class DrawRepeatFragment extends DialogFragment {
     Point size = new Point();
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Activity activity)
+    {
         super.onAttach(activity);
-        try{
+        try
+        {
             mListener = (DrawListener) activity;
-        }catch (ClassCastException e) {
+        }
+        catch (ClassCastException e)
+        {
             throw new ClassCastException(getActivity().toString()
-            + " must implement interface DrawListener");
+                    + " must implement interface DrawListener");
         }
     }
 
     @Override
-    public void onStart() {
+    public void onStart()
+    {
         super.onStart();
 
         if (getDialog() == null)
@@ -93,13 +102,14 @@ public class DrawRepeatFragment extends DialogFragment {
 
         //set dialog window width
         WindowManager.LayoutParams params = getDialog().getWindow().getAttributes();
-        params.width = (int) (dialogWidth*DIALOG_SIZE_COMPENSATION);
+        params.width = (int) (dialogWidth * DIALOG_SIZE_COMPENSATION);
         getDialog().getWindow().setAttributes(params);
     }
 
     @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public Dialog onCreateDialog(Bundle savedInstanceState)
+    {
         int marginSize;
         Bundle b = getArguments();
         Clicker clickListener = new Clicker();
@@ -113,7 +123,7 @@ public class DrawRepeatFragment extends DialogFragment {
         //get the size of the display and calculate dialog size
         display = getActivity().getWindowManager().getDefaultDisplay();
         display.getSize(size);
-        marginSize = (int) (PAGE_MARGIN_PERCENT*size.x*2);
+        marginSize = (int) (PAGE_MARGIN_PERCENT * size.x * 2);
         dialogWidth = size.x - (marginSize);
 
         //get columns based on screen orientation
@@ -124,30 +134,33 @@ public class DrawRepeatFragment extends DialogFragment {
         bitmapSize = dialogWidth / numColumns;
 
         //get imageview from top left of layout and place the domino background
-        imageView = (ImageView)drawView.findViewById(R.id.imageViewBG);
+        imageView = (ImageView) drawView.findViewById(R.id.imageViewBG);
         imageView.setImageResource(R.drawable.dom_bg);
 
         //get sides
-        leftSide = (ImageView)drawView.findViewById(R.id.leftSide);
-        rightSide = (ImageView)drawView.findViewById(R.id.rightSide);
+        leftSide = (ImageView) drawView.findViewById(R.id.leftSide);
+        rightSide = (ImageView) drawView.findViewById(R.id.rightSide);
 
         leftSide.setOnClickListener(clickListener);
         rightSide.setOnClickListener(clickListener);
 
         //retrieve gridview from layout, set adapter
-        gridView = (GridView)drawView.findViewById(R.id.gridView);
-        bitmapAdapter = new BitmapAdapter(getActivity(), Domino.domIdList, deckMax+1);
+        gridView = (GridView) drawView.findViewById(R.id.gridView);
+        bitmapAdapter = new BitmapAdapter(getActivity(), Domino.domIdList, deckMax + 1);
         bitmapAdapter.setImageSize(bitmapSize);
         gridView.setAdapter(bitmapAdapter);
         gridView.setNumColumns(numColumns);
 
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
                 //mark piece, toggle side of preview domino
 
-                switch(currentSide) {
+                switch (currentSide)
+                {
                     default:
                     case 0:
                         var1 = position;
@@ -166,39 +179,49 @@ public class DrawRepeatFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(drawView);
 
-        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //Add domino to hand
-                        mListener.onDrawRepeatClose(new Domino(var1, var2));
-                    }
-                })
-                .setNeutralButton("Finish", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //Add domino to hand
-                        mListener.onClose(var1, var2);
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //nothing, exit out!
-                    }
-                });
+        builder.setPositiveButton("Add", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                //Add domino to hand
+                mListener.onDrawRepeatClose(new Domino(var1, var2));
+            }
+        })
+               .setNeutralButton("Finish", new DialogInterface.OnClickListener()
+               {
+                   @Override
+                   public void onClick(DialogInterface dialog, int which)
+                   {
+                       //Add domino to hand
+                       mListener.onClose(var1, var2);
+                   }
+               })
+               .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+               {
+                   @Override
+                   public void onClick(DialogInterface dialog, int which)
+                   {
+                       //nothing, exit out!
+                   }
+               });
         return builder.create();
     }
 
-    public class Clicker implements View.OnClickListener {
+    public class Clicker implements View.OnClickListener
+    {
         @Override
-        public void onClick(View v) {
+        public void onClick(View v)
+        {
 
-            if(v == leftSide ) {
+            if (v == leftSide)
+            {
                 var1 = 0;
                 leftSide.setImageDrawable(null);
                 currentSide = 0;
             }
-            else {
+            else
+            {
                 var2 = 0;
                 rightSide.setImageDrawable(null);
                 currentSide = 1;

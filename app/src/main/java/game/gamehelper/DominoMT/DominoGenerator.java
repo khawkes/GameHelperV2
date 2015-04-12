@@ -24,25 +24,29 @@ import game.gamehelper.R;
 /**
  * Created by Mark Andrews on 3/26/2015.
  */
-public class DominoGenerator extends AsyncTask<Context, Integer, Integer> {
+public class DominoGenerator extends AsyncTask<Context, Integer, Integer>
+{
     @Override
-    protected Integer doInBackground(Context[] params) {
+    protected Integer doInBackground(Context[] params)
+    {
         Bitmap bitmap = null;
 
-        for(int i = 0 ; i <= 16 ; i++){
-            for(int j = 0 ; j <= 16 ; j++){
-                if(FileHandler.checkFile(i*17 + j))
+        for (int i = 0; i <= 16; i++)
+        {
+            for (int j = 0; j <= 16; j++)
+            {
+                if (FileHandler.checkFile(i * 17 + j))
                     continue;
-                bitmap = buildDomino(i,j, params[0]);
-                FileHandler.storeDomino(bitmap, (i*17 + j), params[0]);
+                bitmap = buildDomino(i, j, params[0]);
+                FileHandler.storeDomino(bitmap, (i * 17 + j), params[0]);
             }
         }
         return null;
     }
 
     //Load background and write each side on top
-    public Bitmap buildDomino(int val1, int val2, Context context){
-
+    public Bitmap buildDomino(int val1, int val2, Context context)
+    {
         Bitmap side1;
         Bitmap side2;
         Bitmap bg;

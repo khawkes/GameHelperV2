@@ -27,22 +27,25 @@ import java.io.OutputStream;
 /**
  * Created by Mark Andrews on 3/26/2015.
  */
-public class FileHandler {
+public class FileHandler
+{
     static String directoryName = "/GameHelper/";
     static String folder = "dominoes";
 
-    public static void storeDomino(Bitmap b, int name, Context context){
+    public static void storeDomino(Bitmap b, int name, Context context)
+    {
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() +
                 directoryName + folder;
 
-        try {
+        try
+        {
             File dir = new File(path);
             if (!dir.exists())
                 dir.mkdirs();
 
             OutputStream fOut = null;
             File file = new File(path, "" + name + ".png");
-            if( file.exists())
+            if (file.exists())
                 return;
             file.createNewFile();
             fOut = new FileOutputStream(file);
@@ -54,39 +57,51 @@ public class FileHandler {
             MediaStore.Images.Media.insertImage(context.getContentResolver(), file.getAbsolutePath(),
                     file.getName(), file.getName());
 
-        } catch (Exception e){
+        }
+        catch (Exception e)
+        {
             Log.e("FileHandler", e.getMessage());
 
         }
     }
 
-    public static boolean checkSd(){
+    public static boolean checkSd()
+    {
         boolean externalStorageAvailable = false;
         String state = Environment.getExternalStorageState();
 
-        if(Environment.MEDIA_MOUNTED.equals(state)) {
+        if (Environment.MEDIA_MOUNTED.equals(state))
+        {
             externalStorageAvailable = true;
-        } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)){
+        }
+        else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state))
+        {
             externalStorageAvailable = true;
         }
         return externalStorageAvailable;
     }
 
-    public static Bitmap loadDomino(int name){
+    public static Bitmap loadDomino(int name)
+    {
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() +
                 directoryName + folder;
         Bitmap bitmap = null;
-        if (checkSd()) {
-            try {
+        if (checkSd())
+        {
+            try
+            {
                 bitmap = BitmapFactory.decodeFile(path + "/" + name + ".png");
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 Log.e("FileHandler", e.getMessage());
             }
         }
         return bitmap;
     }
 
-    public static boolean checkFile(int name){
+    public static boolean checkFile(int name)
+    {
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() +
                 directoryName + folder;
         File file = new File(path + "/" + name + ".png");

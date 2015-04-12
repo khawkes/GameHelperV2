@@ -16,9 +16,9 @@ package game.gamehelper;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -26,8 +26,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.HorizontalScrollView;
-import android.widget.TableRow;
 import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TableRow.LayoutParams;
 import android.widget.TextView;
 
@@ -85,7 +85,8 @@ public class ScoreBoard extends ActionBarActivity implements
     static final int RULES_EXIT = 88;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         Bundle b = getIntent().getExtras();
         screenWidth = getResources().getDisplayMetrics().widthPixels;
@@ -97,13 +98,15 @@ public class ScoreBoard extends ActionBarActivity implements
         headerHeight = (int) (screenHeight * headerHeightPercent);
 
         //read lists from MainWindow
-        if (b != null) {
+        if (b != null)
+        {
             setList = b.getParcelableArrayList("setList");
             playerList = b.getStringArrayList("playerList");
         }
 
         //create lists if empty
-        if (setList == null) {
+        if (setList == null)
+        {
             setList = new ArrayList<GameSet>();
             setList.add(new GameSet());
             setList.get(0).addPlayer(0);
@@ -113,8 +116,8 @@ public class ScoreBoard extends ActionBarActivity implements
         createScoreTable();
     }
 
-    private void createScoreTable(){
-
+    private void createScoreTable()
+    {
         setContentView(R.layout.activity_score_board);
         LayoutParams tableParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
@@ -135,8 +138,9 @@ public class ScoreBoard extends ActionBarActivity implements
         row.setBackground(row.getResources().getDrawable(R.drawable.table_label));
 
         setLabelListView = new LinkedList<TextView>();
-        for(int i = 1 ; i <= setList.size() ; i++ ) {
-            TextView set = makeTableRowWithText(getString(R.string.set) + i, setWidth, headerHeight, SET_FIELD, i-1, 0);
+        for (int i = 1; i <= setList.size(); i++)
+        {
+            TextView set = makeTableRowWithText(getString(R.string.set) + i, setWidth, headerHeight, SET_FIELD, i - 1, 0);
             setLabelListView.add(set);
             row.addView(set);
         }
@@ -165,7 +169,8 @@ public class ScoreBoard extends ActionBarActivity implements
         playerListView = new LinkedList<TextView>();
         totalListView = new LinkedList<TextView>();
 
-        for (int i = 0; i < playerList.size() ; i++) {
+        for (int i = 0; i < playerList.size(); i++)
+        {
             //player name field
             TextView fixedView = makeTableRowWithText(playerList.get(i), playerWidth, rowHeight, PLAYER_FIELD, 0, i);
             fixedView.setBackground(fixedView.getResources().getDrawable(R.drawable.table_label));
@@ -180,7 +185,8 @@ public class ScoreBoard extends ActionBarActivity implements
 
             //fill column with scores
             LinkedList<TextView> dataColumn = new LinkedList<TextView>();
-            for(int j = 0 ; j < setList.size() ; j++) {
+            for (int j = 0; j < setList.size(); j++)
+            {
                 TextView data = makeTableRowWithText("" + setList.get(j).getScore(i), setWidth, rowHeight, DATA_FIELD, j, i);
                 dataColumn.add(data);
                 row.setBackground(row.getResources().getDrawable(R.drawable.table_data));
@@ -191,7 +197,7 @@ public class ScoreBoard extends ActionBarActivity implements
             scrollableData.addView(row);
 
             //total value field
-            TextView fixedViewT = makeTableRowWithText( "" + getPlayerTotal(i), setWidth, rowHeight, TOTAL_FIELD, -1, i);
+            TextView fixedViewT = makeTableRowWithText("" + getPlayerTotal(i), setWidth, rowHeight, TOTAL_FIELD, -1, i);
             fixedViewT.setBackground(fixedViewT.getResources().getDrawable(R.drawable.table_total_data));
             totalListView.add(fixedViewT);
             totalColumn.addView(fixedViewT);
@@ -199,12 +205,14 @@ public class ScoreBoard extends ActionBarActivity implements
         }
 
         //Lock data horizontal scroll to header horizontal scroll
-        scrollHeader = (HorizontalScrollView)findViewById(R.id.scroll_header);
-        scrollData = (HorizontalScrollView)findViewById(R.id.scroll_data);
+        scrollHeader = (HorizontalScrollView) findViewById(R.id.scroll_header);
+        scrollData = (HorizontalScrollView) findViewById(R.id.scroll_data);
 
-        scrollData.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+        scrollData.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener()
+        {
             @Override
-            public void onScrollChanged() {
+            public void onScrollChanged()
+            {
                 scrollHeader.setScrollX(scrollData.getScrollX());
             }
         });
@@ -212,7 +220,8 @@ public class ScoreBoard extends ActionBarActivity implements
     }
 
     public TextView makeTableRowWithText(String text, int width, int fixedHeightInPixels,
-                                         final int fieldType, final int x, final int y){
+            final int fieldType, final int x, final int y)
+    {
         //create text to set in table
 
 //        int screenWidth = getResources().getDisplayMetrics().widthPixels;
@@ -223,18 +232,22 @@ public class ScoreBoard extends ActionBarActivity implements
 //        recyclableTextView.setWidth(widthInPercentOfScreenWidth * screenWidth / 100);
         recyclableTextView.setWidth(width);
         recyclableTextView.setHeight(fixedHeightInPixels);
-        if(fieldType != PLAYER_FIELD) {
+        if (fieldType != PLAYER_FIELD)
+        {
             recyclableTextView.setGravity(Gravity.CENTER);
             recyclableTextView.setTypeface(Typeface.SERIF);
         }
-        else {
+        else
+        {
             recyclableTextView.setGravity(Gravity.CENTER_VERTICAL);
             recyclableTextView.setTypeface(Typeface.SERIF, Typeface.BOLD_ITALIC);
         }
         //make text clickable
-        recyclableTextView.setOnClickListener(new View.OnClickListener() {
+        recyclableTextView.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 selectedField = (TextView) v;
                 fieldX = x;
                 fieldY = y;
@@ -245,10 +258,12 @@ public class ScoreBoard extends ActionBarActivity implements
                 b.putString("field", selectedField.getText().toString());
                 b.putInt("fieldType", fieldType);
 
-                switch (fieldType) {
+                switch (fieldType)
+                {
 
                     case PLAYER_FIELD:
-                        switch(mode){
+                        switch (mode)
+                        {
                             case MODE_ADD:
                                 //add player
                                 newFragment = new FieldChangeFragment();
@@ -258,7 +273,8 @@ public class ScoreBoard extends ActionBarActivity implements
                                 return;
                             case MODE_REMOVE:
                                 //remove player
-                                if(playerList.size() > 1){
+                                if (playerList.size() > 1)
+                                {
                                     b = new Bundle();
                                     b.putString("positive", getString(R.string.remove));
                                     b.putString("negative", getString(R.string.cancel));
@@ -276,14 +292,15 @@ public class ScoreBoard extends ActionBarActivity implements
                                 //edit name
                                 newFragment = new FieldChangeFragment();
                                 newFragment.setArguments(b);
-                                newFragment.show(getSupportFragmentManager(),getString(R.string.editField));
+                                newFragment.show(getSupportFragmentManager(), getString(R.string.editField));
                                 return;
                             default:
                                 //do nothing
                                 return;
                         }
                     case SET_FIELD:
-                        switch (mode) {
+                        switch (mode)
+                        {
                             case MODE_ADD:
                                 //add column
                                 b = new Bundle();
@@ -316,14 +333,16 @@ public class ScoreBoard extends ActionBarActivity implements
                         }
 
                     case DATA_FIELD:
-                        if(mode == MODE_EDIT) {
+                        if (mode == MODE_EDIT)
+                        {
                             //edit score
                             newFragment = new FieldChangeFragment();
                             newFragment.setArguments(b);
                             newFragment.show(getSupportFragmentManager(), getString(R.string.editField));
                         }
 
-                        else if(mode == MODE_NORMAL){
+                        else if (mode == MODE_NORMAL)
+                        {
                             //TODO display the selected set's hand?
                         }
 
@@ -345,7 +364,8 @@ public class ScoreBoard extends ActionBarActivity implements
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_score_board, menu);
         this.menu = menu;
@@ -353,41 +373,52 @@ public class ScoreBoard extends ActionBarActivity implements
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        switch (item.getItemId()){
+        switch (item.getItemId())
+        {
             //toggle icon state and icons
 
             case R.id.action_add:
-                if (mode != MODE_ADD) {
+                if (mode != MODE_ADD)
+                {
                     mode = MODE_ADD;
                     resetIconState();
                     menu.getItem(MODE_ADD).setIcon(R.mipmap.ic_action_add_active);
-                } else {
+                }
+                else
+                {
                     mode = MODE_NORMAL;
                     resetIconState();
                 }
                 break;
 
             case R.id.action_remove:
-                if (mode != MODE_REMOVE) {
+                if (mode != MODE_REMOVE)
+                {
                     mode = MODE_REMOVE;
                     resetIconState();
                     menu.getItem(MODE_REMOVE).setIcon(R.mipmap.ic_action_remove_active);
-                } else {
+                }
+                else
+                {
                     mode = MODE_NORMAL;
                     resetIconState();
                 }
                 break;
 
             case R.id.action_edit:
-                if (mode != MODE_EDIT) {
+                if (mode != MODE_EDIT)
+                {
                     mode = MODE_EDIT;
                     resetIconState();
                     menu.getItem(MODE_EDIT).setIcon(R.mipmap.ic_action_edit_active);
-                } else {
+                }
+                else
+                {
                     mode = MODE_NORMAL;
                     resetIconState();
                 }
@@ -399,7 +430,7 @@ public class ScoreBoard extends ActionBarActivity implements
 
             case R.id.menu_rules:
             {
-                startActivityForResult(new Intent(ScoreBoard.this, RulesActivity.class),RULES_EXIT);
+                startActivityForResult(new Intent(ScoreBoard.this, RulesActivity.class), RULES_EXIT);
 
                 break;
             }
@@ -419,45 +450,57 @@ public class ScoreBoard extends ActionBarActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    private void resetIconState(){
+    private void resetIconState()
+    {
         //set action bar icons to default state
         menu.getItem(MODE_ADD).setIcon(R.mipmap.ic_action_add);
         menu.getItem(MODE_REMOVE).setIcon(R.mipmap.ic_action_remove);
         menu.getItem(MODE_EDIT).setIcon(R.mipmap.ic_action_edit);
     }
 
-    public int getPlayerTotal(int location){
+    public int getPlayerTotal(int location)
+    {
         //calculate total points for a row
         int total = 0;
-        for(GameSet a : setList){
+        for (GameSet a : setList)
+        {
             total += a.getScore(location);
         }
         return total;
     }
 
-    private void recalculateTotal(int x, int y) {
+    private void recalculateTotal(int x, int y)
+    {
         //recalculate total column after data change
         totalListView.get(y).setText("" + getPlayerTotal(y));
     }
 
     @Override
-    public void onDialogPositiveClick(String tag) {
+    public void onDialogPositiveClick(String tag)
+    {
         //from ConfirmationFragment (delete row/column, add column)
 
-        if(tag.compareTo(getString(R.string.deleteRow)) == 0){
+        if (tag.compareTo(getString(R.string.deleteRow)) == 0)
+        {
             //remove player
             playerList.remove(fieldY);
-            for(GameSet a: setList)
+            for (GameSet a : setList)
+            {
                 a.deletePlayer(fieldY);
+            }
         }
-        else if(tag.compareTo(getString(R.string.deleteColumn)) == 0){
+        else if (tag.compareTo(getString(R.string.deleteColumn)) == 0)
+        {
             //remove set
             setList.remove(fieldX);
         }
-        else if(tag.compareTo(getString(R.string.addColumn)) == 0){
+        else if (tag.compareTo(getString(R.string.addColumn)) == 0)
+        {
             GameSet newSet = new GameSet();
-            for(int i = 0 ; i < playerList.size() ; i++)
+            for (int i = 0; i < playerList.size(); i++)
+            {
                 newSet.addPlayer();
+            }
             setList.add(newSet);
         }
         //redraw table
@@ -475,40 +518,50 @@ public class ScoreBoard extends ActionBarActivity implements
     }
 
     @Override
-    public void onDialogNegativeClick(String s) {
+    public void onDialogNegativeClick(String s)
+    {
         //nothing, blank override.
     }
 
     @Override
-    public void onDialogPositiveClick(String s, int fieldType) {
+    public void onDialogPositiveClick(String s, int fieldType)
+    {
         //from FieldChangeFragment
         int score = 0;
 
-        switch(fieldType){
+        switch (fieldType)
+        {
             case PLAYER_FIELD:
 
-                if(mode == MODE_EDIT) {
+                if (mode == MODE_EDIT)
+                {
                     //change name in listarray and textview object
                     playerList.remove(fieldY);
                     playerList.add(fieldY, s);
                     playerListView.get(fieldY).setText(s);
                 }
 
-                else if(mode == MODE_ADD) {
+                else if (mode == MODE_ADD)
+                {
                     //create new player and redraw table
                     //TODO possible memory leak?
                     playerList.add(s);
-                    for(GameSet a: setList)
+                    for (GameSet a : setList)
+                    {
                         a.addPlayer();
+                    }
                     createScoreTable();
                 }
                 break;
 
             case DATA_FIELD:
                 //change score in listarray and textview object if valid
-                try{
+                try
+                {
                     score = Integer.parseInt(s);
-                } catch (NumberFormatException e){
+                }
+                catch (NumberFormatException e)
+                {
                     //don't change field if non numbers present
                     return;
                 }
@@ -537,7 +590,8 @@ public class ScoreBoard extends ActionBarActivity implements
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(Bundle outState)
+    {
         Log.w("ScoreBoard", "onSaveInstanceState called");
         outState.putParcelableArrayList("setList", setList);
         outState.putSerializable("playerList", playerList);
@@ -546,19 +600,22 @@ public class ScoreBoard extends ActionBarActivity implements
     }
 
     @Override
-    protected void onPause() {
+    protected void onPause()
+    {
         Log.w("ScoreBoard", "onPause called");
         super.onPause();
     }
 
     @Override
-    protected void onStop() {
+    protected void onStop()
+    {
         Log.w("ScoreBoard", "onStop called");
         super.onStop();
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onDestroy()
+    {
         Log.w("ScoreBoard", "onDestroy called");
         super.onDestroy();
     }

@@ -21,7 +21,6 @@ import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,10 +39,11 @@ public class RulesActivity extends ActionBarActivity
         setContentView(R.layout.game_rules);
 
         // Set up so that formatted text can be in the help_page_intro text and so that html links are handled.
-        TextView textView = (TextView) findViewById (R.id.help_page_intro);
-        if (textView != null) {
-            textView.setMovementMethod ( LinkMovementMethod.getInstance());
-            textView.setText ( Html.fromHtml( getString( R.string.help_page_intro_html ) ));
+        TextView textView = (TextView) findViewById(R.id.help_page_intro);
+        if (textView != null)
+        {
+            textView.setMovementMethod(LinkMovementMethod.getInstance());
+            textView.setText(Html.fromHtml(getString(R.string.help_page_intro_html)));
         }
 
     }
@@ -68,10 +68,10 @@ public class RulesActivity extends ActionBarActivity
         switch (item.getItemId())
         {
 
-              case R.id.menu_exit:
+            case R.id.menu_exit:
             {
                 finish();
-                System.exit( 0 );
+                System.exit(0);
                 break;
             }
 
@@ -79,7 +79,7 @@ public class RulesActivity extends ActionBarActivity
 
         }
 
-        return( super.onOptionsItemSelected(item) );
+        return (super.onOptionsItemSelected(item));
     }
 
     /**
@@ -87,50 +87,53 @@ public class RulesActivity extends ActionBarActivity
      * Start an activity to display the help text for the topic selected.
      */
 
-    public void onClickHelp (View v)
+    public void onClickHelp(View v)
     {
-        int id = v.getId ();
+        int id = v.getId();
         int textId = -1;
-        switch (id) {
-            case R.id.help_button1 :
+        switch (id)
+        {
+            case R.id.help_button1:
                 textId = R.string.topic_section1;
                 break;
-            case R.id.help_button2 :
+            case R.id.help_button2:
                 textId = R.string.topic_section2;
                 break;
             default:
                 break;
         }
 
-        if (textId >= 0) startInfoActivity (textId);
-        else toast ("Detailed Help for that topic is not available.", true);
+        if (textId >= 0) startInfoActivity(textId);
+        else toast("Detailed Help for that topic is not available.", true);
     }
 
     /**
      * Start a TopicActivity and show the text indicated by argument 1.
      */
 
-    public void startInfoActivity (int textId)
+    public void startInfoActivity(int textId)
     {
-        if (textId >= 0) {
+        if (textId >= 0)
+        {
             Intent intent = (new Intent(this, RuleDetailActivity.class));
-            intent.putExtra (ARG_TEXT_ID, textId);
-            startActivity (intent);
-        } else {
-            toast ("No information is available for topic: " + textId, true);
+            intent.putExtra(ARG_TEXT_ID, textId);
+            startActivity(intent);
+        }
+        else
+        {
+            toast("No information is available for topic: " + textId, true);
         }
     } // end Activity
 
     /**
      * Show a string on the screen via Toast.
-
      */
 
-    public void toast (String msg, boolean longLength)
+    public void toast(String msg, boolean longLength)
     {
-        Toast.makeText (getApplicationContext(), msg,
+        Toast.makeText(getApplicationContext(), msg,
                 (longLength ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT)
-        ).show ();
+        ).show();
     }
 
 }

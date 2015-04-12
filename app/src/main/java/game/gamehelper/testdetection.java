@@ -29,22 +29,23 @@ import game.gamehelper.DominoMT.DetectedShape;
 /**
  * Created by Mark Andrews on 4/11/2015.
  */
-public class testdetection {
+public class testdetection
+{
     private final int picWidth;
     private final int picHeight;
     private final double PIE = 3.14159;
 
-    int    [][]pic;
-    double [][]outpicx;
-    double [][]outpicy;
-    int    []histogram;
-    double [][]maskx;
-    double [][]masky;
-    double [][]ival;
-    double [][]ival2;
-    double [][]peaks;
-    double [][]finalPic;
-    double [][]conv;
+    int[][] pic;
+    double[][] outpicx;
+    double[][] outpicy;
+    int[] histogram;
+    double[][] maskx;
+    double[][] masky;
+    double[][] ival;
+    double[][] ival2;
+    double[][] peaks;
+    double[][] finalPic;
+    double[][] conv;
 
     public Bitmap bwfile;
     public Bitmap histogramfile;
@@ -52,10 +53,10 @@ public class testdetection {
     public Bitmap finalfile;
     public Bitmap shapesfile;
     public DetectedShape rectangle;
-    
+
     //size of mask for performing gaussian blur
-    public int  MAXMASK = 20;
-    
+    public int MAXMASK = 20;
+
     //pathfinding limiter
     private int stopcheck = 0;
     private int limit = 100;
@@ -63,26 +64,27 @@ public class testdetection {
     //list of list of contiguous points
     public ArrayList<ArrayList<Point>> objectList = new ArrayList<>();
     public ArrayList<Point> points = new ArrayList<Point>();
-    
+
     //number of empty spaces object finder can pass over
     private int checkLimit = 2;
 
     //not used
     int low = 150;
     int high = 240;
-    
+
     //for determining high and low, set to -1 for automatic detection
     private double percent = 9;
 
     //sig
     private double sig = 1.0;
-    
+
     //number of pixels that are larger than neighbors
     int peakCount = 0;
 
-    public testdetection(Bitmap file, double sigma, int maskSize, int limit, int checkLimit, double percent){
-        int     i,j,p,q,mr,centx,centy;
-        double  maskval,sum1, sum2,maxival = 0, slope = 0,sigsigtwo,twopiesigfour,sigMod;
+    public testdetection(Bitmap file, double sigma, int maskSize, int limit, int checkLimit, double percent)
+    {
+        int i, j, p, q, mr, centx, centy;
+        double maskval, sum1, sum2, maxival = 0, slope = 0, sigsigtwo, twopiesigfour, sigMod;
 
         sig = sigma;
         this.MAXMASK = maskSize;
@@ -121,13 +123,15 @@ public class testdetection {
         c.drawBitmap(file, 0, 0, paint);
 
         //convert RGB grayscale bitmap to 1 channel int array
-        for(i = 0 ; i < picWidth  ; i++ ){
-            for(j = 0 ; j < picHeight ; j++){
-                int pixel = bwfile.getPixel(i,j);
+        for (i = 0; i < picWidth; i++)
+        {
+            for (j = 0; j < picHeight; j++)
+            {
+                int pixel = bwfile.getPixel(i, j);
                 int red = Color.red(pixel);
                 int blue = Color.blue(pixel);
                 int green = Color.green(pixel);
-                int black = (int) (0.21*red + 0.72*green + 0.07*blue);
+                int black = (int) (0.21 * red + 0.72 * green + 0.07 * blue);
                 pic[i][j] = black;
             }
         }
@@ -137,40 +141,40 @@ public class testdetection {
         percent = (picWidth * picWidth - 1) * (percent / 100);
 
         //variables for mask calculations
-        sigsigtwo = (sig*sig*-2);
-        twopiesigfour = (2*PIE*sig*sig*sig*sig);
+        sigsigtwo = (sig * sig * -2);
+        twopiesigfour = (2 * PIE * sig * sig * sig * sig);
 
-        mr = (int)(sig * 3);
+        mr = (int) (sig * 3);
         centx = (MAXMASK / 2);
         centy = (MAXMASK / 2);
 
         //part 1
-        for (p=-mr; p<=mr; p++)
+        for (p = -mr; p <= mr; p++)
         {
-            for (q=-mr; q<=mr; q++)
+            for (q = -mr; q <= mr; q++)
             {
                 //create x and y masks
-                maskval = ( (-p / twopiesigfour) * Math.exp(((p * p) + (q * q)) / sigsigtwo) );
-                (maskx[p+centy][q+centx]) = maskval;
+                maskval = ((-p / twopiesigfour) * Math.exp(((p * p) + (q * q)) / sigsigtwo));
+                (maskx[p + centy][q + centx]) = maskval;
 
-                maskval = ( (-q / twopiesigfour) * Math.exp(((p * p) + (q * q)) / sigsigtwo) );
-                (masky[p+centy][q+centx]) = maskval;
+                maskval = ((-q / twopiesigfour) * Math.exp(((p * p) + (q * q)) / sigsigtwo));
+                (masky[p + centy][q + centx]) = maskval;
             }
         }
 
         //gaussian blur
-        for (i=mr; i<=(picWidth - 1)-mr; i++)
+        for (i = mr; i <= (picWidth - 1) - mr; i++)
         {
-            for (j=mr; j<=(picHeight - 1)-mr; j++)
+            for (j = mr; j <= (picHeight - 1) - mr; j++)
             {
                 sum1 = 0;
                 sum2 = 0;
-                for (p=-mr; p<=mr; p++)
+                for (p = -mr; p <= mr; p++)
                 {
-                    for (q=-mr; q<=mr; q++)
+                    for (q = -mr; q <= mr; q++)
                     {
-                        sum1 += pic[i+p][j+q] * maskx[p+centy][q+centx];
-                        sum2 += pic[i+p][j+q] * masky[p+centy][q+centx];
+                        sum1 += pic[i + p][j + q] * maskx[p + centy][q + centx];
+                        sum2 += pic[i + p][j + q] * masky[p + centy][q + centx];
                     }
                 }
                 outpicx[i][j] = sum1;
@@ -179,11 +183,11 @@ public class testdetection {
         }
 
         //gaussian blur cont.
-        for (i=mr; i<picWidth-mr; i++)
+        for (i = mr; i < picWidth - mr; i++)
         {
-            for (j=mr; j<picHeight-mr; j++)
+            for (j = mr; j < picHeight - mr; j++)
             {
-                ival[i][j]= Math.sqrt((double) ((outpicx[i][j] * outpicx[i][j]) +
+                ival[i][j] = Math.sqrt((double) ((outpicx[i][j] * outpicx[i][j]) +
                         (outpicy[i][j] * outpicy[i][j])));
                 //printf("%d\n", ival[i][j]);
                 if (ival[i][j] > maxival)
@@ -192,53 +196,53 @@ public class testdetection {
         }
 
         //create histogram
-        for (i=0; i<picWidth; i++)
+        for (i = 0; i < picWidth; i++)
         {
-            for (j=0; j<picHeight; j++)
+            for (j = 0; j < picHeight; j++)
             {
                 //counts how many pixels are at each value 0-255
-                ival2[i][j] = ((double)ival[i][j] / maxival) * (255);
-                histogram[(int)ival2[i][j]] += 1;
+                ival2[i][j] = ((double) ival[i][j] / maxival) * (255);
+                histogram[(int) ival2[i][j]] += 1;
                 //blurred image
-                histogramfile.setPixel(i,j, getBlack((int)ival2[i][j]));
+                histogramfile.setPixel(i, j, getBlack((int) ival2[i][j]));
             }
         }
 
         //Checking pixel neighbors and marking pixel as peak if it is the largest
-        for(i = mr ; i < picWidth - mr ; i++)
+        for (i = mr; i < picWidth - mr; i++)
         {
-            for (j = mr ; j<picHeight - mr ; j++)
+            for (j = mr; j < picHeight - mr; j++)
             {
-                if( (outpicy[i][j] == 0) )
+                if ((outpicy[i][j] == 0))
                 {
                     outpicy[i][j] = .00001;
                 }
 
                 slope = outpicx[i][j] / outpicy[i][j];
-                if( (slope <= .4142) && (slope > -.4142))
+                if ((slope <= .4142) && (slope > -.4142))
                 {
-                    if( (ival[i][j] > ival[i][j-1]) && (ival[i][j] > ival[i][j+1]))
+                    if ((ival[i][j] > ival[i][j - 1]) && (ival[i][j] > ival[i][j + 1]))
                     {
                         peaks[i][j] = (255);
                     }
                 }
-                else if( (slope <= 2.4142) && (slope > .4142))
+                else if ((slope <= 2.4142) && (slope > .4142))
                 {
-                    if( (ival[i][j] > ival[i-1][j-1]) && (ival[i][j] > ival[i+1][j+1]))
+                    if ((ival[i][j] > ival[i - 1][j - 1]) && (ival[i][j] > ival[i + 1][j + 1]))
                     {
                         peaks[i][j] = (255);
                     }
                 }
-                else if( (slope <= -.4142) && (slope > -2.4142))
+                else if ((slope <= -.4142) && (slope > -2.4142))
                 {
-                    if( (ival[i][j] > ival[i+1][j-1]) && (ival[i][j] > ival[i-1][j+1]))
+                    if ((ival[i][j] > ival[i + 1][j - 1]) && (ival[i][j] > ival[i - 1][j + 1]))
                     {
                         peaks[i][j] = (255);
                     }
                 }
                 else
                 {
-                    if( (ival[i][j] > ival[i-1][j]) && (ival[i][j] > ival[i+1][j]))
+                    if ((ival[i][j] > ival[i - 1][j]) && (ival[i][j] > ival[i + 1][j]))
                     {
                         peaks[i][j] = (255);
                     }
@@ -247,12 +251,12 @@ public class testdetection {
         }
 
         //print part 2, count possible peaks
-        for (i=0; i<picWidth; i++)
+        for (i = 0; i < picWidth; i++)
         {
-            for (j=0; j<picHeight; j++)
+            for (j = 0; j < picHeight; j++)
             {
-                peaksfile.setPixel(i,j,getBlack((int)peaks[i][j]));
-                if( peaks[i][j] > 0 )
+                peaksfile.setPixel(i, j, getBlack((int) peaks[i][j]));
+                if (peaks[i][j] > 0)
                     peakCount++;
             }
         }
@@ -261,24 +265,24 @@ public class testdetection {
         high = 0;
 
         // negative entered for percent will automatically find a percent to use
-            //this formula is in no way perfect, I literally made arbitrary calculations until
-            //the generated percent worked well for different pictures
-        if( percent < 0)
+        //this formula is in no way perfect, I literally made arbitrary calculations until
+        //the generated percent worked well for different pictures
+        if (percent < 0)
         {
             mr /= 3;
-            sigMod = mr*Math.log(mr * mr);
+            sigMod = mr * Math.log(mr * mr);
             percent = sigMod > 1 ? sigMod : 1;
-            percent = (percent * peakCount) / (picWidth*picHeight)*100 - mr*3.3;
+            percent = (percent * peakCount) / (picWidth * picHeight) * 100 - mr * 3.3;
             Log.w("testdetection", String.format("Using percent: %f\n", percent));
-            percent = (percent / 100) * (picWidth*picHeight);
+            percent = (percent / 100) * (picWidth * picHeight);
         }
 
         //starting from 255, add the total number of pixels with each value until it exceeds the
         //threshold then use that index for the high threshold
-        for(i=(255); i>=0; i--)
+        for (i = (255); i >= 0; i--)
         {
             high += histogram[i];
-            if( high >= percent )
+            if (high >= percent)
             {
                 high = i;
                 low = (int) (high * .35);
@@ -289,31 +293,32 @@ public class testdetection {
         //double thresholding, if the blurred image's pixel is larger than threshold set it
         //as an edge, if it between high and low then check neighbors for pixels that are edges
         //and if found make pixel an edge
-        for(i=0; i<picWidth; i++)
+        for (i = 0; i < picWidth; i++)
         {
-            for (j=0; j<picHeight; j++)
+            for (j = 0; j < picHeight; j++)
             {
                 {
                     stopcheck = 0;
-                    checkNeighbors(i,j);
+                    checkNeighbors(i, j);
                 }
             }
         }
 
         //print part 3
-        for (i=0; i<picWidth; i++)
+        for (i = 0; i < picWidth; i++)
         {
-            for (j=0; j<picHeight; j++)
+            for (j = 0; j < picHeight; j++)
             {
-                   finalfile.setPixel(i,j, (int)finalPic[i][j]<<24);
+                finalfile.setPixel(i, j, (int) finalPic[i][j] << 24);
 //                fprintf(fo3,"%c",(char)((int)(finalPic[i][j])));
             }
         }
     }
 
-    int getBlack(int i){
+    int getBlack(int i)
+    {
 
-        int black = 0 + i<<24;
+        int black = 0 + i << 24;
 //        int black = (int)(i/.21)<<16 + (int)(0.72*i)<<8 + (int)(0.07*i);
         return black;
     }
@@ -321,26 +326,26 @@ public class testdetection {
     void checkNeighbors(int i, int j)
     {
         stopcheck++;
-        if(stopcheck > limit)
+        if (stopcheck > limit)
             return;
-        if(i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
+        if (i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
             return;
-        if(peaks[i][j] == (255))
+        if (peaks[i][j] == (255))
         {
-            if(ival[i][j] > high)
+            if (ival[i][j] > high)
             {
                 peaks[i][j] = 0;
                 finalPic[i][j] = (255);
-                checkNeighbors(i-1, j);
-                checkNeighbors(i-1, j-1);
-                checkNeighbors(i, j-1);
-                checkNeighbors(i+1, j-1);
-                checkNeighbors(i+1, j);
-                checkNeighbors(i+1, j+1);
-                checkNeighbors(i, j+1);
-                checkNeighbors(i-1, j+1);
+                checkNeighbors(i - 1, j);
+                checkNeighbors(i - 1, j - 1);
+                checkNeighbors(i, j - 1);
+                checkNeighbors(i + 1, j - 1);
+                checkNeighbors(i + 1, j);
+                checkNeighbors(i + 1, j + 1);
+                checkNeighbors(i, j + 1);
+                checkNeighbors(i - 1, j + 1);
             }
-            else if( ival[i][j] < low)
+            else if (ival[i][j] < low)
             {
                 peaks[i][j] = 0;
             }
@@ -352,9 +357,11 @@ public class testdetection {
     //a single object
     void findShapes()
     {
-        for(int i = 0 ; i < picWidth ; i++){
-            for(int j = 0 ; j < picHeight ; j++){
-                if(finalPic[i][j] >=  (1))
+        for (int i = 0; i < picWidth; i++)
+        {
+            for (int j = 0; j < picHeight; j++)
+            {
+                if (finalPic[i][j] >= (1))
                 {
                     stopcheck = 0;
                     int pointCount = 1;
@@ -367,28 +374,34 @@ public class testdetection {
 
                     //workaround for stack issues, continue looking for edges around new edges until
                     //no new edges are found
-                    for(int k = 0 ; k < pointCount ; k = pointCount2 ){
-                        for(int m = k ; m < pointCount ; m++) {
+                    for (int k = 0; k < pointCount; k = pointCount2)
+                    {
+                        for (int m = k; m < pointCount; m++)
+                        {
                             Point p = points.get(m);
                             checkUp(p.x, p.y - 1, 0);
                             checkRight(p.x + 1, p.y, 0);
                             checkLeft(p.x - 1, p.y, 0);
                             checkDown(p.x, p.y + 1, 0);
                         }
-                            pointCount2 = pointCount;
-                            pointCount = points.size();
+                        pointCount2 = pointCount;
+                        pointCount = points.size();
                     }
 
                     //threshold for possible static picked up
-                    if(points.size() > 20){
+                    if (points.size() > 20)
+                    {
                         objectList.add(points);
 
                         //write the edges found to be part of a larger object to image
-                        for(Point p: points){
-                            shapesfile.setPixel(p.x, p.y, 255<<24);
+                        for (Point p : points)
+                        {
+                            shapesfile.setPixel(p.x, p.y, 255 << 24);
                         }
 
-                    } else {
+                    }
+                    else
+                    {
                         points.clear();
                     }
 
@@ -399,15 +412,18 @@ public class testdetection {
 
     //traversal functions, check is the number of empty spaces skipped over, checkLimit being how many
     //pixels this program is allowed to skip
-    void checkUp(int i, int j, int check){
+    void checkUp(int i, int j, int check)
+    {
         check++;
-        if(check > checkLimit){
+        if (check > checkLimit)
+        {
             return;
         }
-        if(i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
+        if (i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
             return;
 
-        if(finalPic[i][j] >=  (1)) {
+        if (finalPic[i][j] >= (1))
+        {
             Point point = new Point();
             point.set(i, j);
             points.add(point);
@@ -419,15 +435,18 @@ public class testdetection {
         checkLeft(i - 1, j, check);
     }
 
-    void checkRight(int i, int j, int check){
+    void checkRight(int i, int j, int check)
+    {
         check++;
-        if(check > checkLimit){
+        if (check > checkLimit)
+        {
             return;
         }
-        if(i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
+        if (i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
             return;
 
-        if(finalPic[i][j] >=  (1)) {
+        if (finalPic[i][j] >= (1))
+        {
             Point point = new Point();
             point.set(i, j);
             points.add(point);
@@ -439,15 +458,18 @@ public class testdetection {
         checkDown(i, j + 1, check);
     }
 
-    void checkDown(int i, int j, int check){
+    void checkDown(int i, int j, int check)
+    {
         check++;
-        if(check > checkLimit){
+        if (check > checkLimit)
+        {
             return;
         }
-        if(i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
+        if (i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
             return;
 
-        if(finalPic[i][j] >=  (1)) {
+        if (finalPic[i][j] >= (1))
+        {
             Point point = new Point();
             point.set(i, j);
             points.add(point);
@@ -456,18 +478,21 @@ public class testdetection {
 
         checkDown(i, j + 1, check);
         checkRight(i + 1, j, check);
-        checkLeft(i-1, j, check);
+        checkLeft(i - 1, j, check);
     }
 
-    void checkLeft(int i, int j, int check){
+    void checkLeft(int i, int j, int check)
+    {
         check++;
-        if(check > checkLimit){
+        if (check > checkLimit)
+        {
             return;
         }
-        if(i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
+        if (i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
             return;
 
-        if(finalPic[i][j] >=  (1)) {
+        if (finalPic[i][j] >= (1))
+        {
             Point point = new Point();
             point.set(i, j);
             points.add(point);
@@ -476,36 +501,43 @@ public class testdetection {
 
         checkUp(i, j - 1, check);
         checkDown(i, j + 1, check);
-        checkLeft(i-1, j, check);
+        checkLeft(i - 1, j, check);
     }
 
-    void makeShapes(){
+    void makeShapes()
+    {
         rectangle = new DetectedShape();
-        for(ArrayList<Point> i: objectList){
+        for (ArrayList<Point> i : objectList)
+        {
             //iterate through the objects found and find the corners of rectangles or sides of circles
 
-            Point leftBottom = new Point(-1,-1);
-            Point leftTop = new Point(-1,-1);
-            Point rightBottom = new Point(-1,-1);
-            Point rightTop = new Point(-1,-1);
-            for(Point j: i){
+            Point leftBottom = new Point(-1, -1);
+            Point leftTop = new Point(-1, -1);
+            Point rightBottom = new Point(-1, -1);
+            Point rightTop = new Point(-1, -1);
+            for (Point j : i)
+            {
 
-                if(leftBottom.x == -1 || (j.y >= leftBottom.y)){
+                if (leftBottom.x == -1 || (j.y >= leftBottom.y))
+                {
                     leftBottom.x = j.x;
                     leftBottom.y = j.y;
                 }
 
-                if(leftTop.x == -1 || (j.x <= leftTop.x )){
+                if (leftTop.x == -1 || (j.x <= leftTop.x))
+                {
                     leftTop.x = j.x;
                     leftTop.y = j.y;
                 }
 
-                if(rightBottom.x == -1 || (j.x >= rightBottom.x )){
+                if (rightBottom.x == -1 || (j.x >= rightBottom.x))
+                {
                     rightBottom.x = j.x;
                     rightBottom.y = j.y;
                 }
 
-                if(rightTop.x == -1 || (j.y <= rightTop.y )){
+                if (rightTop.x == -1 || (j.y <= rightTop.y))
+                {
                     rightTop.x = j.x;
                     rightTop.y = j.y;
                 }
@@ -518,9 +550,12 @@ public class testdetection {
             boolean check2 = rectangle.checkSquare(rightTop, rightBottom, leftBottom, leftTop);
 
             //add object to corresponding list
-            if(check1) {
+            if (check1)
+            {
                 rectangle.addRectangle(leftBottom, leftTop, rightBottom, rightTop);
-            }else if(check2){
+            }
+            else if (check2)
+            {
                 rectangle.addCircle(rightTop, rightBottom, leftBottom, leftTop);
             }
         }
@@ -528,8 +563,8 @@ public class testdetection {
         rectangle.deleteOutliers();
     }
 
-    public void updateValues(double sigma, int maskSize, int limit, int checkLimit, double percent){
-
+    public void updateValues(double sigma, int maskSize, int limit, int checkLimit, double percent)
+    {
         sig = sigma;
         this.MAXMASK = maskSize;
         this.limit = limit;

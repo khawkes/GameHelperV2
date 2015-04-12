@@ -21,7 +21,6 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -35,16 +34,19 @@ import game.gamehelper.R;
  * Created by Mark Andrews on 2/23/2015.
  * Fragment for selecting the end piece to calculate runs
  */
-public class EndSelectFragment extends DialogFragment {
+public class EndSelectFragment extends DialogFragment
+{
 
-    public interface EndListener {
+    public interface EndListener
+    {
         public void onClose(int var1);
     }
 
-    /** @param DIALOG_SIZE_COMPENSATION adjust for dialog window being smaller than the specified size
-     *  @param PAGE_MARGIN_PERCENT percent of the screen width to be used for side margins
-     *  @param PORTRAIT_COLUMNS columns for portrait mode
-     *  @param LANDSCAPE_COLUMNS = columns for landscape mode
+    /**
+     * @param DIALOG_SIZE_COMPENSATION adjust for dialog window being smaller than the specified size
+     * @param PAGE_MARGIN_PERCENT percent of the screen width to be used for side margins
+     * @param PORTRAIT_COLUMNS columns for portrait mode
+     * @param LANDSCAPE_COLUMNS = columns for landscape mode
      */
     private static final float DIALOG_SIZE_COMPENSATION = 1.1f;
     private final float PAGE_MARGIN_PERCENT = 0.1f;
@@ -63,7 +65,8 @@ public class EndSelectFragment extends DialogFragment {
 
 
     @Override
-    public void onStart() {
+    public void onStart()
+    {
         super.onStart();
 
         if (getDialog() == null)
@@ -71,16 +74,20 @@ public class EndSelectFragment extends DialogFragment {
 
         //set dialog window width
         WindowManager.LayoutParams params = getDialog().getWindow().getAttributes();
-        params.width = (int) (dialogWidth*DIALOG_SIZE_COMPENSATION);
+        params.width = (int) (dialogWidth * DIALOG_SIZE_COMPENSATION);
         getDialog().getWindow().setAttributes(params);
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Activity activity)
+    {
         super.onAttach(activity);
-        try {
+        try
+        {
             mListener = (EndListener) activity;
-        } catch (ClassCastException e) {
+        }
+        catch (ClassCastException e)
+        {
             throw new ClassCastException(getActivity().toString()
                     + " must implement interface EndListener");
         }
@@ -88,7 +95,8 @@ public class EndSelectFragment extends DialogFragment {
 
     @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public Dialog onCreateDialog(Bundle savedInstanceState)
+    {
         int marginSize;
         Bundle b = getArguments();
 
@@ -101,16 +109,15 @@ public class EndSelectFragment extends DialogFragment {
         //get the size of the display and calculate dialog size
         display = getActivity().getWindowManager().getDefaultDisplay();
         display.getSize(size);
-        marginSize = (int) (PAGE_MARGIN_PERCENT*size.x*2);
+        marginSize = (int) (PAGE_MARGIN_PERCENT * size.x * 2);
         dialogWidth = size.x - (marginSize);
 
         //get columns based on screen orientation
         numColumns = (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT ?
-            PORTRAIT_COLUMNS : LANDSCAPE_COLUMNS);
+                PORTRAIT_COLUMNS : LANDSCAPE_COLUMNS);
 
         //set bitmap size
         bitmapSize = dialogWidth / numColumns;
-
 
 
         //retrieve gridview from layout, set adapter
@@ -121,9 +128,11 @@ public class EndSelectFragment extends DialogFragment {
         gridView.setNumColumns(numColumns);
 
         //return the selected tile
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
                 //mark value
                 mListener.onClose(position);
                 dismiss();

@@ -13,13 +13,13 @@
 
 package game.gamehelper;
 
-import android.support.v7.app.ActionBarActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.view.View;
-import android.content.Intent;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -27,7 +27,8 @@ import java.util.Random;
 
 import game.gamehelper.DominoMT.GameWindowMT;
 
-public class MainWindow extends ActionBarActivity {
+public class MainWindow extends ActionBarActivity
+{
     public static final int MEXICAN_TRAIN = 0;
     public static final int MAX_DOMINO_DISPLAY = 24;
     public static boolean debug = false;
@@ -45,8 +46,8 @@ public class MainWindow extends ActionBarActivity {
     static final int RULES_EXIT = 88;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_window);
 
@@ -56,8 +57,8 @@ public class MainWindow extends ActionBarActivity {
         gameList.add("Other games");
         //TODO add other games
 
-        Button newGameButton = (Button)findViewById(R.id.newGameButton);
-        Button nextGameButton = (Button)findViewById(R.id.nextGameButton);
+        Button newGameButton = (Button) findViewById(R.id.newGameButton);
+        Button nextGameButton = (Button) findViewById(R.id.nextGameButton);
 
 
         final TextView gameTitle = (TextView) findViewById(R.id.gameTitle);
@@ -66,11 +67,14 @@ public class MainWindow extends ActionBarActivity {
 
         //New Game Button
         newGameButton.setOnClickListener(
-                new Button.OnClickListener(){
-                    public void onClick(View v){
+                new Button.OnClickListener()
+                {
+                    public void onClick(View v)
+                    {
 
                         debug = false;
-                        switch(selectedGame) {
+                        switch (selectedGame)
+                        {
 
                             case MEXICAN_TRAIN:
 
@@ -91,10 +95,12 @@ public class MainWindow extends ActionBarActivity {
 
         //Next Game Button
         nextGameButton.setOnClickListener(
-                new Button.OnClickListener(){
-                    public void onClick(View v){
+                new Button.OnClickListener()
+                {
+                    public void onClick(View v)
+                    {
                         selectedGame++;
-                        if(selectedGame > gameList.size() - 1)
+                        if (selectedGame > gameList.size() - 1)
                             selectedGame = 0;
                         gameTitle.setText(gameList.get(selectedGame));
                     }
@@ -106,14 +112,16 @@ public class MainWindow extends ActionBarActivity {
 
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main_window, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -123,7 +131,7 @@ public class MainWindow extends ActionBarActivity {
         {
             case R.id.menu_rules:
             {
-                startActivityForResult(new Intent(MainWindow.this, RulesActivity.class),RULES_EXIT);
+                startActivityForResult(new Intent(MainWindow.this, RulesActivity.class), RULES_EXIT);
 
                 break;
             }
@@ -132,7 +140,7 @@ public class MainWindow extends ActionBarActivity {
             {
 
                 finish();
-                System.exit( 0 );
+                System.exit(0);
                 break;
             }
 
@@ -140,36 +148,43 @@ public class MainWindow extends ActionBarActivity {
 
         }
 
-        return( super.onOptionsItemSelected(item) );
+        return (super.onOptionsItemSelected(item));
     }
 
     //generate a random set of tiles for hand
     //produces a maximum double of 12
-    public void randomDominos(int total){
+    public void randomDominos(int total)
+    {
         Random generator = new Random(222);
         boolean[][] used = new boolean[13][13];
         totalTiles = 0;
 
-        if (total > (13 * 14 / 2 - 1)) {
+        if (total > (13 * 14 / 2 - 1))
+        {
             total = (13 * 14 / 2) - 1;
         }
 
-        for(boolean[] a : used){
-            for(boolean b : a)
+        for (boolean[] a : used)
+        {
+            for (boolean b : a)
+            {
                 b = false;
+            }
         }
 
         used[maxDouble][maxDouble] = true;
 
-        for(int[] i : tileList){
+        for (int[] i : tileList)
+        {
 
-            if(total-- <= 0)
+            if (total-- <= 0)
                 break;
 
             i[0] = generator.nextInt(13);
             i[1] = generator.nextInt(13);
 
-            while(used[i[0]][i[1]] != false) {
+            while (used[i[0]][i[1]] != false)
+            {
                 i[0] = generator.nextInt(13);
                 i[1] = generator.nextInt(13);
             }
@@ -182,18 +197,22 @@ public class MainWindow extends ActionBarActivity {
     }
 
     //create random list of players and scores
-    public void randomScoreBoard(int player, int set){
+    public void randomScoreBoard(int player, int set)
+    {
         Random generator = new Random();
         setList.clear();
 
-        for(int i = 0 ; i < set ; i++ ){
+        for (int i = 0; i < set; i++)
+        {
             GameSet setScores = new GameSet();
             setList.add(setScores);
-            for(int j = 0 ; j < player ; j++) {
+            for (int j = 0; j < player; j++)
+            {
                 setList.get(i).addPlayer(generator.nextInt(500));
             }
         }
-        for(int j = 0 ; j < player ; j++) {
+        for (int j = 0; j < player; j++)
+        {
             playerList.add("Player " + j);
         }
 
