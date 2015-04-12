@@ -11,6 +11,8 @@
     <string name="txtBtnBlur">Blur</string>
     <string name="txtBtnProcess">Process</string>
     <string name="txtBtnOriginal">Original</string>
+    <string name="txtBtnReturn">Return</string>
+    <string name="txtBtnShapes">Shapes</string>
     <string name="imgDescr">pictureView</string>
     <string name="title_activity_main_window">MainWindow</string>
     <string name="title_activity_game_window">GameWindow</string>

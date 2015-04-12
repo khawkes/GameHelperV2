@@ -191,9 +191,10 @@ public class ImageProcessor {
 
         if (!isOpenCVReady() || bitmapImage == null) return -1;
 
-        Bitmap myBitmap32 = decreaseColorDepth(
-                bitmapImage.copy(Bitmap.Config.RGB_565, true),
-                colorReduce);
+        Bitmap myBitmap32 = Bitmap.createScaledBitmap(bitmapImage, (int)(bitmapImage.getWidth()*.1), (int)(bitmapImage.getHeight()*.1), true);
+//        Bitmap myBitmap32 = decreaseColorDepth(
+//                bitmapImage.copy(Bitmap.Config.RGB_565, true),
+//                colorReduce);
 
         //mats for picture conversion
         Mat rgba = new Mat(myBitmap32.getWidth(), myBitmap32.getHeight(), CvType.CV_8U);
@@ -209,6 +210,9 @@ public class ImageProcessor {
 
         //make blur from grayscale
         Imgproc.GaussianBlur(gray, blur, new Size(blurSize, blurSize), blurSigmaX);
+
+        Mat circles = new Mat();
+        Imgproc.HoughCircles(gray, circles, Imgproc.CV_HOUGH_GRADIENT, 1.2, 20);
 
         //find canny edges from blurred grayscale
         Imgproc.Canny(blur, cany, threshold1, threshold2);

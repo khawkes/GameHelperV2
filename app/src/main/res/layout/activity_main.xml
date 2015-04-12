@@ -72,6 +72,22 @@
             android:layout_alignParentStart="false"
             android:layout_below="@+id/btnTakePicture"
             android:layout_alignStart="@+id/btnTakePicture" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txtBtnReturn"
+            android:id="@+id/btnReturn"
+            android:layout_alignParentStart="false"
+            android:layout_below="@+id/btnShowPicture"
+            android:layout_alignStart="@+id/btnTakePicture" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txtBtnShapes"
+            android:id="@+id/btnShapes"
+            android:layout_alignParentStart="false"
+            android:layout_below="@+id/btnReturn"
+            android:layout_alignStart="@+id/btnTakePicture" />
 
         <EditText
             android:layout_width="wrap_content"

@@ -1,11 +1,14 @@
 package game.gamehelper;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,18 +37,40 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             R.id.btnShowGray,
             R.id.btnShowPicture,
             R.id.btnShowProcessed,
-            R.id.btnTakePicture
+            R.id.btnTakePicture,
+            R.id.btnReturn,
+            R.id.btnShapes
     };
-
+    private Bitmap file;
     private File currentPhotoPath;
     private ImageProcessor imgProcessor;
+    private testdetection testimg;
+    int[][] domList = null;
 
     private TextView countText;
     private ImageView picture;
 
+    private int photoTaken = 0;
+
     static final int RULES_EXIT = 88;
 
     private HashMap<Integer, Button> buttons = new HashMap<>();
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString("currentPhotoPath", currentPhotoPath.getAbsolutePath());
+        outState.putInt("photoTaken", photoTaken);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        currentPhotoPath = new File(savedInstanceState.getString("currentPhotoPath"));
+        photoTaken = savedInstanceState.getInt("photoTaken");
+        if(photoTaken >= 1)
+            onActivityResult(RESULT_OK, REQUEST_IMAGE_CAPTURE, null);
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,46 +142,70 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 dispatchTakePictureIntent();
                 setButtons();
                 break;
+//            case R.id.btnShowPicture:
+//                picture.setImageBitmap(imgProcessor.getBitmapImage());
+//                countText.setText(currentPhotoPath.getAbsolutePath());
+//                break;
+//            case R.id.btnShowProcessed:
+//                picture.setImageBitmap(imgProcessor.getBitmapProcessed());
+//                countText.setText("Processed");
+//                break;
+//            case R.id.btnShowGray:
+//                picture.setImageBitmap(imgProcessor.getBitmapGray());
+//                countText.setText("Gray");
+//                break;
+//            case R.id.btnShowBlur:
+//                picture.setImageBitmap(imgProcessor.getBitmapBlur());
+//                countText.setText("Blur");
+//                break;
+//            case R.id.btnShowCanny:
+//                picture.setImageBitmap(imgProcessor.getBitmapCanny());
+//                countText.setText("Canny");
             case R.id.btnShowPicture:
-                picture.setImageBitmap(imgProcessor.getBitmapImage());
+                picture.setImageBitmap(file);
                 countText.setText(currentPhotoPath.getAbsolutePath());
                 break;
             case R.id.btnShowProcessed:
-                picture.setImageBitmap(imgProcessor.getBitmapProcessed());
+                picture.setImageBitmap(testimg.finalfile);
                 countText.setText("Processed");
                 break;
             case R.id.btnShowGray:
-                picture.setImageBitmap(imgProcessor.getBitmapGray());
+                picture.setImageBitmap(testimg.bwfile);
                 countText.setText("Gray");
                 break;
             case R.id.btnShowBlur:
-                picture.setImageBitmap(imgProcessor.getBitmapBlur());
+                picture.setImageBitmap(testimg.histogramfile);
                 countText.setText("Blur");
                 break;
             case R.id.btnShowCanny:
-                picture.setImageBitmap(imgProcessor.getBitmapCanny());
+                picture.setImageBitmap(testimg.peaksfile);
                 countText.setText("Canny");
                 break;
             case R.id.btnProcess:
-                EditText ctrl = (EditText) findViewById(R.id.txtColorReduce);
-                int colorReduce = safeInt(ctrl.getText(), 32);
-
-                ctrl = (EditText) findViewById(R.id.txtBlurSize);
-                int blurSize = safeInt(ctrl.getText(), 9);
-
-                ctrl = (EditText) findViewById(R.id.txtBlurSigmaX);
-                int blurSigmaX = safeInt(ctrl.getText(), 0);
-
-                ctrl = (EditText) findViewById(R.id.txtThreshold1);
-                int threshold1 = safeInt(ctrl.getText(), 100);
-
-                ctrl = (EditText) findViewById(R.id.txtThreshold2);
-                int threshold2 = safeInt(ctrl.getText(), 200);
-
-                int count = imgProcessor.process(colorReduce, blurSize, blurSigmaX, threshold1, threshold2);
-                countText.setText(Integer.toString(count));
-                setButtons();
+                testimg.findShapes();
+                Log.w("finding shapes", "finished");
+                picture.setImageBitmap(testimg.shapesfile);
+                buttons.get(R.id.btnShapes).setEnabled(true);
                 break;
+            case R.id.btnShapes:
+                testimg.makeShapes();
+                if(testimg.rectangle != null) {
+                    domList = testimg.rectangle.getDominoes();
+                    countText.setText(Integer.toString(domList.length));
+                    buttons.get(R.id.btnReturn).setEnabled(true);
+                }
+                break;
+            case R.id.btnReturn:
+                Bundle b = new Bundle();
+                Intent intent = getIntent();
+
+                b.putSerializable("dominoList", domList);
+                b.putInt("dominoTotal", domList.length);
+
+                intent.putExtras(b);
+                setResult(RESULT_OK, intent);
+                finish();
+                return;
         }
     }
 
@@ -177,10 +226,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-
-            imgProcessor.setSource(currentPhotoPath);
-            imgProcessor.loadImageBitmap();
-            picture.setImageBitmap(imgProcessor.getBitmapImage());
+            photoTaken = 2;
+//            imgProcessor.setSource(currentPhotoPath);
+//            imgProcessor.loadImageBitmap();
+//            picture.setImageBitmap(imgProcessor.getBitmapImage());
+            file = BitmapFactory.decodeFile(currentPhotoPath.getAbsolutePath());
+            file = Bitmap.createScaledBitmap(file, (int)(file.getWidth()*.1), (int)(file.getHeight()*.1), false);
+            picture.setImageBitmap(file);
+            testimg = new testdetection(file);
             setButtons();
         }
     }
@@ -216,20 +269,28 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(currentPhotoPath));
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+
+            photoTaken = 1;
         }
     }
 
     private void setButtons() {
 
-        if (imgProcessor.getBitmapImage() != null) {
+//        if (imgProcessor.getBitmapImage() != null) {
+//
+//            buttons.get(R.id.btnShowPicture).setEnabled(true);
+//            buttons.get(R.id.btnProcess).setEnabled(true);
+//        }
+//
+//        if (imgProcessor.getBitmapProcessed() != null) buttons.get(R.id.btnShowProcessed).setEnabled(true);
+//        if (imgProcessor.getBitmapGray() != null) buttons.get(R.id.btnShowGray).setEnabled(true);
+//        if (imgProcessor.getBitmapBlur() != null) buttons.get(R.id.btnShowBlur).setEnabled(true);
+//        if (imgProcessor.getBitmapCanny() != null) buttons.get(R.id.btnShowCanny).setEnabled(true);
 
-            buttons.get(R.id.btnShowPicture).setEnabled(true);
-            buttons.get(R.id.btnProcess).setEnabled(true);
-        }
-
-        if (imgProcessor.getBitmapProcessed() != null) buttons.get(R.id.btnShowProcessed).setEnabled(true);
-        if (imgProcessor.getBitmapGray() != null) buttons.get(R.id.btnShowGray).setEnabled(true);
-        if (imgProcessor.getBitmapBlur() != null) buttons.get(R.id.btnShowBlur).setEnabled(true);
-        if (imgProcessor.getBitmapCanny() != null) buttons.get(R.id.btnShowCanny).setEnabled(true);
+        buttons.get(R.id.btnProcess).setEnabled(true);
+        buttons.get(R.id.btnShowProcessed).setEnabled(true);
+        buttons.get(R.id.btnShowGray).setEnabled(true);
+        buttons.get(R.id.btnShowBlur).setEnabled(true);
+        buttons.get(R.id.btnShowCanny).setEnabled(true);
     }
 }

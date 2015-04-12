@@ -475,7 +475,7 @@ public class GameWindowMT extends ActionBarActivity implements
         }
         else if(tag.compareTo(getString(R.string.startCamera)) == 0){
             //camera was called on new game
-            startActivityForResult(new Intent(GameWindowMT.this, MainActivity.class),0);
+            startActivityForResult(new Intent(GameWindowMT.this, MainActivity.class),1);
 
         }
 
@@ -583,7 +583,7 @@ public class GameWindowMT extends ActionBarActivity implements
 
                 if(b != null){
                     //read from camera information
-                    dominoList = (int[][])(b.getSerializable("dominoList"));
+                    convertSerializable(b);
                     dominoTotal = b.getInt("dominoTotal");
 
                     saveInformation();
@@ -710,8 +710,8 @@ public class GameWindowMT extends ActionBarActivity implements
         newFragment.show(getSupportFragmentManager(), getString(R.string.draw));
     }
 
-    private void convertSerializable(){
-        Object[] object = (Object[])handInformation.getSerializable("dominoList");
+    private void convertSerializable(Bundle b){
+        Object[] object = (Object[])b.getSerializable("dominoList");
         int i = 0;
         for(Object o: object){
             dominoList[i][0] = ((int[])o)[0];
@@ -738,7 +738,7 @@ public class GameWindowMT extends ActionBarActivity implements
         hand = handInformation.getParcelable("hand");
         if(hand == null) {
             dominoTotal = handInformation.getInt("dominoTotal");
-            convertSerializable();
+            convertSerializable(handInformation);
         }
         maxDouble = handInformation.getInt("maxDouble");
         originalStartHead = handInformation.getInt("originalStartHead");
