@@ -23,27 +23,29 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.HashMap;
 
-import game.gamehelper.DominoMT.GameWindowMT;
+import game.gamehelper.DominoMT.DominoPlugin;
 
+/**
+ * Entry point for the Game Helper App.  Allows for the user to select
+ * the desired game to get playing assistance with.
+ */
 public class MainWindow extends ActionBarActivity
 {
-    public static final int MEXICAN_TRAIN = 0;
-    public static final int MAX_DOMINO_DISPLAY = 24;
-    public static boolean debug = false;
+    private static final boolean DEBUG_MODE = false;
+    private static final int RULES_EXIT = 88;
 
-    public int[][] tileList = new int[100][2];
-    ArrayList<GameSet> setList = new ArrayList<GameSet>();
-    ArrayList<String> playerList = new ArrayList<String>();
-    ArrayList<String> gameList = new ArrayList<String>();
-    public int totalTiles = 0;
-    public int maxDouble = 12;
-    public int player = 4;
-    public int set = 8;
-    public int selectedGame = 0;
+    private static ArrayList<GameHelperPlugin> games = new ArrayList<>();
 
-    static final int RULES_EXIT = 88;
+    private HashMap<Integer, String> gameList = new HashMap<>();
+    private int selectedGame = 0;
+
+    // Register all plugins in this static block.
+    static
+    {
+        games.add(new DominoPlugin());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -51,19 +53,18 @@ public class MainWindow extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_window);
 
-        //getSupportActionBar().hide();
+        int numGames = 0;
+        for (GameHelperPlugin game : games) {
 
-        gameList.add("Dominos:\nMexicanTrain");
-        gameList.add("Other games");
-        //TODO add other games
+            gameList.put(numGames++, game.getDescription());
+        }
+        gameList.put(numGames++, "Other Games\nComing Soon");
+        //TODO: add other games
 
         Button newGameButton = (Button) findViewById(R.id.newGameButton);
         Button nextGameButton = (Button) findViewById(R.id.nextGameButton);
 
-
         final TextView gameTitle = (TextView) findViewById(R.id.gameTitle);
-
-        final Bundle bundle = new Bundle();
 
         //New Game Button
         newGameButton.setOnClickListener(
@@ -71,24 +72,13 @@ public class MainWindow extends ActionBarActivity
                 {
                     public void onClick(View v)
                     {
+                        GameHelperPlugin game = games.get(selectedGame);
 
-                        debug = false;
-                        switch (selectedGame)
-                        {
+                        Bundle debugBundle;
+                        if (DEBUG_MODE) debugBundle = game.getDebugBundle();
+                        else debugBundle = new Bundle();
 
-                            case MEXICAN_TRAIN:
-
-                                bundle.clear();
-                                bundle.putSerializable("dominoList", tileList);
-                                bundle.putInt("dominoTotal", totalTiles);
-                                bundle.putInt("maxDouble", maxDouble);
-                                startActivity(new Intent(MainWindow.this, GameWindowMT.class).putExtras(bundle));
-                                break;
-
-                            default:
-                                //TODO add other games
-                                break;
-                        }
+                        startActivity(new Intent(MainWindow.this, game.getEntryMenuClass()).putExtras(debugBundle));
                     }
                 }
         );
@@ -106,10 +96,7 @@ public class MainWindow extends ActionBarActivity
                     }
                 }
         );
-
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -138,7 +125,6 @@ public class MainWindow extends ActionBarActivity
 
             case R.id.menu_exit:
             {
-
                 finish();
                 System.exit(0);
                 break;
@@ -149,72 +135,5 @@ public class MainWindow extends ActionBarActivity
         }
 
         return (super.onOptionsItemSelected(item));
-    }
-
-    //generate a random set of tiles for hand
-    //produces a maximum double of 12
-    public void randomDominos(int total)
-    {
-        Random generator = new Random(222);
-        boolean[][] used = new boolean[13][13];
-        totalTiles = 0;
-
-        if (total > (13 * 14 / 2 - 1))
-        {
-            total = (13 * 14 / 2) - 1;
-        }
-
-        for (boolean[] a : used)
-        {
-            for (boolean b : a)
-            {
-                b = false;
-            }
-        }
-
-        used[maxDouble][maxDouble] = true;
-
-        for (int[] i : tileList)
-        {
-
-            if (total-- <= 0)
-                break;
-
-            i[0] = generator.nextInt(13);
-            i[1] = generator.nextInt(13);
-
-            while (used[i[0]][i[1]] != false)
-            {
-                i[0] = generator.nextInt(13);
-                i[1] = generator.nextInt(13);
-            }
-            used[i[0]][i[1]] = true;
-            used[i[1]][i[0]] = true;
-            totalTiles++;
-
-            maxDouble = 12;
-        }
-    }
-
-    //create random list of players and scores
-    public void randomScoreBoard(int player, int set)
-    {
-        Random generator = new Random();
-        setList.clear();
-
-        for (int i = 0; i < set; i++)
-        {
-            GameSet setScores = new GameSet();
-            setList.add(setScores);
-            for (int j = 0; j < player; j++)
-            {
-                setList.get(i).addPlayer(generator.nextInt(500));
-            }
-        }
-        for (int j = 0; j < player; j++)
-        {
-            playerList.add("Player " + j);
-        }
-
     }
 }

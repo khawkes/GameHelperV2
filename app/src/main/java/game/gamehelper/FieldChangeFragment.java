@@ -18,6 +18,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.text.InputType;
 import android.widget.EditText;
@@ -39,10 +40,10 @@ public class FieldChangeFragment extends DialogFragment
     private int fieldType;
 
     @Override
+    @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
         final EditText name = new EditText(getActivity());
-        String title;
 
         //retrieve field type and data
         Bundle args = getArguments();

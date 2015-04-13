@@ -105,6 +105,8 @@ public class GameWindowMT extends ActionBarActivity implements
     private boolean gameTypeSelected = false;
     private boolean trainHeadSelected = false;
 
+    private boolean debugMode = false;
+
     private static int RULES_EXIT;
     static final int SCOREBOARD_EXIT = 10;
 
@@ -155,7 +157,7 @@ public class GameWindowMT extends ActionBarActivity implements
         if (loadGame)
             return;
 
-        if (MainWindow.debug)
+        if (debugMode)
         {
             newGameDebug();
             return;
@@ -174,7 +176,7 @@ public class GameWindowMT extends ActionBarActivity implements
         //create domino array for adapter, set pointValText and image to corresponding values
         Domino temp[] = hand.toArray();
 
-        data = new Domino[(temp.length < MainWindow.MAX_DOMINO_DISPLAY) ? temp.length : MainWindow.MAX_DOMINO_DISPLAY];
+        data = new Domino[(temp.length < DominoPlugin.MAX_DOMINO_DISPLAY) ? temp.length : DominoPlugin.MAX_DOMINO_DISPLAY];
 
         //generate bitmaps for hand
         for (int i = 0; i < data.length; i++)
@@ -802,6 +804,8 @@ public class GameWindowMT extends ActionBarActivity implements
     private void convertSerializable(Bundle b)
     {
         Object[] object = (Object[]) b.getSerializable("dominoList");
+        if (object == null || object.length == 0) return;
+        
         int i = 0;
         for (Object o : object)
         {
@@ -829,8 +833,11 @@ public class GameWindowMT extends ActionBarActivity implements
     private void loadInformation()
     {
         //load information
+        Boolean _debugMode = handInformation.getBoolean("debug");
+        if (_debugMode != null) debugMode = _debugMode;
+
         hand = handInformation.getParcelable("hand");
-        if (hand == null)
+        if (hand != null)
         {
             dominoTotal = handInformation.getInt("dominoTotal");
             convertSerializable(handInformation);
@@ -850,14 +857,13 @@ public class GameWindowMT extends ActionBarActivity implements
             playerList = handInformation.getStringArrayList("playerList");
             data = hand.toArray();
         }
+
         if (trainHeadSelected)
         {
             trainHead = hand.getTrainHead();
             windowState = (WindowContext) handInformation.getSerializable("windowState");
             updateUI();
         }
-
-
     }
 
     @Override

@@ -29,11 +29,10 @@ import game.gamehelper.DominoMT.DetectedShape;
 /**
  * Created by Mark Andrews on 4/11/2015.
  */
-public class testdetection
+public class DominoDetection
 {
     private final int picWidth;
     private final int picHeight;
-    private final double PIE = 3.14159;
 
     int[][] pic;
     double[][] outpicx;
@@ -81,7 +80,7 @@ public class testdetection
     //number of pixels that are larger than neighbors
     int peakCount = 0;
 
-    public testdetection(Bitmap file, double sigma, int maskSize, int limit, int checkLimit, double percent)
+    public DominoDetection(Bitmap file, double sigma, int maskSize, int limit, int checkLimit, double percent)
     {
         int i, j, p, q, mr, centx, centy;
         double maskval, sum1, sum2, maxival = 0, slope = 0, sigsigtwo, twopiesigfour, sigMod;
@@ -142,7 +141,7 @@ public class testdetection
 
         //variables for mask calculations
         sigsigtwo = (sig * sig * -2);
-        twopiesigfour = (2 * PIE * sig * sig * sig * sig);
+        twopiesigfour = (2 * Math.PI * sig * sig * sig * sig);
 
         mr = (int) (sig * 3);
         centx = (MAXMASK / 2);
@@ -273,7 +272,7 @@ public class testdetection
             sigMod = mr * Math.log(mr * mr);
             percent = sigMod > 1 ? sigMod : 1;
             percent = (percent * peakCount) / (picWidth * picHeight) * 100 - mr * 3.3;
-            Log.w("testdetection", String.format("Using percent: %f\n", percent));
+            Log.w("DominoDetection", String.format("Using percent: %f\n", percent));
             percent = (percent / 100) * (picWidth * picHeight);
         }
 

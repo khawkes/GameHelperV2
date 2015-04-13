@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -38,6 +39,10 @@ import java.util.Locale;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
 
+/**
+ * Activity responsible for the capture, display, and detection of dominoes from the
+ * device camera.
+ */
 public class MainActivity extends ActionBarActivity implements View.OnClickListener
 {
 
@@ -56,7 +61,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     };
     private Bitmap file;
     private File currentPhotoPath;
-    private testdetection testimg;
+    private DominoDetection testimg;
     int[][] domList = null;
 
     private TextView countText;
@@ -77,7 +82,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState)
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState)
     {
         super.onRestoreInstanceState(savedInstanceState);
 
@@ -228,40 +233,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 intent.putExtras(b);
                 setResult(RESULT_OK, intent);
                 finish();
-                return;
         }
-    }
-
-    private int safeInt(CharSequence val, int def)
-    {
-
-        int ret = def;
-        try
-        {
-
-            ret = Integer.parseInt(val.toString());
-        }
-        catch (Exception e)
-        {
-        }
-
-        return ret;
-    }
-
-    private double safeDouble(CharSequence val, double def)
-    {
-
-        double ret = def;
-        try
-        {
-
-            ret = Double.parseDouble(val.toString());
-        }
-        catch (Exception e)
-        {
-        }
-
-        return ret;
     }
 
     @Override
@@ -286,7 +258,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         file = Bitmap.createScaledBitmap(file, (int) (file.getWidth() * .1), (int) (file.getHeight() * .1), false);
         picture.setImageBitmap(file);
 
-        testimg = new testdetection(file, 1, 20, 100, 2, 9);
+        testimg = new DominoDetection(file, 1, 20, 100, 2, 9);
         setButtons();
     }
 

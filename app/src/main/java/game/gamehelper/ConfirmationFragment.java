@@ -18,6 +18,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 
 /**
@@ -39,6 +40,7 @@ public class ConfirmationFragment extends DialogFragment
     ConfirmationListener mListener;
 
     @Override
+    @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
         Bundle b = getArguments();
