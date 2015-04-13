@@ -31,6 +31,13 @@
     <string name="title_activity_score_board">ScoreBoard</string>
     <string name="remainingPoints">0</string>
 
+    <!--Activity Main Window-->
+    <string name="txtScreenTitle">The Game Helper App</string>
+    <string name="txtCurrentGame">Selected Game</string>
+    <string name="txtSwitchGame">Switch Game</string>
+    <string name="txtNewGame">New Game</string>
+    <string name="txtAllRules">List All Rules</string>
+
     <!--DialogFragmentsNames-->
     <string name="newGame">New Game</string>
     <string name="endSet">Set End</string>

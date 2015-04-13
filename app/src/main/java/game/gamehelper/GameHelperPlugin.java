@@ -13,6 +13,7 @@
 
 package game.gamehelper;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import java.util.Map;
@@ -61,6 +62,28 @@ public interface GameHelperPlugin
      * @return bundle with debugging values to use for the plugin
      */
     public Bundle getDebugBundle();
+
+    /**
+     * Return the drawable containing the icon to use for the game type.
+     *
+     * @return game icon drawable
+     */
+    public int getImageIcon();
+
+    /**
+     * Return true if the plugin is capable of assisting the user in playing
+     * the game.
+     *
+     * @return true if there is support for game assistance
+     */
+    public boolean isGameReady();
+
+    /**
+     * Return true if the plugin is capable of providing game play rules.
+     *
+     * @return true if there is support for game rule set
+     */
+    public boolean isRuleSetReady();
 
     public ScoreBoard getScoreBoard();
 }

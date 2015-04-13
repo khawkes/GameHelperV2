@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   - COP4331C - Class Project - The Game Helper App
+   - Spring 2015
+   -
+   - Project authors:
+   -   Mark Andrews
+   -   Jacob Cassagnol
+   -   Kurt Hawkes
+   -   Tim McCarthy
+   -   Andrew McKenzie
+   -   Amber Stewart
+-->
+<resources>
+    <string name="scrabble_rules_title">Scrabble</string>
+    <string name="scrabble_rules_text">Scrabble</string>
+    <string name="scrabble_rules_detail">
+    <![CDATA[
+      <p>
+        <b>TODO: Develop the rule set for Scrabble game helper plugin.</b>
+        </p>
+       ]]>
+    </string>
+</resources>

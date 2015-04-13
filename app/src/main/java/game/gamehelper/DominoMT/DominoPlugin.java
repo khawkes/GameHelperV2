@@ -23,7 +23,6 @@ import java.util.Random;
 import game.gamehelper.GameHelperPlugin;
 import game.gamehelper.GameSet;
 import game.gamehelper.R;
-import game.gamehelper.RuleDetailActivity;
 import game.gamehelper.ScoreBoard;
 
 /**
@@ -87,6 +86,18 @@ public class DominoPlugin implements GameHelperPlugin
 
         return debugBundle;
     }
+
+    @Override
+    public int getImageIcon() {
+
+        return R.drawable.domino_default;
+    }
+
+    @Override
+    public boolean isGameReady() { return true; }
+
+    @Override
+    public boolean isRuleSetReady() { return true; }
 
     @Override
     public ScoreBoard getScoreBoard()
