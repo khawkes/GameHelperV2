@@ -26,9 +26,9 @@
     <string name="txtBtnReturn">Return</string>
     <string name="txtBtnShapes">Shapes</string>
     <string name="imgDescr">pictureView</string>
-    <string name="title_activity_main_window">MainWindow</string>
-    <string name="title_activity_game_window">GameWindow</string>
-    <string name="title_activity_score_board">ScoreBoard</string>
+    <string name="title_activity_main_window">Game Helper</string>
+    <string name="title_activity_game_window">Game Window</string>
+    <string name="title_activity_score_board">Score Board</string>
     <string name="remainingPoints">0</string>
 
     <!--Activity Main Window-->
