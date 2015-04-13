@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   - COP4331C - Class Project - The Game Helper App
+   - Spring 2015
+   -
+   - Project authors:
+   -   Mark Andrews
+   -   Jacob Cassagnol
+   -   Kurt Hawkes
+   -   Tim McCarthy
+   -   Andrew McKenzie
+   -   Amber Stewart
+-->
+<resources>
+
+    <string name="dominoMT_rules_title">Mexican Train Dominoes</string>
+    <string name="dominoMT_rules_text">Mexican Train Dominoes</string>
+    <string name="dominoMT_rules_detail">
+    <![CDATA[
+         <p>
+      <b> GENERAL:</b>
+        </p>
+        <p>
+            Domino games begin by shuffling the pieces that have been turned face down so the
+            "spots" do not show. Players then draw the required number of pieces. For 2,3 or 4
+            players, draw 15 dominoes each; for 5 or 6 players draw 12 each; and for 7 or 8 players
+            draw 11 each.
+        </p>
+      <p>
+        <b>OBJECTIVE:</b>
+        </p>
+            To play off all your dominoes. You play off onto your own train, onto the Mexican·Train
+            and onto other players\' marked trains.
+       </p>
+      <p>
+        <b>FIRST PLAYER:</b>
+       </p>
+      <p>
+            Open the Mexican Train station by placing your highest double in the center. You may then
+            begin your train on one of the eight "sidings" of the station by playing off a domino
+            matching the station number. Your train should "depart" the station heading towards you.
+       </p>
+      <p>
+            When the first player has no double, the next player opens the station. If no one has a
+            double, draw in turn until one is found
+        </p>
+      <p>
+            Continue to play off on your own train until you have no more matches.
+            Any left over tiles are called "empties". These may be played later on the Mexican Train when
+            new sidings are started that all players may use. (When all eight directions from the station
+            have been taken, start new sidings off to the side and out of the way.)
+        </p>
+      <p>
+        <b>SUBSEQUENT PLAY:</b>
+        </p>
+      <p>
+            Play always rotates to the left. At your turn, play on your own traIn, on the Mexican Train,
+            or on other players\' marked train. You can play off a series of dominoes only on the
+            turn when you start your train. After your train "has departed" the station, play only
+            one domino per turn, unless you play a double (see below) If you have a choice of plays,
+            make any.
+        </p>
+      <p>
+            Whenever you have no play, draw once from the bone  yard. If you still have no play, place
+            a marker (a button or a penny works) on the last tile of your train, if you\'ve begun it.
+            You may remove your marker by playing on your train later. As long as your train has a
+            marker, you may not play on your train, but any other player can. However, you can play
+            elsewhere.
+        </p>
+      <p>
+       <b> PLAYING DOUBLES:</b>
+        </p>
+      <p>
+            When you play a double you must make another play on that double if you can. If you can\'t,
+            draw one domino from the bone yard. If you can play it, that\'s fine. If not. place a marker
+            on your·train (if it does not already have one) and your turn is over. In this case, the
+            next player must play on the double, and if unable must also draw once from the bone yard.
+            1f the double still cannot be matched, that player\'s train also gets a marker. This action
+            continues until someone plays off the double: players already with a marker can play
+            their drawn tile only to satisfy the double.
+        </p>
+      <p>
+        <b>EXCEPTIONS TO DOUBLES REQUIREMENTS:</b>
+        </p>
+      <p>
+            1) The double to play on is the last domino of its number
+            2) You play a double to remove the marker from your own train, with no requirement that
+               you or the next players satisfy that double
+            3) If the double is your last domino, ending the game immediately.
+        </p>
+      <p>
+        <b>SCORING:</b>
+        </p>
+      <p>
+            As soon as one player is out of dominoes, all play stops and players report the sum of
+            their remaining dominoes to the scorekeeper. After an agreed number of rounds, whoever
+            has the lowest score is the winner. (Note: begin each round with a new player, rotating
+            to the left.)
+        </p>
+      ]]>
+    </string>
+</resources>

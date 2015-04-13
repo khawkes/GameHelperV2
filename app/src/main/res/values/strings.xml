@@ -74,6 +74,7 @@
     <string name="new_game_string">New Game</string>
     <string name="score_board_string">Score Board</string>
     <string name="exit_string">Exit</string>
+    <string name="return_string">Return</string>
     <string name="home_string">Home</string>
     <string name="camera_string">Camera</string>
     <string name="rules_menu_string">Rules</string>

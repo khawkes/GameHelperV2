@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import game.gamehelper.DominoMT.DominoPlugin;
 
@@ -34,7 +35,6 @@ import game.gamehelper.DominoMT.DominoPlugin;
 public class MainWindow extends ActionBarActivity
 {
     private static final boolean DEBUG_MODE = false;
-    private static final int RULES_EXIT = 88;
 
     private static ArrayList<GameHelperPlugin> games = new ArrayList<>();
 
@@ -118,7 +118,14 @@ public class MainWindow extends ActionBarActivity
         {
             case R.id.menu_rules:
             {
-                startActivityForResult(new Intent(MainWindow.this, RulesActivity.class), RULES_EXIT);
+                GameHelperPlugin game = games.get(selectedGame);
+                Bundle bundle = new Bundle();
+                for(Map.Entry<String, Integer> ids : game.getRulesIDs().entrySet())
+                    bundle.putInt(ids.getKey(), ids.getValue());
+
+                Intent activity = new Intent(this, RuleDetailActivity.class);
+                activity.putExtras(bundle);
+                startActivityForResult(activity, RuleDetailActivity.RULES_EXIT);
 
                 break;
             }

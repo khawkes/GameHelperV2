@@ -31,12 +31,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import game.gamehelper.ConfirmationFragment;
+import game.gamehelper.GameHelperPlugin;
 import game.gamehelper.GameSet;
 import game.gamehelper.MainActivity;
 import game.gamehelper.MainWindow;
 import game.gamehelper.R;
+import game.gamehelper.RuleDetailActivity;
 import game.gamehelper.RulesActivity;
 import game.gamehelper.ScoreBoard;
 
@@ -107,7 +110,6 @@ public class GameWindowMT extends ActionBarActivity implements
 
     private boolean debugMode = false;
 
-    private static int RULES_EXIT;
     static final int SCOREBOARD_EXIT = 10;
 
     /**
@@ -423,7 +425,14 @@ public class GameWindowMT extends ActionBarActivity implements
 
             case R.id.menu_rules:
             {
-                startActivityForResult(new Intent(GameWindowMT.this, RulesActivity.class), RULES_EXIT);
+                DominoPlugin plugin = new DominoPlugin();
+                Bundle bundle = new Bundle();
+                for(Map.Entry<String, Integer> ids : plugin.getRulesIDs().entrySet())
+                    bundle.putInt(ids.getKey(), ids.getValue());
+
+                Intent activity = new Intent(this, RuleDetailActivity.class);
+                activity.putExtras(bundle);
+                startActivityForResult(activity, RuleDetailActivity.RULES_EXIT);
 
                 break;
             }
@@ -478,7 +487,6 @@ public class GameWindowMT extends ActionBarActivity implements
 
     public void newGame()
     {
-
         //initiate data and settings for new game
         scoreHistory.clear();
         setList.clear();
@@ -805,7 +813,7 @@ public class GameWindowMT extends ActionBarActivity implements
     {
         Object[] object = (Object[]) b.getSerializable("dominoList");
         if (object == null || object.length == 0) return;
-        
+
         int i = 0;
         for (Object o : object)
         {

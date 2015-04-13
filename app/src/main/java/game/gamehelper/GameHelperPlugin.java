@@ -15,6 +15,8 @@ package game.gamehelper;
 
 import android.os.Bundle;
 
+import java.util.Map;
+
 /**
  * Interface that all game type plugins in the game helper app must implement.
  * There will be one plugin per game type.
@@ -47,6 +49,12 @@ public interface GameHelperPlugin
     public Class<?> getEntryMenuClass();
 
     /**
+     * Returns the rules display class for the game plugin.  This class
+     * will be set in the intent used to display the game rules.
+     */
+    public Map<String, Integer> getRulesIDs();
+
+    /**
      * For debugging purposes - returns a bundle with some pre-generated
      * values used during testing of the plugin.
      *
@@ -55,6 +63,4 @@ public interface GameHelperPlugin
     public Bundle getDebugBundle();
 
     public ScoreBoard getScoreBoard();
-
-    public void getRules();
 }

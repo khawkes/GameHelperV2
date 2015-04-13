@@ -16,10 +16,14 @@ package game.gamehelper.DominoMT;
 import android.os.Bundle;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import game.gamehelper.GameHelperPlugin;
 import game.gamehelper.GameSet;
+import game.gamehelper.R;
+import game.gamehelper.RuleDetailActivity;
 import game.gamehelper.ScoreBoard;
 
 /**
@@ -58,6 +62,16 @@ public class DominoPlugin implements GameHelperPlugin
     }
 
     @Override
+    public Map<String, Integer> getRulesIDs()
+    {
+        HashMap<String, Integer> rulesIDs = new HashMap<>();
+        rulesIDs.put("title", R.string.dominoMT_rules_title);
+        rulesIDs.put("text", R.string.dominoMT_rules_text);
+        rulesIDs.put("detail", R.string.dominoMT_rules_detail);
+        return rulesIDs;
+    }
+
+    @Override
     public Bundle getDebugBundle()
     {
         randomDominos(24);
@@ -78,12 +92,6 @@ public class DominoPlugin implements GameHelperPlugin
     public ScoreBoard getScoreBoard()
     {
         return new ScoreBoard();
-    }
-
-    @Override
-    public void getRules()
-    {
-
     }
 
     //generate a random set of tiles for hand

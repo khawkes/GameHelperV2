@@ -16,4 +16,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="game.gamehelper.RuleDetailActivity">
 
+    <group android:menuCategory="system">
+
+        <item android:id="@+id/menu_return"
+              android:title="@string/return_string"
+              android:orderInCategory="2"
+              app:showAsAction="never" />
+    </group>
 </menu>
