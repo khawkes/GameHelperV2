@@ -11,7 +11,7 @@
  *   Amber Stewart
  */
 
-package game.gamehelper.DominoMT.UiFragments;
+package game.gamehelper.DominoMT;
 
 import android.app.Activity;
 import android.app.AlertDialog;

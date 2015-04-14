@@ -11,7 +11,7 @@
  *   Amber Stewart
  */
 
-package game.gamehelper.DominoMT.PieceHolders;
+package game.gamehelper.DominoMT;
 
 import android.os.Parcel;
 import android.os.Parcelable;

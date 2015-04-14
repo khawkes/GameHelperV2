@@ -11,7 +11,7 @@
  *   Amber Stewart
  */
 
-package game.gamehelper.DominoMT.GameHelperOverrides;
+package game.gamehelper.DominoMT;
 
 import android.os.Bundle;
 
@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import game.gamehelper.DominoMT.GameWindowMT;
 import game.gamehelper.GameHelperPlugin;
 import game.gamehelper.GameSet;
 import game.gamehelper.R;
@@ -34,7 +33,7 @@ import game.gamehelper.ScoreBoard;
  */
 public class DominoPlugin implements GameHelperPlugin
 {
-    public static final int MAX_DOMINO_DISPLAY = 24;
+    static final int MAX_DOMINO_DISPLAY = 24;
 
     private ArrayList<GameSet> setList = new ArrayList<>();
     private ArrayList<String> playerList = new ArrayList<>();

@@ -11,7 +11,7 @@
  *   Amber Stewart
  */
 
-package game.gamehelper.DominoMT.ComputerVision;
+package game.gamehelper.DominoMT;
 
 import android.graphics.Point;
 

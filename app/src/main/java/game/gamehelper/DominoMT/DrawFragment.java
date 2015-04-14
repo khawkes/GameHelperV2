@@ -11,11 +11,12 @@
  *   Amber Stewart
  */
 
-package game.gamehelper.DominoMT.UiFragments;
+package game.gamehelper.DominoMT;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -26,21 +27,23 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
 
 import game.gamehelper.BitmapAdapter;
-import game.gamehelper.DominoMT.PieceHolders.Domino;
 import game.gamehelper.R;
 
 /**
  * Created by Mark Andrews on 2/23/2015.
- * Fragment for selecting the end piece to calculate runs
+ * Fragment class for handling draw operations
+ *
+ * TODO make parent class to minimize duplicate code in DrawFragment and EndSelectFragment
  */
-public class TrainHeadSelectFragment extends DialogFragment
+public class DrawFragment extends DialogFragment
 {
 
-    public interface EndListener
+    public interface DrawListener
     {
-        public void onClose(int var1);
+        public void onClose(int var1, int var2);
     }
 
     /**
@@ -57,13 +60,35 @@ public class TrainHeadSelectFragment extends DialogFragment
     int bitmapSize;
     int numColumns;
     int deckMax;
-    EndListener mListener;
+    DrawListener mListener;
     GridView gridView;
     View drawView;
+    ImageView imageView;
+    ImageView leftSide;
+    ImageView rightSide;
+    BitmapAdapter bitmapAdapter;
+    int width = 0;
+    int height = 0;
+    int var1 = 0;
+    int var2 = 0;
+    int currentSide = 0;
     Display display;
     Point size = new Point();
-    BitmapAdapter bitmapAdapter;
 
+    @Override
+    public void onAttach(Activity activity)
+    {
+        super.onAttach(activity);
+        try
+        {
+            mListener = (DrawListener) activity;
+        }
+        catch (ClassCastException e)
+        {
+            throw new ClassCastException(getActivity().toString()
+                    + " must implement interface DrawListener");
+        }
+    }
 
     @Override
     public void onStart()
@@ -79,33 +104,19 @@ public class TrainHeadSelectFragment extends DialogFragment
         getDialog().getWindow().setAttributes(params);
     }
 
-    @Override
-    public void onAttach(Activity activity)
-    {
-        super.onAttach(activity);
-        try
-        {
-            mListener = (EndListener) activity;
-        }
-        catch (ClassCastException e)
-        {
-            throw new ClassCastException(getActivity().toString()
-                    + " must implement interface EndListener");
-        }
-    }
-
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
         int marginSize;
         Bundle b = getArguments();
+        Clicker clickListener = new Clicker();
 
         if (b != null)
             deckMax = b.getInt("maxDouble");
 
         //retrieve draw_layout view
-        drawView = View.inflate(getActivity(), R.layout.end_select_layout, null);
+        drawView = View.inflate(getActivity(), R.layout.draw_layout, null);
 
         //get the size of the display and calculate dialog size
         display = getActivity().getWindowManager().getDefaultDisplay();
@@ -120,6 +131,16 @@ public class TrainHeadSelectFragment extends DialogFragment
         //set bitmap size
         bitmapSize = dialogWidth / numColumns;
 
+        //get imageview from top left of layout and place the domino background
+        imageView = (ImageView) drawView.findViewById(R.id.imageViewBG);
+        imageView.setImageResource(R.drawable.dom_bg);
+
+        //get sides
+        leftSide = (ImageView) drawView.findViewById(R.id.leftSide);
+        rightSide = (ImageView) drawView.findViewById(R.id.rightSide);
+
+        leftSide.setOnClickListener(clickListener);
+        rightSide.setOnClickListener(clickListener);
 
         //retrieve gridview from layout, set adapter
         gridView = (GridView) drawView.findViewById(R.id.gridView);
@@ -128,23 +149,75 @@ public class TrainHeadSelectFragment extends DialogFragment
         gridView.setAdapter(bitmapAdapter);
         gridView.setNumColumns(numColumns);
 
-        //return the selected tile
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-                //mark value
-                mListener.onClose(position);
-                dismiss();
+                //mark piece, toggle side of preview domino
+
+                switch (currentSide)
+                {
+                    default:
+                    case 0:
+                        var1 = position;
+                        leftSide.setImageBitmap(Domino.getSide(position, getActivity().getApplicationContext()));
+                        break;
+                    case 1:
+                        var2 = position;
+                        rightSide.setImageBitmap(Domino.getSide(position, getActivity().getApplicationContext()));
+                }
+
+                currentSide ^= 1;
             }
         });
 
         //create alert dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(drawView);
-        builder.setTitle(R.string.endSelectTitle);
+
+        builder.setPositiveButton("Add", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                //Add domino to hand
+                mListener.onClose(var1, var2);
+
+            }
+        })
+               .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+               {
+                   @Override
+                   public void onClick(DialogInterface dialog, int which)
+                   {
+                       //close window
+
+                   }
+               });
 
         return builder.create();
+    }
+
+    public class Clicker implements View.OnClickListener
+    {
+        @Override
+        public void onClick(View v)
+        {
+
+            if (v == leftSide)
+            {
+                var1 = 0;
+                leftSide.setImageDrawable(null);
+                currentSide = 0;
+            }
+            else
+            {
+                var2 = 0;
+                rightSide.setImageDrawable(null);
+                currentSide = 1;
+            }
+        }
     }
 }
