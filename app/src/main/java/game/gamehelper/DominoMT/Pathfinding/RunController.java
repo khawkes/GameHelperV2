@@ -59,7 +59,7 @@ public class RunController implements Parcelable
      * @param h           The hand to use to initialize the graph.
      * @param startDouble The starting double to target.
      */
-    RunController(HandMT h, int startDouble)
+    public RunController(HandMT h, int startDouble)
     {
         this(h.getMaxDouble(), h.toArray(), startDouble);
     }
@@ -71,7 +71,7 @@ public class RunController implements Parcelable
      * @param edges         The array of edges to use to initialize the graph.
      * @param startDouble   The starting double to target.
      */
-    RunController(int maximumDouble, Domino edges[], int startDouble)
+    public RunController(int maximumDouble, Domino edges[], int startDouble)
     {
         MAX_EDGE = maximumDouble;
 
@@ -93,7 +93,7 @@ public class RunController implements Parcelable
         currentRun = new DominoRun();
     }
 
-    RunController(Parcel p)
+    public RunController(Parcel p)
     {
         ArrayList<DominoRun> tempList = new ArrayList<>();
 

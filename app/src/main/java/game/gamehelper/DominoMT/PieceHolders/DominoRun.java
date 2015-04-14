@@ -29,13 +29,13 @@ public class DominoRun implements Parcelable
     private LinkedList<Domino> path;
     private int pointVal;
 
-    DominoRun()
+    public DominoRun()
     {
         pointVal = 0;
         path = new LinkedList<Domino>();
     }
 
-    DominoRun(Parcel p)
+    public DominoRun(Parcel p)
     {
         //constructor for loading from save state
         ArrayList<Domino> tempList = new ArrayList<>();
