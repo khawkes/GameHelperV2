@@ -11,7 +11,7 @@
  *   Amber Stewart
  */
 
-package game.gamehelper.DominoMT;
+package game.gamehelper.DominoMT.PieceHolders;
 
 import android.app.Activity;
 import android.content.Context;
@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
+import game.gamehelper.DominoMT.PieceHolders.Domino;
 import game.gamehelper.R;
 
 /**

@@ -11,7 +11,7 @@
  *   Amber Stewart
  */
 
-package game.gamehelper.DominoMT;
+package game.gamehelper.DominoMT.UiFragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -30,22 +30,21 @@ import android.widget.GridView;
 import android.widget.ImageView;
 
 import game.gamehelper.BitmapAdapter;
+import game.gamehelper.DominoMT.PieceHolders.Domino;
 import game.gamehelper.R;
 
 /**
- * Copied by Jacob Cassagnol on 4/7/2015.
+ * Created by Mark Andrews on 2/23/2015.
  * Fragment class for handling draw operations
  *
  * TODO make parent class to minimize duplicate code in DrawFragment and EndSelectFragment
  */
-public class DrawRepeatFragment extends DialogFragment
+public class DrawDominoFragment extends DialogFragment
 {
 
     public interface DrawListener
     {
-        public void onDrawRepeatClose(Domino added);
-
-        public void onClose(int var1, int var2);
+        public void drawDominoCallback(int var1, int var2);
     }
 
     /**
@@ -185,26 +184,20 @@ public class DrawRepeatFragment extends DialogFragment
             public void onClick(DialogInterface dialog, int which)
             {
                 //Add domino to hand
-                mListener.onDrawRepeatClose(new Domino(var1, var2));
+                mListener.drawDominoCallback(var1, var2);
+
             }
         })
-               .setNeutralButton("Finish", new DialogInterface.OnClickListener()
-               {
-                   @Override
-                   public void onClick(DialogInterface dialog, int which)
-                   {
-                       //Add domino to hand
-                       mListener.onClose(var1, var2);
-                   }
-               })
                .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
                {
                    @Override
                    public void onClick(DialogInterface dialog, int which)
                    {
-                       //nothing, exit out!
+                       //close window
+
                    }
                });
+
         return builder.create();
     }
 

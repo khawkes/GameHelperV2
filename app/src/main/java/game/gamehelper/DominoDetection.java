@@ -24,7 +24,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-import game.gamehelper.DominoMT.DetectedShape;
+import game.gamehelper.DominoMT.ComputerVision.DetectedShape;
 
 /**
  * Created by Mark Andrews on 4/11/2015.

@@ -11,7 +11,7 @@
  *   Amber Stewart
  */
 
-package game.gamehelper.DominoMT;
+package game.gamehelper.DominoMT.GameHelperOverrides;
 
 /**
  * Created by Mark Andrews on 3/7/2015.

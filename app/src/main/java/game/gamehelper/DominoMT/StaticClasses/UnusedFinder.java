@@ -12,13 +12,17 @@
  *   Amber Stewart
  */
 
-package game.gamehelper.DominoMT;
+package game.gamehelper.DominoMT.StaticClasses;
 
 /**
  * Created by Tim on 4/6/2015.
  */
 
 import java.util.ArrayList;
+
+import game.gamehelper.DominoMT.PieceHolders.Domino;
+import game.gamehelper.DominoMT.PieceHolders.DominoRun;
+import game.gamehelper.DominoMT.PieceHolders.HandMT;
 
 public class UnusedFinder
 {

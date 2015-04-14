@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import game.gamehelper.DominoMT.DominoPlugin;
+import game.gamehelper.DominoMT.GameHelperOverrides.DominoPlugin;
 import game.gamehelper.Scrabble.ScrabblePlugin;
 
 /**

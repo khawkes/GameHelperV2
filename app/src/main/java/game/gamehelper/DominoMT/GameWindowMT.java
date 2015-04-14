@@ -34,13 +34,20 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import game.gamehelper.ConfirmationFragment;
-import game.gamehelper.GameHelperPlugin;
+import game.gamehelper.DominoMT.GameHelperOverrides.DominoPlugin;
+import game.gamehelper.DominoMT.PieceHolders.DominoAdapter;
+import game.gamehelper.DominoMT.StaticClasses.UnusedFinder;
+import game.gamehelper.DominoMT.UiFragments.DrawDominoFragment;
+import game.gamehelper.DominoMT.UiFragments.DrawDominoRepeatFragment;
+import game.gamehelper.DominoMT.UiFragments.TrainHeadSelectFragment;
+import game.gamehelper.DominoMT.UiFragments.NewGameMT;
+import game.gamehelper.DominoMT.UiFragments.OptionPickerFragment;
+import game.gamehelper.DominoMT.PieceHolders.Domino;
+import game.gamehelper.DominoMT.PieceHolders.HandMT;
 import game.gamehelper.GameSet;
 import game.gamehelper.MainActivity;
-import game.gamehelper.MainWindow;
 import game.gamehelper.R;
 import game.gamehelper.RuleDetailActivity;
-import game.gamehelper.RulesActivity;
 import game.gamehelper.ScoreBoard;
 
 /**
@@ -50,9 +57,9 @@ import game.gamehelper.ScoreBoard;
 
 public class GameWindowMT extends ActionBarActivity implements
         ConfirmationFragment.ConfirmationListener,
-        DrawFragment.DrawListener,
-        EndSelectFragment.EndListener,
-        DrawRepeatFragment.DrawListener,
+        DrawDominoFragment.DrawListener,
+        TrainHeadSelectFragment.EndListener,
+        DrawDominoRepeatFragment.DrawListener,
         AdapterView.OnItemClickListener,
         NewGameMT.NewGameListener,
         OptionPickerFragment.OptionPickerListener
@@ -244,7 +251,7 @@ public class GameWindowMT extends ActionBarActivity implements
                     @Override
                     public void onClick(View v)
                     {
-                        DialogFragment endSelect = new EndSelectFragment();
+                        DialogFragment endSelect = new TrainHeadSelectFragment();
                         endSelect.setArguments(handInformation);
                         endSelect.show(getSupportFragmentManager(), "Select_End");
                     }
@@ -285,13 +292,13 @@ public class GameWindowMT extends ActionBarActivity implements
                     {
                         if (hand != null && hand.getTotalDominos() > 0)
                         {
-                            DialogFragment newFragment = new DrawFragment();
+                            DialogFragment newFragment = new DrawDominoFragment();
                             newFragment.setArguments(handInformation);
                             newFragment.show(getSupportFragmentManager(), getString(R.string.draw));
                         }
                         else
                         {
-                            DialogFragment newFragment = new DrawRepeatFragment();
+                            DialogFragment newFragment = new DrawDominoRepeatFragment();
                             newFragment.setArguments(handInformation);
                             newFragment.show(getSupportFragmentManager(), getString(R.string.draw));
                         }
@@ -533,7 +540,7 @@ public class GameWindowMT extends ActionBarActivity implements
             GameSet newSet = new GameSet(hand);
             dominoTotal = 0;
 
-            DialogFragment fragment = new EndSelectFragment();
+            DialogFragment fragment = new TrainHeadSelectFragment();
             fragment.setArguments(handInformation);
             fragment.show(getSupportFragmentManager(), getString(R.string.endSelect));
 
@@ -561,14 +568,14 @@ public class GameWindowMT extends ActionBarActivity implements
         if (tag.compareTo(getString(R.string.startCamera)) == 0)
         {
             //camera was cancelled, add in hand manually.
-            DialogFragment newFragment = new DrawRepeatFragment();
+            DialogFragment newFragment = new DrawDominoRepeatFragment();
             newFragment.setArguments(handInformation);
             newFragment.show(getSupportFragmentManager(), getString(R.string.draw));
         }
     }
 
     @Override
-    public void onClose(int var1, int var2)
+    public void drawDominoCallback(int var1, int var2)
     {
         //From draw button, use 2 integers to add a domino to hand
         loadGame = true;
@@ -581,7 +588,7 @@ public class GameWindowMT extends ActionBarActivity implements
     }
 
     @Override
-    public void onDrawRepeatClose(Domino d)
+    public void drawAgainCallback(Domino d)
     {
         //adds from repeating draw button.
         loadGame = true;
@@ -591,7 +598,7 @@ public class GameWindowMT extends ActionBarActivity implements
 
         updateUI();
         //call repeat again!
-        DialogFragment newFragment = new DrawRepeatFragment();
+        DialogFragment newFragment = new DrawDominoRepeatFragment();
         newFragment.setArguments(handInformation);
         newFragment.show(getSupportFragmentManager(), getString(R.string.draw));
     }
@@ -771,7 +778,7 @@ public class GameWindowMT extends ActionBarActivity implements
 
             handInformation.putInt("maxDouble", maxDouble);
 
-            DialogFragment fragment = new EndSelectFragment();
+            DialogFragment fragment = new TrainHeadSelectFragment();
             fragment.setArguments(handInformation);
             fragment.setCancelable(false);
             fragment.show(getSupportFragmentManager(), getString(R.string.endSelect));
@@ -804,7 +811,7 @@ public class GameWindowMT extends ActionBarActivity implements
         updateUI();
 
         //calls hand creation repeater
-        DialogFragment newFragment = new DrawRepeatFragment();
+        DialogFragment newFragment = new DrawDominoRepeatFragment();
         newFragment.setArguments(handInformation);
         newFragment.show(getSupportFragmentManager(), getString(R.string.draw));
     }

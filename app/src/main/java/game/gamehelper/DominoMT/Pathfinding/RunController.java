@@ -12,7 +12,7 @@
  *   Amber Stewart
  */
 
-package game.gamehelper.DominoMT;
+package game.gamehelper.DominoMT.Pathfinding;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -20,6 +20,10 @@ import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+
+import game.gamehelper.DominoMT.PieceHolders.Domino;
+import game.gamehelper.DominoMT.PieceHolders.HandMT;
+import game.gamehelper.DominoMT.PieceHolders.DominoRun;
 
 /**
  * Created on 3/6/2015.
