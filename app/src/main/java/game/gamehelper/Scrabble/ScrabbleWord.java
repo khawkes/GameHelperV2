@@ -31,10 +31,10 @@ public class ScrabbleWord implements Parcelable
     {
         score = 0;
         //Scoring rules:     a, b, c, ...
-        int[] scoreTable = { 1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10 };
+        int[] scoreTable = {1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10};
 
         char[] charArray = word.toCharArray();
-        for (char c: charArray)
+        for (char c : charArray)
         {
             score += scoreTable[c - 'A'];
         }
@@ -54,7 +54,8 @@ public class ScrabbleWord implements Parcelable
     {
         @Override
         //compares two ScrabbleWords by score.
-        public int compare(ScrabbleWord lhs, ScrabbleWord rhs) {
+        public int compare(ScrabbleWord lhs, ScrabbleWord rhs)
+        {
             if (lhs.score < rhs.score)
                 return -1;
             else if (lhs.score > rhs.score)

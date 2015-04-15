@@ -427,8 +427,10 @@ public class GameWindowMT extends ActionBarActivity implements
             {
                 DominoPlugin plugin = new DominoPlugin();
                 Bundle bundle = new Bundle();
-                for(Map.Entry<String, Integer> ids : plugin.getRulesIDs().entrySet())
+                for (Map.Entry<String, Integer> ids : plugin.getRulesIDs().entrySet())
+                {
                     bundle.putInt(ids.getKey(), ids.getValue());
+                }
 
                 Intent activity = new Intent(this, RuleDetailActivity.class);
                 activity.putExtras(bundle);

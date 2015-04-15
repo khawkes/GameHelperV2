@@ -18,15 +18,13 @@ import java.util.ArrayList;
 public class getScrabbleWords
 {
 
-    public ScrabbleWord[] getWordArray(String  letters)
+    public static ScrabbleWord[] processWordArray(String letters)
     {
-
-        //creat the url for request
+        //create the url for request
         String urlString = new String("http://www.anagramica.com/all/:");
         urlString += letters;
 
         ArrayList<ScrabbleWord> wordList = new ArrayList<>();
-
 
         try
         {
@@ -58,10 +56,10 @@ public class getScrabbleWords
             JSONArray jArray = jObject.getJSONArray("all");
 
             //add all the JSON array objects bigger then length 1 to a list
-            for (int i=0; i < jArray.length(); i++)
+            for (int i = 0; i < jArray.length(); i++)
             {
                 String word = (String) jArray.get(i);
-                if(word.length() > 1)
+                if (word.length() > 1)
                 {
                     ScrabbleWord sWord = new ScrabbleWord(word);
                     wordList.add(sWord);
@@ -69,16 +67,12 @@ public class getScrabbleWords
             }
 
         }
-        catch(Exception e)
+        catch (Exception e)
         {
-
+            e.printStackTrace();
         }
 
         //return the list as an array
         return wordList.toArray(new ScrabbleWord[wordList.size()]);
     }
-
-
-
-
 }

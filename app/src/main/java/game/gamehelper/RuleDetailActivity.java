@@ -41,7 +41,7 @@ public class RuleDetailActivity extends ActionBarActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-       switch (item.getItemId())
+        switch (item.getItemId())
         {
             case R.id.menu_return:
             {
@@ -66,11 +66,13 @@ public class RuleDetailActivity extends ActionBarActivity
         textView.setMovementMethod(LinkMovementMethod.getInstance());
 
         int textId = rulesIDs.getInt("text", -1);
-        if (textId == -1) {
+        if (textId == -1)
+        {
 
             textView.setText("Could not get rules for current game!");
         }
-        else {
+        else
+        {
 
             int titleId = rulesIDs.getInt("title");
             int detailId = rulesIDs.getInt("detail");

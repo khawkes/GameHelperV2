@@ -49,13 +49,22 @@ public class ScrabblePlugin implements GameHelperPlugin
     }
 
     @Override
-    public int getImageIcon() { return R.drawable.scrabble_default; }
+    public int getImageIcon()
+    {
+        return R.drawable.scrabble_default;
+    }
 
     @Override
-    public boolean isGameReady() { return false; }
+    public boolean isGameReady()
+    {
+        return false;
+    }
 
     @Override
-    public boolean isRuleSetReady() { return true; }
+    public boolean isRuleSetReady()
+    {
+        return true;
+    }
 
     @Override
     public ScoreBoard getScoreBoard()

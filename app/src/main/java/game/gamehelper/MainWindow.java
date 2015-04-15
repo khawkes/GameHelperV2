@@ -55,9 +55,13 @@ public class MainWindow extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_window);
 
-        games.put(games.size(), new GameHelperPlugin() {
+        games.put(games.size(), new GameHelperPlugin()
+        {
             @Override
-            public String getName() { return "Other"; }
+            public String getName()
+            {
+                return "Other";
+            }
 
             @Override
             public String getDescription()
@@ -67,25 +71,46 @@ public class MainWindow extends ActionBarActivity
             }
 
             @Override
-            public Class<?> getEntryMenuClass() { return null; }
+            public Class<?> getEntryMenuClass()
+            {
+                return null;
+            }
 
             @Override
-            public Map<String, Integer> getRulesIDs() { return null; }
+            public Map<String, Integer> getRulesIDs()
+            {
+                return null;
+            }
 
             @Override
-            public Bundle getDebugBundle() { return null; }
+            public Bundle getDebugBundle()
+            {
+                return null;
+            }
 
             @Override
-            public int getImageIcon() { return 0; }
+            public int getImageIcon()
+            {
+                return 0;
+            }
 
             @Override
-            public boolean isGameReady() { return false; }
+            public boolean isGameReady()
+            {
+                return false;
+            }
 
             @Override
-            public boolean isRuleSetReady() { return false; }
+            public boolean isRuleSetReady()
+            {
+                return false;
+            }
 
             @Override
-            public ScoreBoard getScoreBoard() { return null; }
+            public ScoreBoard getScoreBoard()
+            {
+                return null;
+            }
         });
 
         final Button newGameButton = (Button) findViewById(R.id.newGameButton);
@@ -162,8 +187,10 @@ public class MainWindow extends ActionBarActivity
             {
                 GameHelperPlugin game = games.get(selectedGame);
                 Bundle bundle = new Bundle();
-                for(Map.Entry<String, Integer> ids : game.getRulesIDs().entrySet())
+                for (Map.Entry<String, Integer> ids : game.getRulesIDs().entrySet())
+                {
                     bundle.putInt(ids.getKey(), ids.getValue());
+                }
 
                 Intent activity = new Intent(this, RuleDetailActivity.class);
                 activity.putExtras(bundle);
@@ -186,7 +213,8 @@ public class MainWindow extends ActionBarActivity
         return (super.onOptionsItemSelected(item));
     }
 
-    public static Collection<GameHelperPlugin> getGames() {
+    public static Collection<GameHelperPlugin> getGames()
+    {
 
         return Collections.unmodifiableCollection(games.values());
     }

@@ -88,16 +88,23 @@ public class DominoPlugin implements GameHelperPlugin
     }
 
     @Override
-    public int getImageIcon() {
+    public int getImageIcon()
+    {
 
         return R.drawable.domino_default;
     }
 
     @Override
-    public boolean isGameReady() { return true; }
+    public boolean isGameReady()
+    {
+        return true;
+    }
 
     @Override
-    public boolean isRuleSetReady() { return true; }
+    public boolean isRuleSetReady()
+    {
+        return true;
+    }
 
     @Override
     public ScoreBoard getScoreBoard()
