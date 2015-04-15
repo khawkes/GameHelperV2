@@ -1,9 +1,16 @@
 package game.gamehelper.Scrabble;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedList;
+
+import game.gamehelper.R;
 
 /**
  * Created by Andrew on 4/13/2015.
@@ -11,37 +18,32 @@ import java.util.Comparator;
 public class ScrabbleWord implements Parcelable
 {
     int score;
-    String word;
+    LinkedList<ScrabbleLetter> word;
 
     //stores word, and sets score for word.
     ScrabbleWord(String in)
     {
-        word = in.toUpperCase();
-        setScore();
+        score = 0;
+
+        for (char c : in.toCharArray())
+        {
+            word.add(new ScrabbleLetter(c));
+            score += word.getLast().getPointVal();
+        }
+
+        //special rule; scrabble bingo
+        if (word.size() == 8)
+        {
+            score += 50;
+        }
     }
 
     //loads a ScrabbleWord from a Parcel.
     ScrabbleWord(Parcel in)
     {
-        word = in.readString();
+        word = new LinkedList<>();
+        in.readTypedList(word, ScrabbleLetter.CREATOR);
         score = in.readInt();
-    }
-
-    private void setScore()
-    {
-        score = 0;
-        //Scoring rules:     a, b, c, ...
-        int[] scoreTable = {1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10};
-
-        char[] charArray = word.toCharArray();
-        for (char c : charArray)
-        {
-            score += scoreTable[c - 'A'];
-        }
-
-        //special scrabble word. TECHNICALLY doesn't account for start tile.
-        if (word.length() == 8)
-            score += 150;
     }
 
     public int getScore()
@@ -69,7 +71,7 @@ public class ScrabbleWord implements Parcelable
     //to allow for list-usage.
     public int hashCode()
     {
-        return word.length() * score;
+        return word.size() * score;
     }
 
     @Override
@@ -102,22 +104,7 @@ public class ScrabbleWord implements Parcelable
     //Writes this scrabble-word to a parcel
     public void writeToParcel(Parcel dest, int flags)
     {
-        dest.writeString(word);
+        dest.writeTypedList(word);
         dest.writeInt(score);
     }
-
-    public static Parcelable.Creator CREATOR = new Parcelable.Creator()
-    {
-        @Override
-        public ScrabbleWord createFromParcel(Parcel source)
-        {
-            return new ScrabbleWord(source);
-        }
-
-        @Override
-        public ScrabbleWord[] newArray(int size)
-        {
-            return new ScrabbleWord[size];
-        }
-    };
 }
