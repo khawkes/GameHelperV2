@@ -37,6 +37,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
+import game.gamehelper.DominoMT.DetectedShape;
+
 import static android.os.Environment.DIRECTORY_PICTURES;
 
 /**
@@ -45,23 +47,23 @@ import static android.os.Environment.DIRECTORY_PICTURES;
  */
 public class MainActivity extends ActionBarActivity implements View.OnClickListener
 {
-
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int[] VIEW_BUTTONS = new int[] {
 
-            R.id.btnProcess,
-            R.id.btnShowBlur,
-            R.id.btnShowCanny,
-            R.id.btnShowGray,
-            R.id.btnShowPicture,
-            R.id.btnShowProcessed,
             R.id.btnTakePicture,
+            R.id.btnProcess,
             R.id.btnReturn,
-            R.id.btnShapes
+            R.id.btnShowGray,
+            R.id.btnShowHistogram,
+            R.id.btnShowPeaks,
+            R.id.btnShowShapes,
+            R.id.btnShowFinal,
+            R.id.btnShowOriginal
     };
+
     private Bitmap file;
     private File currentPhotoPath;
-    private DominoDetection testimg;
+    private DominoDetection detector;
     int[][] domList = null;
 
     private TextView countText;
@@ -178,50 +180,29 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             case R.id.btnTakePicture:
                 createImageFile();
                 dispatchTakePictureIntent();
-                setButtons();
+                setButtons(false);
                 break;
-            case R.id.btnShowPicture:
-                picture.setImageBitmap(file);
-                countText.setText(currentPhotoPath.getAbsolutePath());
-                break;
-            case R.id.btnShowProcessed:
-                //show double thresholded image
-                picture.setImageBitmap(testimg.finalfile);
-                countText.setText("Processed");
-                break;
-            case R.id.btnShowGray:
-                //show grayscale image
-                picture.setImageBitmap(testimg.bwfile);
-                countText.setText("Gray");
-                break;
-            case R.id.btnShowBlur:
-                //show normalized gradient
-                picture.setImageBitmap(testimg.histogramfile);
-                countText.setText("Blur");
-                break;
-            case R.id.btnShowCanny:
-                //show peaks image
-                picture.setImageBitmap(testimg.peaksfile);
-                countText.setText("Canny");
-                break;
+
             case R.id.btnProcess:
                 //convert bitmap to list of points[]s representing contiguous segments
-                testimg.findShapes();
-                Log.w("finding shapes", "finished");
-                picture.setImageBitmap(testimg.shapesfile);
-                buttons.get(R.id.btnShapes).setEnabled(true);
-                break;
-            case R.id.btnShapes:
+                detector.findShapes();
+                Log.w("ImageProcessing", "Find Shapes Finished");
+                picture.setImageBitmap(detector.getShapesImage());
+
                 //find corners of point[]s and determine if rectangle circle or neither
-                testimg.makeShapes();
-                if (testimg.rectangle != null)
+                detector.makeShapes();
+                Log.w("ImageProcessing", "Make Shapes Finished");
+
+                DetectedShape shapes = detector.getDetectedShape();
+                if (shapes != null)
                 {
                     //iterate through rectangle list and find circles that are within each side
-                    domList = testimg.rectangle.getDominoes();
+                    domList = shapes.getDominoes();
                     countText.setText(Integer.toString(domList.length));
                     buttons.get(R.id.btnReturn).setEnabled(true);
                 }
                 break;
+
             case R.id.btnReturn:
                 //return results to caller
                 Bundle b = new Bundle();
@@ -233,13 +214,39 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 intent.putExtras(b);
                 setResult(RESULT_OK, intent);
                 finish();
+                break;
+
+            case R.id.btnShowGray:
+                picture.setImageBitmap(detector.getBWImage());
+                countText.setText("Gray");
+                break;
+            case R.id.btnShowHistogram:
+                picture.setImageBitmap(detector.getHistogramImage());
+                countText.setText("Histogram");
+                break;
+            case R.id.btnShowPeaks:
+                picture.setImageBitmap(detector.getPeaksImage());
+                countText.setText("Peaks");
+                break;
+            case R.id.btnShowShapes:
+                picture.setImageBitmap(detector.getShapesImage());
+                countText.setText("Shapes");
+                break;
+            case R.id.btnShowFinal:
+                picture.setImageBitmap(detector.getFinalImage());
+                countText.setText("Final");
+                break;
+            case R.id.btnShowOriginal:
+                //show peaks image
+                picture.setImageBitmap(file);
+                countText.setText("Original");
+                break;
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK)
         {
@@ -251,20 +258,27 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private void processPicture()
     {
-
         //read file and scale to 10% (if image is too large the stack will overflow on edge detection)
         //size picked arbitrarily, don't know optimal size
         file = BitmapFactory.decodeFile(currentPhotoPath.getAbsolutePath());
-        file = Bitmap.createScaledBitmap(file, (int) (file.getWidth() * .1), (int) (file.getHeight() * .1), false);
+
+        int longestSide = Math.max(file.getWidth(), file.getHeight());
+        double scale = longestSide / 512;
+        int width = (int) (file.getWidth() / scale);
+        int height = (int) (file.getHeight() / scale);
+
+        file = Bitmap.createScaledBitmap(file, width, height, false);
         picture.setImageBitmap(file);
 
-        testimg = new DominoDetection(file, 1, 20, 100, 2, 9);
-        setButtons();
+        detector = new DominoDetection(file, 1, 20, 100, 2, 9);
+        detector.processImage();
+        Log.w("ImageProcessing", "Processing Image Done");
+
+        setButtons(true);
     }
 
     private void createImageFile()
     {
-
         try
         {
             // Create an image file name
@@ -288,7 +302,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private void dispatchTakePictureIntent()
     {
-
         if (currentPhotoPath == null) return;
 
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -303,14 +316,15 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
-    private void setButtons()
+    private void setButtons(boolean enabled)
     {
-
-        buttons.get(R.id.btnShowPicture).setEnabled(true);
         buttons.get(R.id.btnProcess).setEnabled(true);
-        buttons.get(R.id.btnShowProcessed).setEnabled(true);
-        buttons.get(R.id.btnShowGray).setEnabled(true);
-        buttons.get(R.id.btnShowBlur).setEnabled(true);
-        buttons.get(R.id.btnShowCanny).setEnabled(true);
+
+        buttons.get(R.id.btnShowGray).setEnabled(enabled && detector.isProcessed());
+        buttons.get(R.id.btnShowHistogram).setEnabled(enabled && detector.isProcessed());
+        buttons.get(R.id.btnShowPeaks).setEnabled(enabled && detector.isProcessed());
+        buttons.get(R.id.btnShowShapes).setEnabled(enabled && detector.isProcessed());
+        buttons.get(R.id.btnShowFinal).setEnabled(enabled && detector.isProcessed());
+        buttons.get(R.id.btnShowOriginal).setEnabled(enabled && detector.isProcessed());
     }
 }

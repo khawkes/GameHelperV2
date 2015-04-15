@@ -34,27 +34,16 @@ public class DominoDetection
     private final int picWidth;
     private final int picHeight;
 
-    int[][] pic;
-    double[][] outpicx;
-    double[][] outpicy;
-    int[] histogram;
-    double[][] maskx;
-    double[][] masky;
-    double[][] ival;
-    double[][] ival2;
-    double[][] peaks;
-    double[][] finalPic;
-    double[][] conv;
+    private double[][] ival;
+    private double[][] peaks;
+    private double[][] finalPic;
 
-    public Bitmap bwfile;
-    public Bitmap histogramfile;
-    public Bitmap peaksfile;
-    public Bitmap finalfile;
-    public Bitmap shapesfile;
-    public DetectedShape rectangle;
-
-    //size of mask for performing gaussian blur
-    public int MAXMASK = 20;
+    private Bitmap bwfile;
+    private Bitmap histogramfile;
+    private Bitmap peaksfile;
+    private Bitmap finalfile;
+    private Bitmap shapesfile;
+    private DetectedShape rectangle;
 
     //pathfinding limiter
     private int stopcheck = 0;
@@ -75,51 +64,60 @@ public class DominoDetection
     private double percent = 9;
 
     //sig
-    private double sig = 1.0;
+    private double sigma = 1.0;
+    private int maskSize = 20;
+    private Bitmap sourceFile;
 
     //number of pixels that are larger than neighbors
     int peakCount = 0;
 
-    public DominoDetection(Bitmap file, double sigma, int maskSize, int limit, int checkLimit, double percent)
+    public DominoDetection(Bitmap file, double sigma, int maskSize, int limit,
+            int checkLimit, double percent)
     {
-        int i, j, p, q, mr, centx, centy;
-        double maskval, sum1, sum2, maxival = 0, slope = 0, sigsigtwo, twopiesigfour, sigMod;
 
-        sig = sigma;
-        this.MAXMASK = maskSize;
+        this.sourceFile = file;
+        this.sigma = sigma;
+        this.maskSize = maskSize;
         this.limit = limit;
         this.checkLimit = checkLimit;
         this.percent = percent;
 
-        picWidth = file.getWidth();
-        picHeight = file.getHeight();
+        picWidth = sourceFile.getWidth();
+        picHeight = sourceFile.getHeight();
+    }
 
-        pic = new int[picWidth][picHeight];
-        outpicx = new double[picWidth][picHeight];
-        outpicy = new double[picWidth][picHeight];
-        histogram = new int[256];
-        maskx = new double[MAXMASK][MAXMASK];
-        masky = new double[MAXMASK][MAXMASK];
+    public void processImage()
+    {
+
+        int i, j, p, q, mr, centx, centy;
+        double maskval, sum1, sum2, maxival = 0, slope = 0, sigsigtwo, twopiesigfour, sigMod;
+
+        int[][] pic = new int[picWidth][picHeight];
+        double[][] outpicx = new double[picWidth][picHeight];
+        double[][] outpicy = new double[picWidth][picHeight];
+        int[] histogram = new int[256];
+        double[][] maskx = new double[maskSize][maskSize];
+        double[][] masky = new double[maskSize][maskSize];
         ival = new double[picWidth][picHeight];
-        ival2 = new double[picWidth][picHeight];
+        double[][] ival2 = new double[picWidth][picHeight];
         peaks = new double[picWidth][picHeight];
         finalPic = new double[picWidth][picHeight];
-        conv = new double[picWidth][picHeight];
+        double[][] conv = new double[picWidth][picHeight];
 
         histogramfile = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
         peaksfile = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
         finalfile = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
         shapesfile = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
+        bwfile = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
 
         //create grayscale image
-        bwfile = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(bwfile);
         Paint paint = new Paint();
         ColorMatrix cm = new ColorMatrix();
         cm.setSaturation(0);
         ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
         paint.setColorFilter(f);
-        c.drawBitmap(file, 0, 0, paint);
+        c.drawBitmap(sourceFile, 0, 0, paint);
 
         //convert RGB grayscale bitmap to 1 channel int array
         for (i = 0; i < picWidth; i++)
@@ -140,12 +138,12 @@ public class DominoDetection
         percent = (picWidth * picWidth - 1) * (percent / 100);
 
         //variables for mask calculations
-        sigsigtwo = (sig * sig * -2);
-        twopiesigfour = (2 * Math.PI * sig * sig * sig * sig);
+        sigsigtwo = (sigma * sigma * -2);
+        twopiesigfour = (2 * Math.PI * sigma * sigma * sigma * sigma);
 
-        mr = (int) (sig * 3);
-        centx = (MAXMASK / 2);
-        centy = (MAXMASK / 2);
+        mr = (int) (sigma * 3);
+        centx = (maskSize / 2);
+        centy = (maskSize / 2);
 
         //part 1
         for (p = -mr; p <= mr; p++)
@@ -188,7 +186,7 @@ public class DominoDetection
             {
                 ival[i][j] = Math.sqrt((double) ((outpicx[i][j] * outpicx[i][j]) +
                         (outpicy[i][j] * outpicy[i][j])));
-                //printf("%d\n", ival[i][j]);
+
                 if (ival[i][j] > maxival)
                     maxival = ival[i][j];
             }
@@ -296,10 +294,8 @@ public class DominoDetection
         {
             for (j = 0; j < picHeight; j++)
             {
-                {
-                    stopcheck = 0;
-                    checkNeighbors(i, j);
-                }
+                stopcheck = 0;
+                checkNeighbors(i, j);
             }
         }
 
@@ -309,20 +305,54 @@ public class DominoDetection
             for (j = 0; j < picHeight; j++)
             {
                 finalfile.setPixel(i, j, (int) finalPic[i][j] << 24);
-//                fprintf(fo3,"%c",(char)((int)(finalPic[i][j])));
             }
         }
     }
 
-    int getBlack(int i)
+    private int getBlack(int i)
     {
+//        int black = (int)(i/.21)<<16 + (int)(0.72*i)<<8 + (int)(0.07*i);
 
         int black = 0 + i << 24;
-//        int black = (int)(i/.21)<<16 + (int)(0.72*i)<<8 + (int)(0.07*i);
         return black;
     }
 
-    void checkNeighbors(int i, int j)
+    public Bitmap getBWImage()
+    {
+        return bwfile;
+    }
+
+    public Bitmap getHistogramImage()
+    {
+        return histogramfile;
+    }
+
+    public Bitmap getPeaksImage()
+    {
+        return peaksfile;
+    }
+
+    public Bitmap getFinalImage()
+    {
+        return finalfile;
+    }
+
+    public Bitmap getShapesImage()
+    {
+        return shapesfile;
+    }
+
+    public boolean isProcessed()
+    {
+        return bwfile != null;
+    }
+
+    public DetectedShape getDetectedShape()
+    {
+        return rectangle;
+    }
+
+    private void checkNeighbors(int i, int j)
     {
         stopcheck++;
         if (stopcheck > limit)
@@ -354,7 +384,7 @@ public class DominoDetection
 
     //iterate through image until an edge is found then look for other edges nearby and group as
     //a single object
-    void findShapes()
+    public void findShapes()
     {
         for (int i = 0; i < picWidth; i++)
         {
@@ -411,7 +441,7 @@ public class DominoDetection
 
     //traversal functions, check is the number of empty spaces skipped over, checkLimit being how many
     //pixels this program is allowed to skip
-    void checkUp(int i, int j, int check)
+    private void checkUp(int i, int j, int check)
     {
         check++;
         if (check > checkLimit)
@@ -434,7 +464,7 @@ public class DominoDetection
         checkLeft(i - 1, j, check);
     }
 
-    void checkRight(int i, int j, int check)
+    private void checkRight(int i, int j, int check)
     {
         check++;
         if (check > checkLimit)
@@ -457,7 +487,7 @@ public class DominoDetection
         checkDown(i, j + 1, check);
     }
 
-    void checkDown(int i, int j, int check)
+    private void checkDown(int i, int j, int check)
     {
         check++;
         if (check > checkLimit)
@@ -480,7 +510,7 @@ public class DominoDetection
         checkLeft(i - 1, j, check);
     }
 
-    void checkLeft(int i, int j, int check)
+    private void checkLeft(int i, int j, int check)
     {
         check++;
         if (check > checkLimit)
@@ -503,7 +533,7 @@ public class DominoDetection
         checkLeft(i - 1, j, check);
     }
 
-    void makeShapes()
+    public void makeShapes()
     {
         rectangle = new DetectedShape();
         for (ArrayList<Point> i : objectList)
@@ -561,14 +591,4 @@ public class DominoDetection
         //remove wrongly added shapes
         rectangle.deleteOutliers();
     }
-
-    public void updateValues(double sigma, int maskSize, int limit, int checkLimit, double percent)
-    {
-        sig = sigma;
-        this.MAXMASK = maskSize;
-        this.limit = limit;
-        this.checkLimit = checkLimit;
-        this.percent = percent;
-    }
-
 }

@@ -25,7 +25,7 @@ public class UnusedFinder
 
     public static Domino[] FindUnused(DominoRun currentRun, HandMT currentHand)
     {
-        ArrayList<Domino> unUsed = new ArrayList<Domino>();
+        ArrayList<Domino> unUsed = new ArrayList<>();
         Domino[] usedRun = currentRun.toArray();
         Domino[] hand = currentHand.toArray();
 

@@ -67,6 +67,7 @@ public class OptionPickerFragment extends DialogFragment
         {
             Log.w("OptionPickerFragment", "no arguments found, integer required for picker type");
             dismiss();
+            return null;
         }
         option = b.getInt("option");
 

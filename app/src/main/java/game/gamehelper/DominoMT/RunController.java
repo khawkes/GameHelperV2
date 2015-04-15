@@ -84,8 +84,8 @@ public class RunController implements Parcelable
         longest = new DominoRun();
         mostPoints = new DominoRun();
         TRAIN_HEAD = target = startDouble;
-        mostPointRuns = new LinkedList<DominoRun>();
-        longestRuns = new LinkedList<DominoRun>();
+        mostPointRuns = new LinkedList<>();
+        longestRuns = new LinkedList<>();
         currentRun = new DominoRun();
     }
 
@@ -95,18 +95,18 @@ public class RunController implements Parcelable
 
         longest = new DominoRun();
         mostPoints = new DominoRun();
-        mostPointRuns = new LinkedList<DominoRun>();
-        longestRuns = new LinkedList<DominoRun>();
+        mostPointRuns = new LinkedList<>();
+        longestRuns = new LinkedList<>();
         currentRun = new DominoRun();
 
         MAX_EDGE = p.readInt();
         TRAIN_HEAD = p.readInt();
-        graph = (DominoGraph) p.readParcelable(DominoGraph.class.getClassLoader());
+        graph = p.readParcelable(DominoGraph.class.getClassLoader());
         target = p.readInt();
         midTrainTrainHeadPlaysAllowed = (p.readByte() == 1);
         pathsAreCurrent = (p.readByte() == 1);
-        longest = (DominoRun) p.readParcelable(DominoRun.class.getClassLoader());
-        mostPoints = (DominoRun) p.readParcelable(DominoRun.class.getClassLoader());
+        longest = p.readParcelable(DominoRun.class.getClassLoader());
+        mostPoints = p.readParcelable(DominoRun.class.getClassLoader());
         p.readList(tempList, null);
 
         for (DominoRun d : tempList)
@@ -122,7 +122,7 @@ public class RunController implements Parcelable
             longestRuns.add(d);
         }
 
-        currentRun = (DominoRun) p.readParcelable(DominoRun.class.getClassLoader());
+        currentRun = p.readParcelable(DominoRun.class.getClassLoader());
     }
 
     //Getter's & setters for rule field.
@@ -135,7 +135,6 @@ public class RunController implements Parcelable
     {
         RunController.midTrainTrainHeadPlaysAllowed = midTrainTrainHeadPlaysAllowed;
     }
-
 
     //recalculates longest/most point path. Uses brute force.
     private void recalculatePaths()

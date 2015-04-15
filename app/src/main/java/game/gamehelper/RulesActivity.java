@@ -27,27 +27,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-
 
 public class RulesActivity extends ActionBarActivity implements ImageButton.OnClickListener
 {
-
-    static public final String ARG_TEXT_ID = "text_id";
-
-    private static int RULES_EXIT = 88;
-    private GridView rulesGrid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -65,7 +56,7 @@ public class RulesActivity extends ActionBarActivity implements ImageButton.OnCl
             textView.setText(Html.fromHtml(getString(R.string.help_page_intro_html)));
         }
 
-        rulesGrid = (GridView) findViewById(R.id.rulesGrid);
+        GridView rulesGrid = (GridView) findViewById(R.id.rulesGrid);
         rulesGrid.setSmoothScrollbarEnabled(true);
 
         RuleAdapter gamesAdapter = new RuleAdapter(this, R.layout.rule_item);

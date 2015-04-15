@@ -15,16 +15,18 @@
 
     <string name="app_name">Domino</string>
     <string name="action_settings">Settings</string>
+
     <string name="txtBtnTakePicture">Take Picture</string>
-    <string name="txtBtnCount">Count</string>
-    <string name="txtBtnShowPicture">Show Picture</string>
-    <string name="txtBtnGray">Gray</string>
-    <string name="txtBtnCanny">Canny</string>
-    <string name="txtBtnBlur">Blur</string>
     <string name="txtBtnProcess">Process</string>
-    <string name="txtBtnOriginal">Original</string>
     <string name="txtBtnReturn">Return</string>
+
+    <string name="txtBtnGray">Gray</string>
+    <string name="txtBtnHistogram">Histogram</string>
+    <string name="txtBtnPeaks">Peaks</string>
     <string name="txtBtnShapes">Shapes</string>
+    <string name="txtBtnFinal">Final</string>
+    <string name="txtBtnOriginal">Original</string>
+
     <string name="imgDescr">pictureView</string>
     <string name="title_activity_main_window">Game Helper</string>
     <string name="title_activity_game_window">Game Window</string>
