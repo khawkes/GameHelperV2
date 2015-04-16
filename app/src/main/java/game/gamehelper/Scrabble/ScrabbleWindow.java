@@ -32,7 +32,8 @@ public class ScrabbleWindow extends ActionBarActivity implements
         LetterSelectFragment.LetterSelectListener,
         LeadOffLetterSelect.LeadOffListener,
         AdapterView.OnItemClickListener,
-        LetterSelectRepeatFragment.LetterSelectRepeatListener
+        LetterSelectRepeatFragment.LetterSelectRepeatListener,
+        ScrabbleHand.HandInterface
 {
     private ScrabbleHand hand;
     private GridView listView;
@@ -318,7 +319,7 @@ public class ScrabbleWindow extends ActionBarActivity implements
 
     public void newSet(char playoffLetter)
     {
-        hand = new ScrabbleHand(playoffLetter);
+        hand = new ScrabbleHand(playoffLetter, this);
         data = hand.toArray();
         updateUI();
     }
@@ -415,6 +416,7 @@ public class ScrabbleWindow extends ActionBarActivity implements
 
         updateUI();
 
+        /*
         //call for camera on new game
         if (!playoffLetterSelected && getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA))
         {
@@ -427,7 +429,7 @@ public class ScrabbleWindow extends ActionBarActivity implements
             fragment.setArguments(b);
             fragment.show(getSupportFragmentManager(), getString(R.string.startCamera));
             //positive button click will continue in the method onActivityResult()
-        }
+        }*/
         playoffLetterSelected = true;
     }
 
@@ -476,7 +478,7 @@ public class ScrabbleWindow extends ActionBarActivity implements
         updateUI();
     }
 
-    private void updateUI()
+    public void updateUI()
     {
         //update the screen to reflect changes to hand
 
@@ -632,6 +634,7 @@ public class ScrabbleWindow extends ActionBarActivity implements
         saveInformation();
         getIntent().putExtras(handInformation);
         adapter.clear();
+        hand = null;
         super.onDestroy();
     }
 

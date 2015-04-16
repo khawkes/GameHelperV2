@@ -29,7 +29,7 @@ public class ScrabblePlugin implements GameHelperPlugin
     @Override
     public Class<?> getEntryMenuClass()
     {
-        return null;
+        return ScrabbleWindow.class;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class ScrabblePlugin implements GameHelperPlugin
     @Override
     public boolean isGameReady()
     {
-        return false;
+        return true;
     }
 
     @Override

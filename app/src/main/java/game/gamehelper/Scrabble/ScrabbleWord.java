@@ -24,6 +24,7 @@ public class ScrabbleWord implements Parcelable
     ScrabbleWord(String in)
     {
         score = 0;
+        word = new LinkedList<>();
 
         for (char c : in.toCharArray())
         {
@@ -57,7 +58,7 @@ public class ScrabbleWord implements Parcelable
     }
 
     //comparator for score-based comparison.
-    public class compareByScore implements Comparator<ScrabbleWord>
+    public static class compareByScore implements Comparator<ScrabbleWord>
     {
         @Override
         //compares two ScrabbleWords by score.
@@ -73,7 +74,7 @@ public class ScrabbleWord implements Parcelable
     }
 
     //comparator for score-based comparison.
-    public class compareByLength implements Comparator<ScrabbleWord>
+    public static class compareByLength implements Comparator<ScrabbleWord>
     {
         @Override
         //compares two ScrabbleWords by score.
