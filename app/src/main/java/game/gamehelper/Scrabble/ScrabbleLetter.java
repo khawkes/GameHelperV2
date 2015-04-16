@@ -16,6 +16,38 @@ public class ScrabbleLetter implements Parcelable
     final char letter;
     final int pointVal;
 
+    //holds the picture references
+    public static final int[] scrabIdList = new int[]
+    {
+        R.drawable.smallBlank,
+        R.drawable.smallA,
+        R.drawable.smallB,
+        R.drawable.smallC,
+        R.drawable.smallD,
+        R.drawable.smallE,
+        R.drawable.smallF,
+        R.drawable.smallG,
+        R.drawable.smallH,
+        R.drawable.smallI,
+        R.drawable.smallJ,
+        R.drawable.smallK,
+        R.drawable.smallL,
+        R.drawable.smallM,
+        R.drawable.smallN,
+        R.drawable.smallO,
+        R.drawable.smallP,
+        R.drawable.smallQ,
+        R.drawable.smallR,
+        R.drawable.smallS,
+        R.drawable.smallT,
+        R.drawable.smallU,
+        R.drawable.smallV,
+        R.drawable.smallW,
+        R.drawable.smallX,
+        R.drawable.smallY,
+        R.drawable.smallZ,
+    };
+
     //Scoring rules:     a, b, c, ...
     static final int[] scoreTable = {1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10};
 
@@ -23,7 +55,10 @@ public class ScrabbleLetter implements Parcelable
     public ScrabbleLetter(char c)
     {
         letter = Character.toLowerCase(c);
-        pointVal = scoreTable[letter - 'a'];
+        if (c != ' ')
+            pointVal = scoreTable[letter - 'a'];
+        else
+            pointVal = 0;
     }
 
     //constructs a letter from a parcel
@@ -52,92 +87,14 @@ public class ScrabbleLetter implements Parcelable
     public static Bitmap getLetterPic(char letter, Context context)
     {
         Bitmap letterPic;
+        letter = Character.toLowerCase(letter);
 
-        switch (letter)
-        {
-            case 'A':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallA);
-                break;
-            case 'B':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallB);
-                break;
-            case 'C':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallC);
-                break;
-            case 'D':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallD);
-                break;
-            case 'E':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallE);
-                break;
-            case 'F':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallF);
-                break;
-            case 'G':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallG);
-                break;
-            case 'H':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallH);
-                break;
-            case 'I':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallI);
-                break;
-            case 'J':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallJ);
-                break;
-            case 'K':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallK);
-                break;
-            case 'L':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallL);
-                break;
-            case 'M':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallM);
-                break;
-            case 'N':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallN);
-                break;
-            case 'O':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallO);
-                break;
-            case 'P':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallP);
-                break;
-            case 'Q':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallQ);
-                break;
-            case 'R':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallR);
-                break;
-            case 'S':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallS);
-                break;
-            case 'T':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallT);
-                break;
-            case 'U':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallU);
-                break;
-            case 'V':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallV);
-                break;
-            case 'W':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallW);
-                break;
-            case 'X':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallX);
-                break;
-            case 'Y':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallY);
-                break;
-            case 'Z':
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallZ);
-                break;
-            case ' ':
-            default:
-                letterPic = BitmapFactory.decodeResource(context.getResources(), R.drawable.smallBlank);
-                break;
-        }
+        //if it's not a space, look it up in the table above, shifting to match the table.
+        if (letter != ' ')
+            letterPic = BitmapFactory.decodeResource(context.getResources(), scrabIdList[letter - 'a' + 1]);
+        else
+            letterPic = BitmapFactory.decodeResource(context.getResources(), scrabIdList[0]);
+
         return letterPic;
     }
 

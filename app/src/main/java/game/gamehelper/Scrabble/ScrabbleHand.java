@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import java.util.ArrayList;
 
+import game.gamehelper.DominoMT.Domino;
+import game.gamehelper.DominoMT.DominoRun;
 import game.gamehelper.Hand;
 
 /**
@@ -13,12 +15,19 @@ import game.gamehelper.Hand;
 public class ScrabbleHand implements Hand, Parcelable
 {
     private ArrayList<ScrabbleLetter> currentHand;
+    private ScrabbleLetter playoff;
 
     public ScrabbleHand()
     {
         currentHand = new ArrayList<>();
+        playoff = new ScrabbleLetter(' ');
     }
 
+    public ScrabbleHand(char playoffLetter)
+    {
+        currentHand = new ArrayList<>();
+        playoff = new ScrabbleLetter(playoffLetter);
+    }
 
     @Override
     public int getTotalPointsHand()
@@ -36,5 +45,55 @@ public class ScrabbleHand implements Hand, Parcelable
     public void writeToParcel(Parcel dest, int flags)
     {
 
+    }
+
+    public void setPlayoffLetter(ScrabbleLetter l)
+    {
+
+    }
+
+    public void letterPlayed(int position, ScrabbleWindow.WindowContext context)
+    {
+
+    }
+
+    public void addLetter(ScrabbleLetter l)
+    {
+
+    }
+
+    public ScrabbleLetter[] findUnused(ScrabbleWord compareAgainst)
+    {
+        return null;
+    }
+
+    public ScrabbleLetter getPlayoffLetter()
+    {
+        return null;
+    }
+
+    public ScrabbleWord getMostPointWord()
+    {
+        return null;
+    }
+
+    public ScrabbleWord getLongestWord()
+    {
+        return null;
+    }
+
+    public boolean undo()
+    {
+        return true;
+    }
+
+    public int getTotalLetters()
+    {
+        return currentHand.size();
+    }
+
+    public ScrabbleLetter[] toArray()
+    {
+        return currentHand.toArray(new ScrabbleLetter[currentHand.size()]);
     }
 }

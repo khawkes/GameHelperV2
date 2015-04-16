@@ -70,7 +70,6 @@ public class AnagramLibrary
                     wordList.add(sWord);
                 }
             }
-
         }
         catch (Exception e)
         {

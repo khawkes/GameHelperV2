@@ -52,6 +52,8 @@
     <string name="draw">Draw</string>
     <string name="newGameMT">New Game MT</string>
     <string name="startCamera">Start Camera</string>
+    <string name="letterSelect">Letter Select</string>
+    <string name="leadOffLetterSelect">Lead Off Letter</string>
 
     <!--DialogFragmentStrings-->
     <string name="newGameText">Start a new game? \nAll data will be deleted</string>
@@ -70,6 +72,8 @@
     <string name="nameChange">Enter new name</string>
     <string name="dataChange">Change score</string>
     <string name="setChange">Delete round?</string>
+    <string name="letterSelectTitle">Please select a letter</string>
+    <string name="leadOffLetterSelectTitle">Please select the lead-off letter</string>
 
     <!--ScoreBoard-->
     <string name="total">Total</string>
@@ -108,5 +112,14 @@
     <string name="actNewGame_txtPlayers">1</string>
     <string name="actNewGame_txtRulesLabel">Rules</string>
     <string name="actNewGame_txtRules">Traditional</string>
+
+    <!--Scrabble Game Window-->
+    <string name="scrbGameWindow_txtTitle">Scrabble Game</string>
+    <string name="scrbGameWindow_btnLongestRun">Longest Word</string>
+    <string name="scrbGameWindow_btnHighestScore">Highest Score</string>
+    <string name="scrbGameWindow_btnDraw">Draw</string>
+    <string name="scrbGameWindow_btnUnsorted">Unsorted Hand</string>
+    <string name="scrbGameWindow_btnUndo">Undo</string>
+    <string name="scrbGameWindow_btnUnused">Unused</string>
 
 </resources>

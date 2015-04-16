@@ -46,12 +46,17 @@ public class ScrabbleWord implements Parcelable
         score = in.readInt();
     }
 
-    public int getScore()
+    public int getPointVal()
     {
         return score;
     }
 
-    //comparator for sorting classes.
+    public int getLength()
+    {
+        return word.size();
+    }
+
+    //comparator for score-based comparison.
     public class compareByScore implements Comparator<ScrabbleWord>
     {
         @Override
@@ -61,6 +66,22 @@ public class ScrabbleWord implements Parcelable
             if (lhs.score < rhs.score)
                 return -1;
             else if (lhs.score > rhs.score)
+                return 1;
+            else
+                return 0;
+        }
+    }
+
+    //comparator for score-based comparison.
+    public class compareByLength implements Comparator<ScrabbleWord>
+    {
+        @Override
+        //compares two ScrabbleWords by score.
+        public int compare(ScrabbleWord lhs, ScrabbleWord rhs)
+        {
+            if (lhs.getLength() < rhs.getLength())
+                return -1;
+            else if (lhs.getLength() > rhs.getLength())
                 return 1;
             else
                 return 0;
@@ -106,5 +127,10 @@ public class ScrabbleWord implements Parcelable
     {
         dest.writeTypedList(word);
         dest.writeInt(score);
+    }
+
+    public ScrabbleLetter[] toArray()
+    {
+        return word.toArray(new ScrabbleLetter[word.size()]);
     }
 }

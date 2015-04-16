@@ -33,6 +33,10 @@
             android:label="@string/title_activity_game_window" >
         </activity>
         <activity
+            android:name=".Scrabble.ScrabbleWindow"
+            android:label="@string/title_activity_game_window" >
+        </activity>
+        <activity
             android:name=".ScoreBoard"
             android:label="@string/title_activity_score_board"
             android:screenOrientation="landscape">
