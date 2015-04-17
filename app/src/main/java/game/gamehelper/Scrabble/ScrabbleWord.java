@@ -15,36 +15,28 @@ import game.gamehelper.R;
 /**
  * Created by Andrew on 4/13/2015.
  */
-public class ScrabbleWord implements Parcelable
+public class ScrabbleWord
 {
-    int score;
-    LinkedList<ScrabbleLetter> word;
 
-    //stores word, and sets score for word.
+    int score;
+    String word;
+
     ScrabbleWord(String in)
     {
-        score = 0;
-        word = new LinkedList<>();
-
-        for (char c : in.toCharArray())
-        {
-            word.add(new ScrabbleLetter(c));
-            score += word.getLast().getPointVal();
-        }
-
-        //special rule; scrabble bingo
-        if (word.size() == 8)
-        {
-            score += 50;
-        }
+        word = in.toUpperCase();
+        setScore();
     }
 
-    //loads a ScrabbleWord from a Parcel.
-    ScrabbleWord(Parcel in)
+    private void setScore()
     {
-        word = new LinkedList<>();
-        in.readTypedList(word, ScrabbleLetter.CREATOR);
-        score = in.readInt();
+        score = 0;
+        int[] scoreTable = {1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10};
+
+        char[] charArray = word.toCharArray();
+        for (char c : charArray)
+        {
+            score += scoreTable[c - 'A'];
+        }
     }
 
     public int getPointVal()
@@ -54,7 +46,7 @@ public class ScrabbleWord implements Parcelable
 
     public int getLength()
     {
-        return word.size();
+        return word.length();
     }
 
     //comparator for score-based comparison.
@@ -93,7 +85,7 @@ public class ScrabbleWord implements Parcelable
     //to allow for list-usage.
     public int hashCode()
     {
-        return word.size() * score;
+        return word.length() * score;
     }
 
     @Override
@@ -115,23 +107,4 @@ public class ScrabbleWord implements Parcelable
             return true;
     }
 
-    @Override
-    //Required for Parcelable
-    public int describeContents()
-    {
-        return 0;
-    }
-
-    @Override
-    //Writes this scrabble-word to a parcel
-    public void writeToParcel(Parcel dest, int flags)
-    {
-        dest.writeTypedList(word);
-        dest.writeInt(score);
-    }
-
-    public ScrabbleLetter[] toArray()
-    {
-        return word.toArray(new ScrabbleLetter[word.size()]);
-    }
 }

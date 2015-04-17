@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-   - COP4331C - Class Project - The Game Helper App
-   - Spring 2015
-   -
-   - Project authors:
-   -   Mark Andrews
-   -   Jacob Cassagnol
-   -   Kurt Hawkes
-   -   Tim McCarthy
-   -   Andrew McKenzie
-   -   Amber Stewart
--->
+    <!--
+       - COP4331C - Class Project - The Game Helper App
+       - Spring 2015
+       -
+       - Project authors:
+       -   Mark Andrews
+       -   Jacob Cassagnol
+       -   Kurt Hawkes
+       -   Tim McCarthy
+       -   Andrew McKenzie
+       -   Amber Stewart
+    -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="game.gamehelper.Scrabble.ScrabbleWindow" >
+                xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+                android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                tools:context="game.gamehelper.Scrabble.ScrabbleWindow" >
 
     <Space
         android:layout_width="fill_parent"
@@ -29,11 +29,11 @@
 
     <!--Letter List-->
     <GridView android:id="@+id/gridViewMain"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/space"
-        android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/space" />
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_below="@+id/space"
+              android:layout_alignParentStart="true"
+              android:layout_alignEnd="@+id/space" />
 
     <!--Points Remaining-->
     <EditText
@@ -54,88 +54,30 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:id="@+id/remPoint"
+        android:id="@+id/letters"
         android:layout_below="@+id/titleText"
         android:layout_alignParentStart="true"
         android:layout_alignEnd="@+id/titleText"
-        android:enabled="false"
+        android:enabled="true"
         android:focusableInTouchMode="false"
         android:clickable="false"
-        android:inputType="text" />
+        android:inputType="text"
+        android:editable="true"/>
 
     <!--Last value played image-->
-    <ImageView
+
+
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageView2"
-        android:layout_above="@+id/gridViewMain"
+        android:text="@string/scrbGameWindow_btnListWords"
+        android:id="@+id/listWords"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignStart="@+id/longestRunButton" />
+        android:layout_toEndOf="@+id/titleText"
+        android:layout_alignParentStart="false"/>
 
-
-    <!--Longest run button-->
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_alignParentEnd="true"
-        android:text="@string/scrbGameWindow_btnLongestRun"
-        android:id="@+id/longestRunButton"
-        android:layout_toEndOf="@+id/gridViewMain"
-        android:layout_alignTop="@+id/gridViewMain" />
-
-    <!--Highest score button-->
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_alignParentEnd="true"
-        android:text="@string/scrbGameWindow_btnHighestScore"
-        android:id="@+id/highestScoreButton"
-        android:layout_toEndOf="@+id/gridViewMain"
-        android:layout_below="@+id/longestRunButton" />
-
-    <!--Draw button-->
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_alignParentEnd="true"
-        android:text="@string/scrbGameWindow_btnDraw"
-        android:id="@+id/drawButton"
-        android:layout_toEndOf="@+id/gridViewMain"
-        android:layout_below="@+id/highestScoreButton"/>
-
-    <!--Unsorted button-->
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_alignParentEnd="true"
-        android:text="@string/scrbGameWindow_btnUnsorted"
-        android:id="@+id/unsortedButton"
-        android:layout_toEndOf="@+id/gridViewMain"
-        android:layout_below="@+id/drawButton"/>
-
-    <!--Undo button-->
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_alignParentEnd="true"
-        android:text="@string/scrbGameWindow_btnUndo"
-        android:id="@+id/undoButton"
-        android:layout_toEndOf="@+id/gridViewMain"
-        android:layout_below="@+id/unsortedButton"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/scrbGameWindow_btnUnused"
-        android:id="@+id/unusedButton"
-        android:layout_below="@+id/undoButton"
-        android:layout_alignEnd="@+id/undoButton"
-        android:layout_alignStart="@+id/undoButton" />
 
 </RelativeLayout>
+
+
+

@@ -121,5 +121,7 @@
     <string name="scrbGameWindow_btnUnsorted">Unsorted Hand</string>
     <string name="scrbGameWindow_btnUndo">Undo</string>
     <string name="scrbGameWindow_btnUnused">Unused</string>
+    <string name="scrbGameWindow_btnListWords">List Words</string>
+
 
 </resources>
