@@ -13,7 +13,12 @@
 
 package game.gamehelper.DominoMT;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -37,14 +42,20 @@ public class DetectedShape
     double da = 0;
 
     double lengthThreshold = .25;
-    double circleThreshold = .25;
-    double upperAreaThreshold = 2.5;
-    double lowerAreaThreshold = .25;
+    double circleThreshold = .50;
+    double upperAreaThreshold = 3;
+    double lowerAreaThreshold = .125;
+    Bitmap usedShapes;
+    Canvas canvas = new Canvas();
+    Paint paint = new Paint();
+
 
     ArrayList<Point[]> circles = new ArrayList();
 
-    public DetectedShape()
+    public DetectedShape(int width, int height)
     {
+        usedShapes = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        canvas.setBitmap(usedShapes);
     }
 
     public boolean addRectangle(Point lb, Point lt, Point rb, Point rt)
@@ -61,37 +72,17 @@ public class DetectedShape
         corners[2] = c;
         corners[3] = d;
 
-        //find midpoints of long sides
-        if (getLength(a, b) > getLength(b, c))
-        {
-            mpTop = new Point((a.x + b.x) / 2, (a.y + b.y) / 2);
-            mpBottom = new Point((d.x + c.x) / 2, (c.y + d.y) / 2);
-        }
-        else
-        {
-            mpTop = new Point((c.x + b.x) / 2, (b.y + c.y) / 2);
-            mpBottom = new Point((d.x + a.x) / 2, (d.y + a.y) / 2);
-        }
-
-        //corners 4 and 5 are midpoints, corner 6 is the center of the rectangle
-        corners[4] = mpTop;
-        corners[5] = mpBottom;
-        corners[6] = new Point((a.x + c.x) / 2, (b.y + d.y) / 2);
-
         rectangles.add(corners);
         return true;
     }
 
     public boolean addCircle(Point t, Point r, Point b, Point l)
     {
-        Point[] circle = new Point[5];
+        Point[] circle = new Point[7];
         circle[0] = t;
         circle[1] = r;
         circle[2] = b;
         circle[3] = l;
-
-        //circle center
-        circle[4] = new Point((l.x + r.x) / 2, (t.y + b.y) / 2);
 
         circles.add(circle);
         return true;
@@ -119,7 +110,7 @@ public class DetectedShape
         double sidetoside = side1 / side2;
 
         //must be rectangle
-        if (sidetoside > 2.25 || (sidetoside < 1.75 && sidetoside > .625) || sidetoside < .375)
+        if (sidetoside > 2.25 || (sidetoside < 1.85 && sidetoside > .625) || sidetoside < .375)
             return false;
         return true;
     }
@@ -128,6 +119,7 @@ public class DetectedShape
     {
         //counts the number of circles on one side of a rectangle
         int count = 0;
+        ArrayList<Point[]> toRemove = new ArrayList<>();
         switch (side)
         {
             case 1:
@@ -140,6 +132,7 @@ public class DetectedShape
                     //check if center circle is inside rectangle ABCD
                     if (isInside(e[4], a[0], a[4], a[5], a[3]))
                     {
+                        drawShape(e, 1);
                         count++;
                     }
                 }
@@ -154,6 +147,8 @@ public class DetectedShape
                     //check if center circle is inside rectangle ABCD
                     if (isInside(e[4], a[4], a[1], a[2], a[5]))
                     {
+                        toRemove.add(e);
+                        drawShape(e, 2);
                         count++;
                     }
                 }
@@ -165,8 +160,13 @@ public class DetectedShape
         return count;
     }
 
-    public void deleteOutliers()
+    public void deleteOutliers(int rem)
     {
+        if( rem <= 0 )
+        {
+            calculateExtraPoints();
+            return;
+        }
         //filter out any static that got through the width and height ratio test
         //check that all rectangles and circles are about the same size
 
@@ -199,6 +199,11 @@ public class DetectedShape
         for (Point[] r : toRemove)
         {
             rectangles.remove(r);
+            if(rem > 1)
+            {
+                //add object to category if one more pass is remaining
+                circles.add(r);
+            }
         }
 
         toRemove.clear();
@@ -212,13 +217,13 @@ public class DetectedShape
                 toRemove.add(c);
             }
         }
-
         for (Point[] c : toRemove)
         {
             circles.remove(c);
         }
 
         toRemove.clear();
+        deleteOutliers(rem - 1);
     }
 
     public int[][] getDominoes()
@@ -229,6 +234,7 @@ public class DetectedShape
         //iterate through rectangles and record sides
         for (Point[] a : rectangles)
         {
+            drawShape(a, 0);
             domlist[i][0] = countSide(1, a);
             domlist[i++][1] = countSide(2, a);
         }
@@ -264,7 +270,7 @@ public class DetectedShape
         double area = (ab * bc);
         double area2 = a1 + a2 + a3 + a4;
 
-        if (area2 > area * 1.05)
+        if (area2 > area * 1.02)
         {
             return false;
         }
@@ -274,5 +280,76 @@ public class DetectedShape
     public double getLength(Point a, Point b)
     {
         return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+    }
+
+    public Bitmap getUsedShapes()
+    {
+        return usedShapes;
+    }
+
+    public void drawShape(Point[] points, int option)
+    {
+        if(option == 0)
+        {
+            paint.setColor(Color.BLACK);
+            canvas.drawLine(points[0].x, points[0].y, points[1].x, points[1].y, paint);
+            canvas.drawLine(points[1].x, points[1].y, points[2].x, points[2].y, paint);
+            canvas.drawLine(points[2].x, points[2].y, points[3].x, points[3].y, paint);
+            canvas.drawLine(points[3].x, points[3].y, points[0].x, points[0].y, paint);
+            paint.setColor(Color.RED);
+            canvas.drawLine(points[4].x, points[4].y, points[5].x, points[5].y, paint);
+        }
+        else if(option == 1)
+        {
+            paint.setColor(Color.GREEN);
+            canvas.drawLine(points[0].x, points[0].y, points[1].x, points[1].y, paint);
+            canvas.drawLine(points[1].x, points[1].y, points[2].x, points[2].y, paint);
+            canvas.drawLine(points[2].x, points[2].y, points[3].x, points[3].y, paint);
+            canvas.drawLine(points[3].x, points[3].y, points[0].x, points[0].y, paint);
+            canvas.drawPoint(points[4].x, points[4].y, paint);
+        }
+        else if(option == 2)
+        {
+            paint.setColor(Color.BLUE);
+            canvas.drawLine(points[0].x, points[0].y, points[1].x, points[1].y, paint);
+            canvas.drawLine(points[1].x, points[1].y, points[2].x, points[2].y, paint);
+            canvas.drawLine(points[2].x, points[2].y, points[3].x, points[3].y, paint);
+            canvas.drawLine(points[3].x, points[3].y, points[0].x, points[0].y, paint);
+            canvas.drawPoint(points[4].x, points[4].y, paint);
+        }
+    }
+
+    private Point getCenter(Point[] a)
+    {
+        return new Point((a[0].x + a[2].x) / 2, (a[1].y + a[3].y) / 2);
+    }
+
+    private void calculateExtraPoints()
+    {
+        //calculates middle of circle and midpoints of top and bottom of rectangles
+        for(Point[] r: rectangles)
+        {
+            //find midpoints of long sides
+            if (getLength(r[0], r[1]) > getLength(r[1], r[2]))
+            {
+                mpTop = new Point((r[0].x + r[1].x) / 2, (r[0].y + r[1].y) / 2);
+                mpBottom = new Point((r[3].x + r[2].x) / 2, (r[2].y + r[3].y) / 2);
+            }
+            else
+            {
+                mpTop = new Point((r[2].x + r[1].x) / 2, (r[1].y + r[2].y) / 2);
+                mpBottom = new Point((r[3].x + r[0].x) / 2, (r[3].y + r[0].y) / 2);
+            }
+
+            //corners 4 and 5 are midpoints, corner 6 is the center of the rectangle
+            r[4] = mpTop;
+            r[5] = mpBottom;
+            r[6] = new Point((r[0].x + r[2].x) / 2, (r[1].y + r[3].y) / 2);
+        }
+
+        for(Point[] c: circles){
+            c[4] = getCenter(c);
+        }
+
     }
 }

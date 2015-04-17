@@ -28,6 +28,7 @@ import game.gamehelper.DominoMT.DetectedShape;
 
 /**
  * Created by Mark Andrews on 4/11/2015.
+ * Uses canny to edge detect, then finds and classifies continuous edges as rectangles or circles
  */
 public class DominoDetection
 {
@@ -159,7 +160,7 @@ public class DominoDetection
             }
         }
 
-        //gaussian blur
+        //gaussian blur: generate two images with horizontal and vertical blur
         for (i = mr; i <= (picWidth - 1) - mr; i++)
         {
             for (j = mr; j <= (picHeight - 1) - mr; j++)
@@ -179,7 +180,7 @@ public class DominoDetection
             }
         }
 
-        //gaussian blur cont.
+        //gaussian blur: average the pixels from the 2d blur
         for (i = mr; i < picWidth - mr; i++)
         {
             for (j = mr; j < picHeight - mr; j++)
@@ -299,7 +300,7 @@ public class DominoDetection
             }
         }
 
-        //print part 3
+        //write the detected edges to file
         for (i = 0; i < picWidth; i++)
         {
             for (j = 0; j < picHeight; j++)
@@ -311,8 +312,6 @@ public class DominoDetection
 
     private int getBlack(int i)
     {
-//        int black = (int)(i/.21)<<16 + (int)(0.72*i)<<8 + (int)(0.07*i);
-
         int black = 0 + i << 24;
         return black;
     }
@@ -352,8 +351,10 @@ public class DominoDetection
         return rectangle;
     }
 
+
     private void checkNeighbors(int i, int j)
     {
+        //determines if a peak will be a final edge using double thresholding
         stopcheck++;
         if (stopcheck > limit)
             return;
@@ -535,7 +536,7 @@ public class DominoDetection
 
     public void makeShapes()
     {
-        rectangle = new DetectedShape();
+        rectangle = new DetectedShape(picWidth, picHeight);
         for (ArrayList<Point> i : objectList)
         {
             //iterate through the objects found and find the corners of rectangles or sides of circles
@@ -547,25 +548,25 @@ public class DominoDetection
             for (Point j : i)
             {
 
-                if (leftBottom.x == -1 || (j.y >= leftBottom.y))
+                if (leftBottom.x == -1 || (j.y >= leftBottom.y) || (j.y == leftBottom.y && j.x < leftBottom.x))
                 {
                     leftBottom.x = j.x;
                     leftBottom.y = j.y;
                 }
 
-                if (leftTop.x == -1 || (j.x <= leftTop.x))
+                if (leftTop.x == -1 || (j.x <= leftTop.x) || (j.x == leftTop.x && j.y < leftTop.y))
                 {
                     leftTop.x = j.x;
                     leftTop.y = j.y;
                 }
 
-                if (rightBottom.x == -1 || (j.x >= rightBottom.x))
+                if (rightBottom.x == -1 || (j.x >= rightBottom.x) || (j.x == rightBottom.x && j.x > rightBottom.x))
                 {
                     rightBottom.x = j.x;
                     rightBottom.y = j.y;
                 }
 
-                if (rightTop.x == -1 || (j.y <= rightTop.y))
+                if (rightTop.x == -1 || (j.y <= rightTop.y) || (j.y == rightTop.y && j.x > rightTop.x))
                 {
                     rightTop.x = j.x;
                     rightTop.y = j.y;
@@ -588,7 +589,7 @@ public class DominoDetection
                 rectangle.addCircle(rightTop, rightBottom, leftBottom, leftTop);
             }
         }
-        //remove wrongly added shapes
-        rectangle.deleteOutliers();
+        //remove or swap misclassified objects
+        rectangle.deleteOutliers(2);
     }
 }
