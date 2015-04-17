@@ -119,7 +119,7 @@
     <string name="scrbGameWindow_btnHighestScore">Highest Score</string>
     <string name="scrbGameWindow_btnDraw">Draw</string>
     <string name="scrbGameWindow_btnUnsorted">Unsorted Hand</string>
-    <string name="scrbGameWindow_btnListWords">List Words</string>
+    <string name="scrbGameWindow_btnUndo">Undo</string>
     <string name="scrbGameWindow_btnUnused">Unused</string>
 
 </resources>
