@@ -60,6 +60,14 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/txtBtnShapes"
+            android:id="@+id/btnShowUsedShapes"
+            android:layout_below="@id/btnShowGray"
+            android:layout_alignParentStart="true" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/txtBtnHistogram"
             android:id="@+id/btnShowHistogram"
             android:layout_alignTop="@id/btnShowGray"

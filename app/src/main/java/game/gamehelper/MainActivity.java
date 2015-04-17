@@ -58,7 +58,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             R.id.btnShowPeaks,
             R.id.btnShowShapes,
             R.id.btnShowFinal,
-            R.id.btnShowOriginal
+            R.id.btnShowOriginal,
+            R.id.btnShowUsedShapes
     };
 
     private Bitmap file;
@@ -241,6 +242,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 picture.setImageBitmap(file);
                 countText.setText("Original");
                 break;
+            case R.id.btnShowUsedShapes:
+                //show shapes generated from points
+                picture.setImageBitmap(detector.getDetectedShape().getUsedShapes());
+                countText.setText("Shapes From Points");
+                break;
         }
     }
 
@@ -263,14 +269,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         file = BitmapFactory.decodeFile(currentPhotoPath.getAbsolutePath());
 
         int longestSide = Math.max(file.getWidth(), file.getHeight());
-        double scale = longestSide / 512;
+        double scale = longestSide / 1000;
         int width = (int) (file.getWidth() / scale);
         int height = (int) (file.getHeight() / scale);
 
         file = Bitmap.createScaledBitmap(file, width, height, false);
         picture.setImageBitmap(file);
 
-        detector = new DominoDetection(file, 1, 20, 100, 2, 9);
+        detector = new DominoDetection(file, 1, 20, 25, 3, 9);
         detector.processImage();
         Log.w("ImageProcessing", "Processing Image Done");
 
@@ -326,5 +332,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         buttons.get(R.id.btnShowShapes).setEnabled(enabled && detector.isProcessed());
         buttons.get(R.id.btnShowFinal).setEnabled(enabled && detector.isProcessed());
         buttons.get(R.id.btnShowOriginal).setEnabled(enabled && detector.isProcessed());
+        buttons.get(R.id.btnShowUsedShapes).setEnabled(enabled && detector.isProcessed());
     }
 }
