@@ -1,10 +1,5 @@
 package game.gamehelper.Scrabble;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -14,28 +9,24 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-import game.gamehelper.R;
-
 
 /**
  * Created by Andrew on 4/13/2015.
  */
 
 
-public class AnagramLibraryUnused extends AsyncTask<ArrayList<ScrabbleLetter>, Void, ArrayList<ScrabbleWord>>
+public class AnagramLibrary
 {
-    @Override
-    protected ArrayList<ScrabbleWord> doInBackground(ArrayList<ScrabbleLetter>... letters)
+
+    public ScrabbleWord[] getWordArray(String  letters)
     {
-        //create the url for request
-        String urlString = "http://www.anagramica.com/all/:";
-        for (ScrabbleLetter l : letters[0])
-        {
-            if (l.getChar() != ' ')
-                urlString += l.getChar();
-        }
+
+        //creat the url for request
+        String urlString = new String("http://www.anagramica.com/all/:");
+        urlString += letters;
 
         ArrayList<ScrabbleWord> wordList = new ArrayList<>();
+
 
         try
         {
@@ -67,22 +58,27 @@ public class AnagramLibraryUnused extends AsyncTask<ArrayList<ScrabbleLetter>, V
             JSONArray jArray = jObject.getJSONArray("all");
 
             //add all the JSON array objects bigger then length 1 to a list
-            for (int i = 0; i < jArray.length(); i++)
+            for (int i=0; i < jArray.length(); i++)
             {
                 String word = (String) jArray.get(i);
-                if (word.length() > 1)
+                if(word.length() > 1)
                 {
                     ScrabbleWord sWord = new ScrabbleWord(word);
                     wordList.add(sWord);
                 }
             }
+
         }
-        catch (Exception e)
+        catch(Exception e)
         {
-            e.printStackTrace();
+
         }
 
-        //return the list as an ArrayList
-        return wordList;
+        //return the list as an array
+        return wordList.toArray(new ScrabbleWord[wordList.size()]);
     }
+
+
+
+
 }
