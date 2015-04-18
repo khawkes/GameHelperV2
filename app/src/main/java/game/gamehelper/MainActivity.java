@@ -79,7 +79,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     protected void onSaveInstanceState(Bundle outState)
     {
-        outState.putString("currentPhotoPath", currentPhotoPath.getAbsolutePath());
+        outState.putString("currentPhotoPath",
+                (currentPhotoPath == null ? "" :
+                    currentPhotoPath.getAbsolutePath()));
         outState.putInt("photoTaken", photoTaken);
         super.onSaveInstanceState(outState);
     }
