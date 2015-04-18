@@ -34,13 +34,10 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import game.gamehelper.ConfirmationFragment;
-import game.gamehelper.GameHelperPlugin;
 import game.gamehelper.GameSet;
 import game.gamehelper.MainActivity;
-import game.gamehelper.MainWindow;
 import game.gamehelper.R;
 import game.gamehelper.RuleDetailActivity;
-import game.gamehelper.RulesActivity;
 import game.gamehelper.ScoreBoard;
 
 /**
@@ -50,10 +47,10 @@ import game.gamehelper.ScoreBoard;
 
 public class GameWindowMT extends ActionBarActivity implements
         ConfirmationFragment.ConfirmationListener,
-        DrawFragment.DrawListener,
+        DrawDominoListener,
         EndSelectFragment.EndListener,
-        DrawRepeatFragment.DrawListener,
         AdapterView.OnItemClickListener,
+        AdapterView.OnItemLongClickListener,
         NewGameMT.NewGameListener,
         OptionPickerFragment.OptionPickerListener
 {
@@ -150,8 +147,10 @@ public class GameWindowMT extends ActionBarActivity implements
         titleText.setClickable(false);
         addButtonBehavior();
 
+        listView.setLongClickable(true);
         listView.setSmoothScrollbarEnabled(true);
         listView.setOnItemClickListener(this);
+        listView.setOnItemLongClickListener(this);
 
         if (handInformation != null)
             loadInformation();
@@ -570,13 +569,14 @@ public class GameWindowMT extends ActionBarActivity implements
     }
 
     @Override
-    public void onClose(int var1, int var2)
+    public void onDrawClose(Domino overwrite, int var1, int var2)
     {
         //From draw button, use 2 integers to add a domino to hand
         loadGame = true;
         gameTypeSelected = true;
         trainHeadSelected = true;
-        hand.addDomino(new Domino(var1, var2));
+        if (overwrite == null) hand.addDomino(new Domino(var1, var2));
+        else hand.replaceDomino(overwrite, new Domino(var1, var2));
 
         updateUI();
 
@@ -651,7 +651,7 @@ public class GameWindowMT extends ActionBarActivity implements
         {
             case 0:
                 //data returned from scoreboard
-                b = data.getExtras();
+                b = (data != null) ? data.getExtras() : null;
 
                 if (b != null)
                 {
@@ -695,6 +695,20 @@ public class GameWindowMT extends ActionBarActivity implements
         Log.w("GameWindow", "Clicked " + position);
         hand.dominoPlayed(position, windowState);
         updateUI();
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
+    {
+        Log.w("GameWindow", "Long Clicked " + position);
+
+        Domino sel = hand.getDomino(position, windowState);
+        handInformation.putParcelable("overwrite", sel);
+
+        DialogFragment newFragment = new DrawFragment();
+        newFragment.setArguments(handInformation);
+        newFragment.show(getSupportFragmentManager(), getString(R.string.draw));
+        return true;
     }
 
     private void updateUI()
@@ -777,7 +791,7 @@ public class GameWindowMT extends ActionBarActivity implements
             fragment.setArguments(handInformation);
             fragment.setCancelable(false);
             fragment.show(getSupportFragmentManager(), getString(R.string.endSelect));
-            //On train head select, new game creation continued at method onClose() for train head select
+            //On train head select, new game creation continued at method onDrawClose() for train head select
         }
 
     }

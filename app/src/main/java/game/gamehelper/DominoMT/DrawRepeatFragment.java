@@ -40,14 +40,6 @@ import game.gamehelper.R;
  */
 public class DrawRepeatFragment extends DialogFragment
 {
-
-    public interface DrawListener
-    {
-        public void onDrawRepeatClose(Domino added);
-
-        public void onClose(int var1, int var2);
-    }
-
     /**
      * @param DIALOG_SIZE_COMPENSATION adjust for dialog window being smaller than the specified size
      * @param PAGE_MARGIN_PERCENT percent of the screen width to be used for side margins
@@ -62,7 +54,7 @@ public class DrawRepeatFragment extends DialogFragment
     int bitmapSize;
     int numColumns;
     int deckMax;
-    DrawListener mListener;
+    DrawDominoListener mListener;
     GridView gridView;
     View drawView;
     ImageView imageView;
@@ -83,12 +75,12 @@ public class DrawRepeatFragment extends DialogFragment
         super.onAttach(activity);
         try
         {
-            mListener = (DrawListener) activity;
+            mListener = (DrawDominoListener) activity;
         }
         catch (ClassCastException e)
         {
             throw new ClassCastException(getActivity().toString()
-                    + " must implement interface DrawListener");
+                    + " must implement interface DrawDominoListener");
         }
     }
 
@@ -194,7 +186,7 @@ public class DrawRepeatFragment extends DialogFragment
                    public void onClick(DialogInterface dialog, int which)
                    {
                        //Add domino to hand
-                       mListener.onClose(var1, var2);
+                       mListener.onDrawClose(null, var1, var2);
                    }
                })
                .setNegativeButton("Cancel", new DialogInterface.OnClickListener()

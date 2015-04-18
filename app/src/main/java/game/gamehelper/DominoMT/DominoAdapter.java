@@ -61,7 +61,6 @@ public class DominoAdapter extends ArrayAdapter<Domino>
     {
         View row = convertView;
         DominoHolder holder = null;
-        Domino piece;
 
         if (row == null)
         {

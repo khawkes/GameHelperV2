@@ -145,13 +145,7 @@ public class HandMT implements Hand, Parcelable
     //Adds a domino to the hand, but only if it doesn't exist
     public void addDomino(Domino d)
     {
-        for (Domino a : currentHand)
-        {
-            if (a.compareTo(d))
-            {
-                return;
-            }
-        }
+        if (exists(d)) return;
 
         //Sorta like memoization, remembering previous runs.
         rememberRuns();
@@ -165,6 +159,45 @@ public class HandMT implements Hand, Parcelable
         playHistory.push(d);
         trainHeadHistory.push(trainHead);
         positionPlayedHistory.push(null);
+    }
+
+    public void replaceDomino(Domino overwrite, Domino d)
+    {
+        if (exists(d)) return;
+
+        rememberRuns();
+
+        int pos = findDomino(dominoHandHistory, overwrite);
+        if (pos != -1) dominoHandHistory.set(pos, d);
+
+        pos = findDomino(currentHand, overwrite);
+        if (pos != -2) currentHand.set(pos, d);
+
+        totalPointsHand = getTotalPointsHand();
+        runs.forceDirty();
+    }
+
+    public int findDomino(ArrayList<Domino> list, Domino d)
+    {
+        if (d == null) return -1;
+
+        for(int i = 0; i < list.size(); i++)
+            if (d.equals(list.get(i))) return i;
+
+        return -1;
+    }
+
+    public boolean exists(Domino d)
+    {
+        for (Domino a : currentHand)
+        {
+            if (a.compareTo(d))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     //Removes a domino to hand if it exists.
@@ -183,14 +216,8 @@ public class HandMT implements Hand, Parcelable
         }
     }
 
-    /**
-     * Plays a domino based on its position in the arraylist.
-     *
-     * @param position    The play position; what order we made the play in.
-     * @param playContext The context in which the play was made.
-     */
-    public void dominoPlayed(int position, GameWindowMT.WindowContext playContext)
-    {
+    public Domino getDomino(int position, GameWindowMT.WindowContext playContext) {
+
         //We find the "real" position, and change position to match it so we can delete it below.
 
         //find the longest path position.
@@ -216,7 +243,18 @@ public class HandMT implements Hand, Parcelable
         }
 
         //find the domino to remove, and get it from the current hand.
-        Domino toRemove = currentHand.get(position);
+        return currentHand.get(position);
+    }
+
+    /**
+     * Plays a domino based on its position in the arraylist.
+     *
+     * @param position    The play position; what order we made the play in.
+     * @param playContext The context in which the play was made.
+     */
+    public void dominoPlayed(int position, GameWindowMT.WindowContext playContext)
+    {
+        Domino toRemove = getDomino(position, playContext);
 
         //add to our undo stacks.
         playHistory.push(toRemove);
