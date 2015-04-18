@@ -800,29 +800,7 @@ public class GameWindowMT extends ActionBarActivity implements
     public void onNewGameCancel()
     {
         //Create game with default settings if user cancels new game settings window
-
-        loadGame = true;
-        gameTypeSelected = true;
-        trainHeadSelected = true;
-        this.rules = 0;
-        this.players = 1;
-        maxDouble = DEFAULT_SET;
-
-        for (int i = 1; i <= players; i++)
-        {
-            playerList.add("Player " + i);
-        }
-
-        handInformation.putInt("maxDouble", maxDouble);
-        newSet(maxDouble);
-        trainHead = maxDouble;
-        hand.setTrainHead(maxDouble);
-        updateUI();
-
-        //calls hand creation repeater
-        DialogFragment newFragment = new DrawRepeatFragment();
-        newFragment.setArguments(handInformation);
-        newFragment.show(getSupportFragmentManager(), getString(R.string.draw));
+        finish();
     }
 
     private void convertSerializable(Bundle b)
