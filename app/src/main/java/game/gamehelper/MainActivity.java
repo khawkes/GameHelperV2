@@ -14,6 +14,7 @@
 package game.gamehelper;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -118,6 +119,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         countText = (TextView) findViewById(R.id.countText);
         picture = (ImageView) findViewById(R.id.imageView);
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         for (Integer buttonRes : VIEW_BUTTONS)
         {
