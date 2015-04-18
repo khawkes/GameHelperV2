@@ -59,12 +59,14 @@
         android:layout_alignParentStart="true"
         android:layout_alignEnd="@+id/titleText"
         android:enabled="true"
-        android:focusableInTouchMode="false"
+        android:focusableInTouchMode="true"
         android:clickable="true"
         android:inputType="text"
         android:editable="true"
-        android:hint="Enter Letters (spaces for blank)"
-        android:textIsSelectable="true"/>
+        android:hint="@string/scrabble_eddit_text_help"
+        android:textIsSelectable="true"
+        android:focusable="true"
+        />
 
     <!--Last value played image-->
 

@@ -122,6 +122,7 @@
     <string name="scrbGameWindow_btnUndo">Undo</string>
     <string name="scrbGameWindow_btnUnused">Unused</string>
     <string name="scrbGameWindow_btnListWords">List Words</string>
+    <string name="scrabble_eddit_text_help">Enter Letters (spaces for blank)</string>
 
 
 </resources>

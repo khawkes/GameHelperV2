@@ -1,18 +1,23 @@
 package game.gamehelper.Scrabble;
 
+import android.app.Service;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import android.support.v7.app.ActionBarActivity;
 
 import android.text.Editable;
+import android.view.KeyEvent;
 import android.view.View;
 
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import java.util.ArrayList;
@@ -32,6 +37,9 @@ public class ScrabbleWindow extends ActionBarActivity implements AnagramLibrary.
     private TextView titleText;
     private AnagramLibrary dictionary;
     private ScrabbleWord[] wordList;
+    private boolean ready;
+
+    InputMethodManager imm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -43,6 +51,31 @@ public class ScrabbleWindow extends ActionBarActivity implements AnagramLibrary.
         titleText = (TextView) findViewById(R.id.titleText);
         listView = (GridView) findViewById(R.id.gridViewMain);
         listView.setNumColumns(getResources().getConfiguration().orientation);
+
+        imm = (InputMethodManager)this.getSystemService(Service.INPUT_METHOD_SERVICE);
+        lettersText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                imm.showSoftInput(lettersText, 0);
+            }
+        });
+
+        lettersText.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&  (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    // Perform action on key press
+                    imm.hideSoftInputFromWindow(lettersText.getWindowToken(), 0);
+                    if(ready)
+                    {
+                        updateWords();
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
 
         dictionary = new AnagramLibrary(this);
 
@@ -63,6 +96,7 @@ public class ScrabbleWindow extends ActionBarActivity implements AnagramLibrary.
     {
         final Button listWords = (Button) findViewById(R.id.listWords);
         listWords.setEnabled(true);
+        ready = true;
 
         listWords.setOnClickListener(
                 new Button.OnClickListener()
@@ -70,11 +104,14 @@ public class ScrabbleWindow extends ActionBarActivity implements AnagramLibrary.
                     public void onClick(View v)
                     {
                         updateWords();
+                        imm.hideSoftInputFromWindow(lettersText.getWindowToken(), 0);
                         listWords.setEnabled(false);
                     }
                 }
         );
     }
+
+
 
     /**
      * Asks for the word list from the dictionary.
