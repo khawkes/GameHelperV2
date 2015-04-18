@@ -151,7 +151,7 @@ public class HandMT implements Hand, Parcelable
 
         dominoHandHistory.add(d);
         currentHand.add(d);
-        totalPointsHand = getTotalPointsHand() + d.getSum();
+        totalPointsHand = getTotalPointsHand() + d.getDominoValue();
         totalDominos++;
         runs.addDomino(d);
 
@@ -183,7 +183,7 @@ public class HandMT implements Hand, Parcelable
 
         for(Domino d : currentHand)
         {
-            total += d.getSum();
+            total += d.getDominoValue();
         }
 
         return total;
@@ -220,7 +220,7 @@ public class HandMT implements Hand, Parcelable
             if (a.compareTo(d))
             {
                 currentHand.remove(a);
-                totalPointsHand = getTotalPointsHand() - d.getSum();
+                totalPointsHand = getTotalPointsHand() - d.getDominoValue();
                 runs.removeDomino(a);
                 totalDominos--;
                 break;
@@ -338,7 +338,7 @@ public class HandMT implements Hand, Parcelable
         //add information back to hand
         currentHand.add(position, lastDomino);
         runs.reAddDomino(lastDomino, savedTrainHead);
-        totalPointsHand += lastDomino.getSum();
+        totalPointsHand += lastDomino.getDominoValue();
         totalDominos++;
         trainHead = savedTrainHead;
 

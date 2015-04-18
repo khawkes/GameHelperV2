@@ -59,7 +59,7 @@ public class DominoRun implements Parcelable
     public void addDomino(Domino d)
     {
         path.addLast(d);
-        pointVal += d.getSum();
+        pointVal += d.getDominoValue();
     }
 
     public Domino peekFront()
@@ -69,13 +69,13 @@ public class DominoRun implements Parcelable
 
     public Domino popEnd()
     {
-        pointVal -= path.getLast().getSum();
+        pointVal -= path.getLast().getDominoValue();
         return path.removeLast();
     }
 
     public Domino popFront()
     {
-        pointVal -= path.getFirst().getSum();
+        pointVal -= path.getFirst().getDominoValue();
         return path.removeFirst();
     }
 

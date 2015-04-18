@@ -28,14 +28,14 @@ import game.gamehelper.R;
  */
 
 /**
+ * Defines a single domino instance consisting of
+ * two values for each side of the domino (val1, val2)
+ * and a sum of those values.
+ *
  * Created by Jacob on 2/11/2015.
- * A domino: defined as value 1, value 2, and sum of values.
  */
 public class Domino implements Parcelable
 {
-    private final int val1;
-    private final int val2;
-    private final int sum;
     public static final int[] domIdList = new int[] {
             R.drawable.side_border,
             R.drawable.dom_one,
@@ -58,27 +58,45 @@ public class Domino implements Parcelable
             R.drawable.dom_eighteen
     };
 
+    // Setting values to be final.
+    // Dominoes are not mutable.
+    private final int val1;
+    private final int val2;
+    private final int sum;
+
+    /**
+     * Required for Parcelable interface.
+     * Not used.
+     *
+     * @return zero
+     */
     @Override
-    //required for Parcelable
     public int describeContents()
     {
         return 0;
     }
 
     /**
-     * Constructor. Creates the Domino.
+     * Create a new domino based on the two provided
+     * values (one for each side of the domino)/
      *
-     * @param value1 Pair value 1.
-     * @param value2 Pair value 2.
+     * @param value1 number of dots on first side
+     * @param value2 number of dots on second side
      */
     public Domino(int value1, int value2)
     {
         val1 = value1;
         val2 = value2;
         sum = getVal1() + getVal2();
-
     }
 
+    /**
+     * Reconstruct a domino from an Android Parcel.  Used by Android
+     * to pass parameters between activities and intents.  Performance
+     * is faster than Java's serializable.
+     *
+     * @param p the parcel to construct the domino from.
+     */
     public Domino(Parcel p)
     {
         val1 = p.readInt();
@@ -86,41 +104,71 @@ public class Domino implements Parcelable
         sum = val1 + val2;
     }
 
+    /**
+     * Return the value of the first side of the domino.
+     *
+     * @return domino side 1 value (number of dots on the side)
+     */
     public int getVal1()
     {
         return val1;
     }
 
+    /**
+     * Return the value of the second side of the domino.
+     *
+     * @return domino side 2 value (number of dots on the side)
+     */
     public int getVal2()
     {
         return val2;
     }
 
-    //returns the oppositve value than the one given on this domino.
-    //Assumes that we give it one of the sides on this domino.
-    public int getOtherVal(int val)
+    /**
+     * Returns the value of the side that is not the side value passed
+     * in.  Assumes that the provided side is valid for this domino.
+     * This is an internal function used by the RunController and
+     * should not be used outside that object.
+     *
+     * @param val the value of the side we have
+     * @return the value of the other side.
+     */
+    int getOtherVal(int val)
     {
         return (val == val1) ? val2 : val1;
     }
 
-    public int getSum()
+    /**
+     * Returns the total value of this domino (sum of both side values).
+     *
+     * @return total value of the domino
+     */
+    public int getDominoValue()
     {
         return sum;
     }
 
-    //Allows comparison between other dominoes
-    public boolean compareTo(Domino a)
+    /**
+     * Compares two dominoes and returns true if the dominoes are equal.
+     * Note! Dominoes are equal if both sides equal the other sides,
+     * independent of side order.
+     *
+     * @param o the domino to compare this domino two
+     * @return true if both the dominoes are equal
+     */
+    public boolean compareTo(Domino o)
     {
-        if (a == null)
-            return false;
-        if (val1 == a.getVal1() && val2 == a.getVal2())
-            return true;
-        if (val1 == a.getVal2() && val2 == a.getVal1())
-            return true;
-        return false;
+        return o != null &&
+               ((val1 == o.getVal1() && val2 == o.getVal2()) ||
+                (val1 == o.getVal2() && val2 == o.getVal1()));
     }
 
-
+    /**
+     * Save this domino instance to a Parcel.
+     *
+     * @param dest the parcel to write the domino to
+     * @param flags additional flags on how to write the parcel (not used)
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags)
     {
@@ -128,32 +176,45 @@ public class Domino implements Parcelable
         dest.writeInt(val2);
     }
 
+    /**
+     * Compares two dominoes and returns true if they are equal.
+     * Will return false if obj is null or is not a Domino.
+     *
+     * @see #compareTo(Domino)
+     * @param obj the domino to compare to
+     * @return true if the dominoes are equal
+     */
     @Override
-    //So we can search for this in an arrayList.
     public boolean equals(Object obj)
     {
-        if (obj == null)
-            return false;
-
-        if (obj.getClass() != getClass())
-            return false;
+        if (obj == null) return false;
+        if (obj.getClass() != getClass()) return false;
 
         final Domino other = (Domino) obj;
-
-        if (this.compareTo(other))
-            return true;
-        return false;
+        return compareTo(other);
     }
 
+    /**
+     * Returns the hashcode representation of this domino, based
+     * on the domino's total value.
+     *
+     * @return domino hash code
+     */
     @Override
-    //Because you always have to override both equals and hashcode if you overide one.
     public int hashCode()
     {
         //multiplied by a small prime.
-        return getSum() * 137;
+        return getDominoValue() * 137;
     }
 
-
+    /**
+     * Returns a bitmap representation of a single side of adomino.
+     * Bitmap of the domino side dots.
+     *
+     * @param value the side image to return
+     * @param context the parent context
+     * @return the bitmap image of the domino side value
+     */
     //Load image for domino side value
     public static Bitmap getSide(int value, Context context)
     {
@@ -223,6 +284,11 @@ public class Domino implements Parcelable
         return side;
     }
 
+    /**
+     * Parcel CREATOR for the Domino class.
+     *
+     * @see android.os.Parcelable.Creator
+     */
     public static Parcelable.Creator CREATOR = new Parcelable.Creator()
     {
         @Override
@@ -237,6 +303,4 @@ public class Domino implements Parcelable
             return new Domino[size];
         }
     };
-
-
 }
