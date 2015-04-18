@@ -57,7 +57,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             R.id.btnShowGray,
             R.id.btnShowHistogram,
             R.id.btnShowPeaks,
-            R.id.btnShowShapes,
             R.id.btnShowFinal,
             R.id.btnShowOriginal,
             R.id.btnShowUsedShapes
@@ -233,12 +232,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 picture.setImageBitmap(detector.getPeaksImage());
                 countText.setText("Peaks");
                 break;
-            case R.id.btnShowShapes:
-                picture.setImageBitmap(detector.getShapesImage());
-                countText.setText("Shapes");
-                break;
             case R.id.btnShowFinal:
-                picture.setImageBitmap(detector.getFinalImage());
+                picture.setImageBitmap(detector.getShapesImage());
                 countText.setText("Final");
                 break;
             case R.id.btnShowOriginal:
@@ -333,7 +328,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         buttons.get(R.id.btnShowGray).setEnabled(enabled && detector.isProcessed());
         buttons.get(R.id.btnShowHistogram).setEnabled(enabled && detector.isProcessed());
         buttons.get(R.id.btnShowPeaks).setEnabled(enabled && detector.isProcessed());
-        buttons.get(R.id.btnShowShapes).setEnabled(enabled && detector.isProcessed());
         buttons.get(R.id.btnShowFinal).setEnabled(enabled && detector.isProcessed());
         buttons.get(R.id.btnShowOriginal).setEnabled(enabled && detector.isProcessed());
         buttons.get(R.id.btnShowUsedShapes).setEnabled(enabled && detector.isProcessed());

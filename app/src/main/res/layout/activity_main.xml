@@ -44,26 +44,34 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/txtBtnShapes"
+            android:id="@+id/btnShowUsedShapes"
+            android:layout_alignTop="@+id/btnProcess"
+            android:layout_toEndOf="@+id/btnProcess" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/txtBtnReturn"
             android:id="@+id/btnReturn"
-            android:layout_alignTop="@+id/btnTakePicture"
-            android:layout_toEndOf="@+id/btnProcess" />
+            android:layout_alignTop="@+id/btnShowUsedShapes"
+            android:layout_toEndOf="@+id/btnShowUsedShapes" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txtBtnOriginal"
+            android:id="@+id/btnShowOriginal"
+            android:layout_below="@+id/btnTakePicture"
+            android:layout_alignParentStart="true" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/txtBtnGray"
             android:id="@+id/btnShowGray"
-            android:layout_below="@id/btnTakePicture"
-            android:layout_alignParentStart="true" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/txtBtnShapes"
-            android:id="@+id/btnShowUsedShapes"
-            android:layout_below="@id/btnShowGray"
-            android:layout_alignParentStart="true" />
+            android:layout_alignTop="@id/btnShowOriginal"
+            android:layout_toEndOf="@id/btnShowOriginal" />
 
         <Button
             android:layout_width="wrap_content"
@@ -84,26 +92,10 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/txtBtnShapes"
-            android:id="@+id/btnShowShapes"
-            android:layout_alignTop="@id/btnShowPeaks"
-            android:layout_toEndOf="@+id/btnShowPeaks" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="@string/txtBtnFinal"
             android:id="@+id/btnShowFinal"
-            android:layout_alignTop="@id/btnShowShapes"
-            android:layout_toEndOf="@+id/btnShowShapes" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/txtBtnOriginal"
-            android:id="@+id/btnShowOriginal"
-            android:layout_alignTop="@id/btnShowFinal"
-            android:layout_toEndOf="@+id/btnShowFinal" />
+            android:layout_alignTop="@id/btnShowPeaks"
+            android:layout_toEndOf="@+id/btnShowPeaks" />
 
         <Space
             android:layout_width="15dp"
