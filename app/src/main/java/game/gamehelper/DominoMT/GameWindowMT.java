@@ -382,8 +382,8 @@ public class GameWindowMT extends ActionBarActivity implements
         {
             case R.id.action_new_game:
                 b = new Bundle();
-                b.putString("positive", getString(R.string.yes));
-                b.putString("negative", getString(R.string.cancel));
+                b.putString("positive", getString(R.string.txtDlgYes));
+                b.putString("negative", getString(R.string.txtDlgCancel));
                 b.putString("mainText", getString(R.string.newGameText));
                 b.putString("callName", getString(R.string.newGame));
                 newFragment = new ConfirmationFragment();
@@ -405,8 +405,8 @@ public class GameWindowMT extends ActionBarActivity implements
             case R.id.action_end_round:
                 //write to scoreboard and wipe hand
                 b = new Bundle();
-                b.putString("positive", getString(R.string.yes));
-                b.putString("negative", getString(R.string.cancel));
+                b.putString("positive", getString(R.string.txtDlgYes));
+                b.putString("negative", getString(R.string.txtDlgCancel));
                 b.putString("mainText", getString(R.string.endSetText));
                 b.putString("callName", getString(R.string.endSet));
                 newFragment = new ConfirmationFragment();
@@ -620,8 +620,8 @@ public class GameWindowMT extends ActionBarActivity implements
         {
             Bundle b = new Bundle();
             b.putString("mainText", getString(R.string.startCameraText));
-            b.putString("positive", getString(R.string.yes));
-            b.putString("negative", getString(R.string.cancel));
+            b.putString("positive", getString(R.string.txtDlgYes));
+            b.putString("negative", getString(R.string.txtDlgCancel));
             b.putString("callName", getString(R.string.startCamera));
             DialogFragment fragment = new ConfirmationFragment();
             fragment.setArguments(b);

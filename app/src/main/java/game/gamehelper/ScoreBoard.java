@@ -276,8 +276,8 @@ public class ScoreBoard extends ActionBarActivity implements
                                 if (playerList.size() > 1)
                                 {
                                     b = new Bundle();
-                                    b.putString("positive", getString(R.string.remove));
-                                    b.putString("negative", getString(R.string.cancel));
+                                    b.putString("positive", getString(R.string.txtDlgRemove));
+                                    b.putString("negative", getString(R.string.txtDlgCancel));
 
                                     b.putString("mainText", getString(R.string.deleteRowText)
                                             + " " + selectedField.getText().toString() + "?");
@@ -304,8 +304,8 @@ public class ScoreBoard extends ActionBarActivity implements
                             case MODE_ADD:
                                 //add column
                                 b = new Bundle();
-                                b.putString("positive", getString(R.string.add));
-                                b.putString("negative", getString(R.string.cancel));
+                                b.putString("positive", getString(R.string.txtDlgAdd));
+                                b.putString("negative", getString(R.string.txtDlgCancel));
                                 b.putString("mainText", getString(R.string.addColumnText));
                                 b.putString("callName", getString(R.string.addColumn));
                                 newFragment = new ConfirmationFragment();
@@ -316,8 +316,8 @@ public class ScoreBoard extends ActionBarActivity implements
                             case MODE_REMOVE:
                                 //remove column
                                 b = new Bundle();
-                                b.putString("positive", getString(R.string.remove));
-                                b.putString("negative", getString(R.string.cancel));
+                                b.putString("positive", getString(R.string.txtDlgRemove));
+                                b.putString("negative", getString(R.string.txtDlgCancel));
 
                                 b.putString("mainText", getString(R.string.deleteColumnText)
                                         + " " + selectedField.getText().toString() + "?");

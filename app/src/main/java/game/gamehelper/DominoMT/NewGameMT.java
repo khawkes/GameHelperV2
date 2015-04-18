@@ -106,7 +106,7 @@ public class NewGameMT extends DialogFragment
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(newGameView);
 
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
+        builder.setPositiveButton(R.string.txtDlgYes, new DialogInterface.OnClickListener()
         {
             @Override
             public void onClick(DialogInterface dialog, int which)
@@ -116,7 +116,7 @@ public class NewGameMT extends DialogFragment
 
             }
         })
-               .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener()
+               .setNegativeButton(R.string.txtDlgCancel, new DialogInterface.OnClickListener()
                {
                    @Override
                    public void onClick(DialogInterface dialog, int which)

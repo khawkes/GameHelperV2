@@ -66,14 +66,14 @@ public class FieldChangeFragment extends DialogFragment
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(fieldType == ScoreBoard.PLAYER_FIELD ? R.string.nameChange : R.string.dataChange)
                .setView(name)
-               .setPositiveButton(R.string.done, new DialogInterface.OnClickListener()
+               .setPositiveButton(R.string.txtDlgDone, new DialogInterface.OnClickListener()
                {
                    public void onClick(DialogInterface dialog, int id)
                    {
                        mListener.onDialogPositiveClick(name.getText().toString(), fieldType);
                    }
                })
-               .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener()
+               .setNegativeButton(R.string.txtDlgCancel, new DialogInterface.OnClickListener()
                {
                    public void onClick(DialogInterface dialog, int id)
                    {

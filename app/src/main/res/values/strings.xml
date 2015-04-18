@@ -64,11 +64,11 @@
     <string name="addColumnText">Create new set?</string>
     <string name="endSelectTitle">Please select the train head</string>
     <string name="startCameraText">Do you want to use the camera to read your hand?</string>
-    <string name="cancel">Cancel</string>
-    <string name="add">Add</string>
-    <string name="yes">Yes</string>
-    <string name="done">Done</string>
-    <string name="remove">Remove</string>
+    <string name="txtDlgCancel">Cancel</string>
+    <string name="txtDlgAdd">Add</string>
+    <string name="txtDlgYes">Yes</string>
+    <string name="txtDlgDone">Done</string>
+    <string name="txtDlgRemove">Remove</string>
     <string name="nameChange">Enter new name</string>
     <string name="dataChange">Change score</string>
     <string name="setChange">Delete round?</string>

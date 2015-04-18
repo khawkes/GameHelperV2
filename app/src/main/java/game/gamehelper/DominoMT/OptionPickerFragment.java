@@ -104,7 +104,7 @@ public class OptionPickerFragment extends DialogFragment
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(optionPickerView);
 
-        builder.setPositiveButton(getString(R.string.done), new DialogInterface.OnClickListener()
+        builder.setPositiveButton(getString(R.string.txtDlgDone), new DialogInterface.OnClickListener()
         {
             @Override
             public void onClick(DialogInterface dialog, int which)
@@ -112,7 +112,7 @@ public class OptionPickerFragment extends DialogFragment
                 //return option selected and caller
                 mListener.setOption(optionPicker.getValue(), option);
             }
-        }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener()
+        }).setNegativeButton(getString(R.string.txtDlgCancel), new DialogInterface.OnClickListener()
         {
             @Override
             public void onClick(DialogInterface dialog, int which)
