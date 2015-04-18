@@ -569,17 +569,16 @@ public class GameWindowMT extends ActionBarActivity implements
     }
 
     @Override
-    public void onDrawClose(Domino overwrite, int var1, int var2)
+    public void onDrawClose(Domino overwrite, Domino added)
     {
-        //From draw button, use 2 integers to add a domino to hand
         loadGame = true;
         gameTypeSelected = true;
         trainHeadSelected = true;
-        if (overwrite == null) hand.addDomino(new Domino(var1, var2));
-        else hand.replaceDomino(overwrite, new Domino(var1, var2));
+        if (overwrite == null) hand.addDomino(added);
+        else hand.replaceDomino(overwrite, added);
 
+        handInformation.remove("overwrite");
         updateUI();
-
     }
 
     @Override
@@ -592,6 +591,7 @@ public class GameWindowMT extends ActionBarActivity implements
         hand.addDomino(d);
 
         updateUI();
+
         //call repeat again!
         DialogFragment newFragment = new DrawRepeatFragment();
         newFragment.setArguments(handInformation);

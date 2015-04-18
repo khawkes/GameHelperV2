@@ -179,7 +179,7 @@ public class DrawFragment extends DialogFragment
                 //Add domino to hand
                 Bundle bundle = getArguments();
                 Domino overwrite = bundle.getParcelable("overwrite");
-                mListener.onDrawClose(overwrite, var1, var2);
+                mListener.onDrawClose(overwrite, new Domino(var1, var2));
 
             }
         })

@@ -26,10 +26,9 @@ public interface DrawDominoListener
      * selection occurs in the DrawRepeatFragment dialog.
      *
      * @param overwrite contains the original source domino if the long press edit was selected.
-     * @param var1 one half of the domino value
-     * @param var2 the other half of the domino value
+     * @param added the domino that was added / updated in the fragment
      */
-    public void onDrawClose(Domino overwrite, int var1, int var2);
+    public void onDrawClose(Domino overwrite, Domino added);
 
     /**
      * Callback for when the DrawRepeatFragment returns in intermediate domino (not the final domino).
