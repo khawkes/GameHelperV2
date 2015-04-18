@@ -18,6 +18,9 @@ import android.os.Parcelable;
 import android.util.Pair;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 import game.gamehelper.Hand;
@@ -54,22 +57,19 @@ public class HandMT implements Hand, Parcelable
     //Initializes the hand
     //Requires maximum double possible.
     //NOTE: We have to have the largest double so the pathfinding calculates a legal path.
-    public HandMT(int[][] tileList, int totalTiles, int largestDouble, int startHead)
+    public HandMT(List<Domino> dominoes, int largestDouble, int startHead)
     {
-        dominoHandHistory = new ArrayList<Domino>();
-        currentHand = new ArrayList<Domino>();
-        totalDominos = totalTiles;
+        dominoHandHistory = new ArrayList<>();
+        currentHand = new ArrayList<>();
 
-        //create list of tiles
-        for (int[] i : tileList)
+        Set<Domino> uniqDominoes = new HashSet<>();
+        uniqDominoes.addAll(dominoes);
+        for(Domino d : uniqDominoes)
         {
-            if (totalTiles-- <= 0)
-                break;
-
-            dominoHandHistory.add(new Domino(i[0], i[1]));
-            currentHand.add(new Domino(i[0], i[1]));
-            totalPointsHand += i[0] + i[1];
+            currentHand.add(d);
+            totalPointsHand += d.getDominoValue();
         }
+        totalDominos = uniqDominoes.size();
 
         //sets final hand size and starting head.
         MAXIMUM_DOUBLE = largestDouble;
