@@ -38,7 +38,7 @@
     <string name="txtCurrentGame">Selected Game</string>
     <string name="txtSwitchGame">Switch Game</string>
     <string name="txtNewGame">New Game</string>
-    <string name="txtAllRules">List All Rules</string>
+    <string name="txtAllRules">All Rules</string>
 
     <!--DialogFragmentsNames-->
     <string name="newGame">New Game</string>
