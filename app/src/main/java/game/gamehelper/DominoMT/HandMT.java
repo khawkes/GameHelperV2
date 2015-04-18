@@ -101,11 +101,9 @@ public class HandMT implements Hand, Parcelable
     //This allows a Hand to be retrieved from a Parcel.
     public HandMT(Parcel p)
     {
-        dominoHandHistory = new ArrayList<Domino>();
-        currentHand = new ArrayList<Domino>();
+        dominoHandHistory = new ArrayList<>();
+        currentHand = new ArrayList<>();
         ArrayList<Domino> tempDomList = new ArrayList<>();
-        ArrayList<Integer> tempInt = new ArrayList<>();
-        ArrayList<Pair<DominoRun, DominoRun>> tempHistory = new ArrayList<>();
 
         p.readTypedList(dominoHandHistory, Domino.CREATOR);
         p.readTypedList(currentHand, Domino.CREATOR);
@@ -122,7 +120,7 @@ public class HandMT implements Hand, Parcelable
             playHistory.push(d);
         }
 
-        tempInt = (ArrayList<Integer>) p.readSerializable();
+        ArrayList<Integer> tempInt = (ArrayList<Integer>) p.readSerializable();
         for (Integer i : tempInt)
         {
             trainHeadHistory.push(i);
@@ -135,7 +133,8 @@ public class HandMT implements Hand, Parcelable
             positionPlayedHistory.push(i);
         }
 
-        tempHistory = (ArrayList<Pair<DominoRun, DominoRun>>) p.readSerializable();
+        ArrayList<Pair<DominoRun, DominoRun>> tempHistory =
+                (ArrayList<Pair<DominoRun, DominoRun>>) p.readSerializable();
         for (Pair<DominoRun, DominoRun> d : tempHistory)
         {
             runsHistory.push(d);
@@ -171,10 +170,23 @@ public class HandMT implements Hand, Parcelable
         if (pos != -1) dominoHandHistory.set(pos, d);
 
         pos = findDomino(currentHand, overwrite);
-        if (pos != -2) currentHand.set(pos, d);
+        if (pos != -1) currentHand.set(pos, d);
 
-        totalPointsHand = getTotalPointsHand();
-        runs.forceDirty();
+        totalPointsHand = computeHandTotal();
+        runs.removeDomino(overwrite);
+        runs.addDomino(d);
+    }
+
+    public int computeHandTotal()
+    {
+        int total = 0;
+
+        for(Domino d : currentHand)
+        {
+            total += d.getSum();
+        }
+
+        return total;
     }
 
     public int findDomino(ArrayList<Domino> list, Domino d)

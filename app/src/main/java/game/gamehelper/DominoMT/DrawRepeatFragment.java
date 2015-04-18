@@ -186,7 +186,7 @@ public class DrawRepeatFragment extends DialogFragment
                    public void onClick(DialogInterface dialog, int which)
                    {
                        //Add domino to hand
-                       mListener.onDrawClose(null, var1, var2);
+                       mListener.onDrawClose(null, new Domino(var1, var2));
                    }
                })
                .setNegativeButton("Cancel", new DialogInterface.OnClickListener()

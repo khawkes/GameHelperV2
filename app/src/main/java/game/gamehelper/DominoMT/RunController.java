@@ -404,11 +404,6 @@ public class RunController implements Parcelable
         }
     }
 
-    public void forceDirty()
-    {
-        pathsAreCurrent = true;
-    }
-
     /**
      * Re-adds a domino to this graph. Note: Performance-wise, there's really nothing we can do here,
      * as we don't know if the old value was in both longest and most points runs.
