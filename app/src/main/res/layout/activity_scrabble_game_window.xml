@@ -60,9 +60,11 @@
         android:layout_alignEnd="@+id/titleText"
         android:enabled="true"
         android:focusableInTouchMode="false"
-        android:clickable="false"
+        android:clickable="true"
         android:inputType="text"
-        android:editable="true"/>
+        android:editable="true"
+        android:hint="Enter Letters (spaces for blank)"
+        android:textIsSelectable="true"/>
 
     <!--Last value played image-->
 

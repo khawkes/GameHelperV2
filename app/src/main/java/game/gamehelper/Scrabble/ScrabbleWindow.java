@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import android.support.v7.app.ActionBarActivity;
 
+import android.text.Editable;
 import android.view.View;
 
 import android.widget.AdapterView;
@@ -14,6 +15,8 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 
+import java.util.ArrayList;
+
 import game.gamehelper.ConfirmationFragment;
 import game.gamehelper.DominoMT.OptionPickerFragment;
 import game.gamehelper.R;
@@ -22,45 +25,44 @@ import game.gamehelper.R;
  * Created by Jacob on 4/15/2015.
  * Most of the code by Mark (copy-pasted in).
  */
-public class ScrabbleWindow extends ActionBarActivity
+public class ScrabbleWindow extends ActionBarActivity implements AnagramLibrary.AnagramCallback
 {
-
     private GridView listView;
     private TextView lettersText;
     private TextView titleText;
-
+    private AnagramLibrary dictionary;
     private ScrabbleWord[] wordList;
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game_window);
-
+        setContentView(R.layout.activity_scrabble_game_window);
 
         lettersText = (TextView) findViewById(R.id.letters);
         titleText = (TextView) findViewById(R.id.titleText);
         listView = (GridView) findViewById(R.id.gridViewMain);
         listView.setNumColumns(getResources().getConfiguration().orientation);
 
+        dictionary = new AnagramLibrary(this);
 
         titleText.setClickable(false);
-        addButtonBehavior();
+        Button listWords = (Button) findViewById(R.id.listWords);
+        listWords.setEnabled(false);
 
         listView.setSmoothScrollbarEnabled(true);
-
-
-
+        String[] tempMessage = {"Loading Dictionary"};
+        listView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, tempMessage));
     }
 
 
-
+    /**
+     * Adds the "list words" button's behavior
+     */
     public void addButtonBehavior()
     {
-        Button listWords = (Button) findViewById(R.id.listWords);
+        final Button listWords = (Button) findViewById(R.id.listWords);
+        listWords.setEnabled(true);
 
         listWords.setOnClickListener(
                 new Button.OnClickListener()
@@ -68,32 +70,61 @@ public class ScrabbleWindow extends ActionBarActivity
                     public void onClick(View v)
                     {
                         updateWords();
+                        listWords.setEnabled(false);
                     }
                 }
         );
+    }
 
-
+    /**
+     * Asks for the word list from the dictionary.
+     */
+    public void updateWords()
+    {
+        String[] tempMessage = {"Searching Dictionary"};
+        listView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, tempMessage));
+        dictionary.processString(lettersText.getText().toString());
     }
 
 
-    public void updateWords()
+    @Override
+    /**
+     * Required callback from Anagram, takes the array of scrabble-words, and displays them.
+     * @param foundStrings The list of strings found from AnagramLibrary
+     */
+    public void callbackAnagram(ScrabbleWord[] foundStrings)
     {
-        AnagramLibrary AL = new AnagramLibrary();
-        wordList = AL.getWordArray(lettersText.toString());
-
+        wordList = foundStrings;
         String[] stringArr = new String[wordList.length];
 
-        for(int i = 0; i < wordList.length; i++)
+        for (int i = 0; i < wordList.length; i++)
         {
-            stringArr[i] = wordList[i].word + " " + wordList[i].score;
+            stringArr[i] = wordList[i].toString();
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+        if (stringArr.length == 0)
+        {
+            stringArr = new String[1];
+            stringArr[0] = "Word not found. Point value of hand is "
+                    + ((new ScrabbleWord(lettersText.getText().toString())).getPointVal())
+                    + ".";
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, stringArr);
 
         listView.setAdapter(adapter);
+        addButtonBehavior();
     }
 
-
-
+    @Override
+    /**
+     * Required callback from Anagram, Anagram calls us when its dictionary is ready.
+     */
+    public void stringsAreReady()
+    {
+        String[] tempMessage = {"Dictionary Ready"};
+        listView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, tempMessage));
+        addButtonBehavior();
+    }
 }

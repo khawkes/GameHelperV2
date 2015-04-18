@@ -17,16 +17,34 @@ import game.gamehelper.R;
  */
 public class ScrabbleWord
 {
-
     int score;
     String word;
 
+    /**
+     * Creates a scrabble word, and calculates the score.
+     * @param in The string to create the word from.
+     */
     ScrabbleWord(String in)
     {
         word = in.toUpperCase();
         setScore();
     }
 
+    /**
+     * Creates a scrabble word, minus the deviation score.
+     * @param in The string to create the word from.
+     * @param devScore The deviation score to subtract from the found score.
+     */
+    ScrabbleWord(String in, int devScore)
+    {
+        word = in.toUpperCase();
+        setScore();
+        score -= devScore;
+    }
+
+    /**
+     * Sets the score according to scrabble rules
+     */
     private void setScore()
     {
         score = 0;
@@ -37,6 +55,22 @@ public class ScrabbleWord
         {
             score += scoreTable[c - 'A'];
         }
+
+        if (word.length() == 8)
+            score += 50;
+    }
+
+    @Override
+    /**
+     * Converts the score to a string, and appends a Bingo notice at the end, if it occurs.
+     * @return the converted word-to-string, with point value and bingo notice at end.
+     */
+    public String toString()
+    {
+        if (word.length() == 8)
+            return word + " " + (score - 50) + "\nScrabble Bingo! +50 points (" + score + ")";
+        else
+            return word + " " + score;
     }
 
     public int getPointVal()
@@ -75,6 +109,39 @@ public class ScrabbleWord
             if (lhs.getLength() < rhs.getLength())
                 return -1;
             else if (lhs.getLength() > rhs.getLength())
+                return 1;
+            else
+                return 0;
+        }
+    }
+
+
+    //comparator for score-based comparison.
+    public static class invertCompareByScore implements Comparator<ScrabbleWord>
+    {
+        @Override
+        //compares two ScrabbleWords by score.
+        public int compare(ScrabbleWord lhs, ScrabbleWord rhs)
+        {
+            if (lhs.score > rhs.score)
+                return -1;
+            else if (lhs.score < rhs.score)
+                return 1;
+            else
+                return 0;
+        }
+    }
+
+    //comparator for score-based comparison.
+    public static class invertCompareByLength implements Comparator<ScrabbleWord>
+    {
+        @Override
+        //compares two ScrabbleWords by score.
+        public int compare(ScrabbleWord lhs, ScrabbleWord rhs)
+        {
+            if (lhs.getLength() > rhs.getLength())
+                return -1;
+            else if (lhs.getLength() < rhs.getLength())
                 return 1;
             else
                 return 0;
