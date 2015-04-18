@@ -150,7 +150,6 @@ public class DrawRepeatFragment extends DialogFragment
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
                 //mark piece, toggle side of preview domino
-
                 switch (currentSide)
                 {
                     default:
@@ -171,7 +170,7 @@ public class DrawRepeatFragment extends DialogFragment
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(drawView);
 
-        builder.setPositiveButton("Add", new DialogInterface.OnClickListener()
+        builder.setPositiveButton(R.string.txtDlgAddContinue, new DialogInterface.OnClickListener()
         {
             @Override
             public void onClick(DialogInterface dialog, int which)
@@ -180,7 +179,7 @@ public class DrawRepeatFragment extends DialogFragment
                 mListener.onDrawRepeatClose(new Domino(var1, var2));
             }
         })
-               .setNeutralButton("Finish", new DialogInterface.OnClickListener()
+               .setNegativeButton(R.string.txtDlgAddClose, new DialogInterface.OnClickListener()
                {
                    @Override
                    public void onClick(DialogInterface dialog, int which)
@@ -189,7 +188,7 @@ public class DrawRepeatFragment extends DialogFragment
                        mListener.onDrawClose(null, new Domino(var1, var2));
                    }
                })
-               .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+               .setNeutralButton(R.string.txtDlgCancel, new DialogInterface.OnClickListener()
                {
                    @Override
                    public void onClick(DialogInterface dialog, int which)

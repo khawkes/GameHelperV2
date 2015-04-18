@@ -69,6 +69,9 @@
     <string name="txtDlgYes">Yes</string>
     <string name="txtDlgDone">Done</string>
     <string name="txtDlgRemove">Remove</string>
+    <string name="txtDlgNo">No</string>
+    <string name="txtDlgAddContinue">Add and Continue</string>
+    <string name="txtDlgAddClose">Add and Close</string>
     <string name="nameChange">Enter new name</string>
     <string name="dataChange">Change score</string>
     <string name="setChange">Delete round?</string>

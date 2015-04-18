@@ -559,7 +559,7 @@ public class GameWindowMT extends ActionBarActivity implements
     public void onDialogNegativeClick(String tag)
     {
         //behavior for confirmation fragment negative button
-        if (tag.compareTo(getString(R.string.startCamera)) == 0)
+        if (getString(R.string.startCamera).equals(tag))
         {
             //camera was cancelled, add in hand manually.
             DialogFragment newFragment = new DrawRepeatFragment();
@@ -621,7 +621,7 @@ public class GameWindowMT extends ActionBarActivity implements
             Bundle b = new Bundle();
             b.putString("mainText", getString(R.string.startCameraText));
             b.putString("positive", getString(R.string.txtDlgYes));
-            b.putString("negative", getString(R.string.txtDlgCancel));
+            b.putString("negative", getString(R.string.txtDlgNo));
             b.putString("callName", getString(R.string.startCamera));
             DialogFragment fragment = new ConfirmationFragment();
             fragment.setArguments(b);
