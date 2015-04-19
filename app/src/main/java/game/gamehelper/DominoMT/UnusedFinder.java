@@ -14,15 +14,24 @@
 
 package game.gamehelper.DominoMT;
 
-/**
- * Created by Tim on 4/6/2015.
- */
-
 import java.util.ArrayList;
 
+/**
+ * Find and return the collection of unused dominoes in a hand.
+ *
+ * Created by Tim on 4/6/2015.
+ */
 public class UnusedFinder
 {
-
+    /**
+     * Based upon the provided current run and the current hand, return
+     * and array of all dominoes that are in the hand that are not in
+     * the run.
+     *
+     * @param currentRun the run to exclude dominoes
+     * @param currentHand the hand containing all dominoes
+     * @return an array of dominoes that are not in the run
+     */
     public static Domino[] FindUnused(DominoRun currentRun, HandMT currentHand)
     {
         ArrayList<Domino> unUsed = new ArrayList<>();
