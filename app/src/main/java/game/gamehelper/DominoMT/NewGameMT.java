@@ -39,7 +39,7 @@ public class NewGameMT extends DialogFragment
     TextView rules;
 
     int setOption = 0;
-    int playerOption = 1;
+    int playerOption = 0;
     int rulesOption = 0;
     final Bundle bundle = new Bundle();
 
@@ -112,7 +112,7 @@ public class NewGameMT extends DialogFragment
             public void onClick(DialogInterface dialog, int which)
             {
                 //Add domino to hand
-                mListener.onNewGameCreate(setOption, playerOption, rulesOption);
+                mListener.onNewGameCreate(setOption, playerOption + 1, rulesOption);
 
             }
         })
