@@ -277,7 +277,7 @@ public class DominoRun implements Parcelable
     @Override
     public void writeToParcel(Parcel dest, int flags)
     {
-        ArrayList<Domino> list = new ArrayList<Domino>();
+        ArrayList<Domino> list = new ArrayList<>();
         for (Domino d : path)
         {
             list.add(d);

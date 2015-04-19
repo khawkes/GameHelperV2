@@ -17,8 +17,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * Created by Jacob on 2/11/2015.
  * Vertex for a DominoGraph; contains edge information, too.
+ *
+ * Created by Jacob on 2/11/2015.
  */
 public class DominoVertex implements Parcelable
 {
@@ -26,6 +27,11 @@ public class DominoVertex implements Parcelable
     private boolean edgeList[];
     private int numEdges;
 
+    /**
+     * Construct a new domino vertex with the provided highest double value.
+     *
+     * @param highestDouble highest double for the vertex
+     */
     DominoVertex(int highestDouble)
     {
         MAX_EDGE = highestDouble;
@@ -33,19 +39,17 @@ public class DominoVertex implements Parcelable
         numEdges = 0;
     }
 
+    /**
+     * Construct a domino vertex from the provided parcel.
+     *
+     * @param p the parcel to inflate back to a vertex
+     */
     DominoVertex(Parcel p)
     {
         MAX_EDGE = p.readInt();
         numEdges = p.readInt();
-
         edgeList = new boolean[MAX_EDGE + 1];
-        byte[] tempList = new byte[MAX_EDGE + 1];
-        p.readByteArray(tempList);
-
-        for (int i = 0; i < MAX_EDGE + 1; i++)
-        {
-            edgeList[i] = (boolean) (tempList[i] == 1);
-        }
+        p.readBooleanArray(edgeList);
     }
 
     /**
@@ -93,8 +97,8 @@ public class DominoVertex implements Parcelable
     /**
      * Tests whether this vertex has an edge with another vertex.
      *
-     * @param edgeNum The vertex to test against.
-     * @return True if has edge, false otherwise.
+     * @param edgeNum the vertex to test against.
+     * @return true if has edge, false otherwise.
      */
     public boolean hasEdge(int edgeNum)
     {
@@ -104,39 +108,54 @@ public class DominoVertex implements Parcelable
     /**
      * Dumps a copy of the edges in this vertex.
      *
-     * @return Returns a copy of the edges in this vertex.
+     * @return a copy of the edges in this vertex.
      */
     public boolean[] dumpEdges()
     {
         return edgeList.clone();
     }
 
-    //returns the edge num for this vertex.
+    /**
+     * Return number of edges for the vertex.
+     *
+     * @return number of edges for the vertex.
+     */
     public int getEdgeNum()
     {
         return numEdges;
     }
 
+    /**
+     * Required for Parcelable interface.
+     * Not used.
+     *
+     * @return zero
+     */
     @Override
     public int describeContents()
     {
         return 0;
     }
 
+    /**
+     * Save this domino graph instance to a Parcel.
+     *
+     * @param dest the parcel to write the domino graph to
+     * @param flags additional flags on how to write the parcel (not used)
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags)
     {
         dest.writeInt(MAX_EDGE);
         dest.writeInt(numEdges);
-
-        byte[] tempList = new byte[MAX_EDGE + 1];
-        for (int i = 0; i < MAX_EDGE + 1; i++)
-        {
-            tempList[i] = (byte) (edgeList[i] ? 1 : 0);
-        }
-        dest.writeByteArray(tempList);
+        dest.writeBooleanArray(edgeList);
     }
 
+    /**
+     * Parcel CREATOR for the Domino class.
+     *
+     * @see android.os.Parcelable.Creator
+     */
     public static Parcelable.Creator CREATOR = new Parcelable.Creator()
     {
         @Override
