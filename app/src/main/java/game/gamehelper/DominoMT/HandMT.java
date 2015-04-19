@@ -182,10 +182,14 @@ public class HandMT implements Hand, Parcelable
         rememberRuns();
 
         //blot this domino out of history, it was a bad domino.
-        dominoHandHistory.set(HandMT.findDomino(dominoHandHistory, oldDomino), newDomino);
+        int pos = HandMT.findDomino(dominoHandHistory, oldDomino);
+        if (pos != -1 && pos < dominoHandHistory.size())
+            dominoHandHistory.set(pos, newDomino);
 
         //blot this domino out of the current hand, it was a bad domino.
-        currentHand.set(HandMT.findDomino(currentHand, oldDomino), newDomino);
+        pos = HandMT.findDomino(currentHand, oldDomino);
+        if (pos != -1 && pos < currentHand.size())
+            currentHand.set(pos, newDomino);
 
         //reset points
         totalPointsHand += oldDomino.getDominoValue() - newDomino.getDominoValue();
