@@ -72,6 +72,7 @@
     <string name="txtDlgNo">No</string>
     <string name="txtDlgAddContinue">Add and Continue</string>
     <string name="txtDlgAddClose">Add and Close</string>
+    <string name="txtDlgUpdate">Update</string>
     <string name="nameChange">Enter new name</string>
     <string name="dataChange">Change score</string>
     <string name="setChange">Delete round?</string>

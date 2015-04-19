@@ -33,41 +33,37 @@ import game.gamehelper.BitmapAdapter;
 import game.gamehelper.R;
 
 /**
- * Created by Mark Andrews on 2/23/2015.
- * Fragment class for handling draw operations
+ * Fragment class for handling drawing domino operations
  *
- * TODO make parent class to minimize duplicate code in DrawFragment and EndSelectFragment
+ * Created by Mark Andrews on 2/23/2015.
  */
+// TODO: make parent class to minimize duplicate code in DrawFragment and EndSelectFragment
 public class DrawFragment extends DialogFragment
 {
-    /**
-     * @param DIALOG_SIZE_COMPENSATION adjust for dialog window being smaller than the specified size
-     * @param PAGE_MARGIN_PERCENT percent of the screen width to be used for side margins
-     * @param PORTRAIT_COLUMNS columns for portrait mode
-     * @param LANDSCAPE_COLUMNS = columns for landscape mode
-     */
+    /** DIALOG_SIZE_COMPENSATION adjust for dialog window being smaller than the specified size */
     private static final float DIALOG_SIZE_COMPENSATION = 1.1f;
-    private final float PAGE_MARGIN_PERCENT = 0.1f;
-    private final int PORTRAIT_COLUMNS = 4;
-    private final int LANDSCAPE_COLUMNS = 7;
-    int dialogWidth;
-    int bitmapSize;
-    int numColumns;
-    int deckMax;
-    DrawDominoListener mListener;
-    GridView gridView;
-    View drawView;
-    ImageView imageView;
-    ImageView leftSide;
-    ImageView rightSide;
-    BitmapAdapter bitmapAdapter;
-    int width = 0;
-    int height = 0;
-    int var1 = 0;
-    int var2 = 0;
-    int currentSide = 0;
-    Display display;
-    Point size = new Point();
+
+    /** PAGE_MARGIN_PERCENT percent of the screen width to be used for side margins */
+    private static final float PAGE_MARGIN_PERCENT = 0.1f;
+
+    /** PORTRAIT_COLUMNS columns for portrait mode */
+    private static final int PORTRAIT_COLUMNS = 4;
+
+    /** LANDSCAPE_COLUMNS = columns for landscape mode */
+    private static final int LANDSCAPE_COLUMNS = 7;
+
+    private int dialogWidth;
+    private int deckMax;
+
+    private ImageView leftSide;
+    private ImageView leftSidePtr;
+    private ImageView rightSide;
+    private ImageView rightSidePtr;
+    protected DrawDominoListener mListener;
+
+    protected int var1 = 0;
+    protected int var2 = 0;
+    private int currentSide = 0;
 
     @Override
     public void onAttach(Activity activity)
@@ -102,47 +98,57 @@ public class DrawFragment extends DialogFragment
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
-        int marginSize;
-        Bundle b = getArguments();
-        Clicker clickListener = new Clicker();
-
-        if (b != null)
-            deckMax = b.getInt("maxDouble");
+        Bundle arguments = getArguments();
+        Domino overwrite = null;
+        if (arguments != null)
+        {
+            deckMax = arguments.getInt("maxDouble");
+            overwrite = arguments.getParcelable("overwrite");
+        }
 
         //retrieve draw_layout view
-        drawView = View.inflate(getActivity(), R.layout.draw_layout, null);
+        View drawView = View.inflate(getActivity(), R.layout.draw_layout, null);
 
         //get the size of the display and calculate dialog size
-        display = getActivity().getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
         display.getSize(size);
-        marginSize = (int) (PAGE_MARGIN_PERCENT * size.x * 2);
+        int marginSize = (int) (PAGE_MARGIN_PERCENT * size.x * 2);
         dialogWidth = size.x - (marginSize);
 
         //get columns based on screen orientation
-        numColumns = (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT ?
-                PORTRAIT_COLUMNS : LANDSCAPE_COLUMNS);
+        Configuration configuration = getResources().getConfiguration();
+        int numColumns =
+                (configuration.orientation == Configuration.ORIENTATION_PORTRAIT ?
+                    PORTRAIT_COLUMNS : LANDSCAPE_COLUMNS);
 
         //set bitmap size
-        bitmapSize = dialogWidth / numColumns;
+        int bitmapSize = dialogWidth / numColumns;
 
         //get imageview from top left of layout and place the domino background
-        imageView = (ImageView) drawView.findViewById(R.id.imageViewBG);
-        imageView.setImageResource(R.drawable.dom_bg);
+        ImageView imgDominoBackground = (ImageView) drawView.findViewById(R.id.imageViewBG);
+        imgDominoBackground.setImageResource(R.drawable.dom_bg);
 
         //get sides
         leftSide = (ImageView) drawView.findViewById(R.id.leftSide);
         rightSide = (ImageView) drawView.findViewById(R.id.rightSide);
 
+        leftSidePtr = (ImageView) drawView.findViewById(R.id.leftSidePtr);
+        leftSidePtr.setImageResource(android.R.drawable.arrow_down_float);
+        rightSidePtr = (ImageView) drawView.findViewById(R.id.rightSidePtr);
+        rightSidePtr.setImageResource(android.R.drawable.arrow_down_float);
+        rightSidePtr.setVisibility(View.INVISIBLE);
+
+        Clicker clickListener = new Clicker();
         leftSide.setOnClickListener(clickListener);
         rightSide.setOnClickListener(clickListener);
 
         //retrieve gridview from layout, set adapter
-        gridView = (GridView) drawView.findViewById(R.id.gridView);
-        bitmapAdapter = new BitmapAdapter(getActivity(), Domino.domIdList, deckMax + 1);
+        GridView gridView = (GridView) drawView.findViewById(R.id.gridView);
+        BitmapAdapter bitmapAdapter = new BitmapAdapter(getActivity(), Domino.domIdList, deckMax + 1);
         bitmapAdapter.setImageSize(bitmapSize);
         gridView.setAdapter(bitmapAdapter);
         gridView.setNumColumns(numColumns);
-
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
@@ -150,17 +156,18 @@ public class DrawFragment extends DialogFragment
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
                 //mark piece, toggle side of preview domino
-
                 switch (currentSide)
                 {
                     default:
                     case 0:
                         var1 = position;
                         leftSide.setImageBitmap(Domino.getSide(position, getActivity().getApplicationContext()));
+                        setSidePointerImage(false);
                         break;
                     case 1:
                         var2 = position;
                         rightSide.setImageBitmap(Domino.getSide(position, getActivity().getApplicationContext()));
+                        setSidePointerImage(true);
                 }
 
                 currentSide ^= 1;
@@ -170,49 +177,89 @@ public class DrawFragment extends DialogFragment
         //create alert dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(drawView);
-
-        builder.setPositiveButton("Add", new DialogInterface.OnClickListener()
-        {
-            @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
-                //Add domino to hand
-                Bundle bundle = getArguments();
-                Domino overwrite = bundle.getParcelable("overwrite");
-                mListener.onDrawClose(overwrite, new Domino(var1, var2));
-
-            }
-        })
-               .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
-               {
-                   @Override
-                   public void onClick(DialogInterface dialog, int which)
-                   {
-                       //close window
-
-                   }
-               });
+        customizeDialog(builder, overwrite);
 
         return builder.create();
     }
 
+    /**
+     * Customizes the buttons on the bottom of the dialog screen.  Overwrite, if present,
+     * is the existing domino to update.
+     *
+     * @param builder the dialog builder to update the buttons for
+     * @param overwrite if set, the domino that will be replaced by this draw
+     */
+    protected void customizeDialog(AlertDialog.Builder builder, final Domino overwrite)
+    {
+        int posResourceString = R.string.txtDlgAdd;
+        if (overwrite != null) posResourceString = R.string.txtDlgUpdate;
+
+        int negResourceString = R.string.txtDlgCancel;
+        builder.setPositiveButton(posResourceString, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                mListener.onDrawClose(overwrite, new Domino(var1, var2));
+            }
+        })
+        .setNegativeButton(negResourceString, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                //nothing, exit out!
+            }
+        });
+
+        if (overwrite != null)
+        {
+            var1 = overwrite.getVal1();
+            leftSide.setImageBitmap(Domino.getSide(var1, getActivity().getApplicationContext()));
+
+            var2 = overwrite.getVal2();
+            rightSide.setImageBitmap(Domino.getSide(var2, getActivity().getApplicationContext()));
+        }
+    }
+
+    /**
+     * Updates the pointer triangle over the top the domino side that will
+     * be updated if a value is selected from the top of the dialog.
+     *
+     * @param left if true, the pointer indicates the left hand side of the
+     *             domino, if false, the right hand side.
+     */
+    private void setSidePointerImage(boolean left)
+    {
+        int visibleLeft = left ? View.VISIBLE : View.INVISIBLE;
+        int visibleRight = left ? View.INVISIBLE : View.VISIBLE;
+
+        leftSidePtr.setVisibility(visibleLeft);
+        rightSidePtr.setVisibility(visibleRight);
+    }
+
+    /**
+     * Setup a click listener to allow the user to override the domino side
+     * that will be updated.
+     */
     public class Clicker implements View.OnClickListener
     {
         @Override
         public void onClick(View v)
         {
-
             if (v == leftSide)
             {
                 var1 = 0;
                 leftSide.setImageDrawable(null);
                 currentSide = 0;
+                setSidePointerImage(true);
             }
             else
             {
                 var2 = 0;
                 rightSide.setImageDrawable(null);
                 currentSide = 1;
+                setSidePointerImage(false);
             }
         }
     }

@@ -67,6 +67,15 @@
         android:layout_alignTop="@+id/imageViewBG"
         android:layout_alignBottom="@+id/imageViewBG" />
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/leftSidePtr"
+        android:layout_above="@id/leftSide"
+        android:layout_alignStart="@id/leftSide"
+        android:layout_marginStart="22dp"
+        />
+
     <!--Domino right side-->
     <ImageView
         android:layout_width="@dimen/drawPreviewHeight"
@@ -75,6 +84,15 @@
         android:layout_toEndOf="@+id/space2"
         android:layout_alignTop="@+id/imageViewBG"
         android:layout_alignBottom="@+id/imageViewBG" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rightSidePtr"
+        android:layout_above="@id/rightSide"
+        android:layout_alignStart="@id/rightSide"
+        android:layout_marginStart="22dp"
+        />
 
     <!--center reference-->
     <Space

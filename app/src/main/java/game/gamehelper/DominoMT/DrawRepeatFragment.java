@@ -13,210 +13,51 @@
 
 package game.gamehelper.DominoMT;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.res.Configuration;
-import android.graphics.Point;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.view.Display;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.GridView;
-import android.widget.ImageView;
 
-import game.gamehelper.BitmapAdapter;
 import game.gamehelper.R;
 
 /**
- * Copied by Jacob Cassagnol on 4/7/2015.
- * Fragment class for handling draw operations
+ * Fragment class for handling drawing multiple domino operations.
+ * Extends DrawFragment to add multiple dominoes.
  *
- * TODO make parent class to minimize duplicate code in DrawFragment and EndSelectFragment
+ * Copied by Jacob Cassagnol on 4/7/2015.
  */
-public class DrawRepeatFragment extends DialogFragment
+public class DrawRepeatFragment extends DrawFragment
 {
     /**
-     * @param DIALOG_SIZE_COMPENSATION adjust for dialog window being smaller than the specified size
-     * @param PAGE_MARGIN_PERCENT percent of the screen width to be used for side margins
-     * @param PORTRAIT_COLUMNS columns for portrait mode
-     * @param LANDSCAPE_COLUMNS = columns for landscape mode
+     * Customizes the buttons on the bottom of the dialog screen.  For the DrawRepeatFragment
+     * add buttons to and and continue, add and close, and close.  Overwrite not used.
+     *
+     * @param builder the dialog builder to update the buttons for
+     * @param overwrite NOT USED
      */
-    private static final float DIALOG_SIZE_COMPENSATION = 1.1f;
-    private final float PAGE_MARGIN_PERCENT = 0.1f;
-    private final int PORTRAIT_COLUMNS = 4;
-    private final int LANDSCAPE_COLUMNS = 7;
-    int dialogWidth;
-    int bitmapSize;
-    int numColumns;
-    int deckMax;
-    DrawDominoListener mListener;
-    GridView gridView;
-    View drawView;
-    ImageView imageView;
-    ImageView leftSide;
-    ImageView rightSide;
-    BitmapAdapter bitmapAdapter;
-    int width = 0;
-    int height = 0;
-    int var1 = 0;
-    int var2 = 0;
-    int currentSide = 0;
-    Display display;
-    Point size = new Point();
-
-    @Override
-    public void onAttach(Activity activity)
+    protected void customizeDialog(AlertDialog.Builder builder, final Domino overwrite)
     {
-        super.onAttach(activity);
-        try
-        {
-            mListener = (DrawDominoListener) activity;
-        }
-        catch (ClassCastException e)
-        {
-            throw new ClassCastException(getActivity().toString()
-                    + " must implement interface DrawDominoListener");
-        }
-    }
-
-    @Override
-    public void onStart()
-    {
-        super.onStart();
-
-        if (getDialog() == null)
-            return;
-
-        //set dialog window width
-        WindowManager.LayoutParams params = getDialog().getWindow().getAttributes();
-        params.width = (int) (dialogWidth * DIALOG_SIZE_COMPENSATION);
-        getDialog().getWindow().setAttributes(params);
-    }
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState)
-    {
-        int marginSize;
-        Bundle b = getArguments();
-        Clicker clickListener = new Clicker();
-
-        if (b != null)
-            deckMax = b.getInt("maxDouble");
-
-        //retrieve draw_layout view
-        drawView = View.inflate(getActivity(), R.layout.draw_layout, null);
-
-        //get the size of the display and calculate dialog size
-        display = getActivity().getWindowManager().getDefaultDisplay();
-        display.getSize(size);
-        marginSize = (int) (PAGE_MARGIN_PERCENT * size.x * 2);
-        dialogWidth = size.x - (marginSize);
-
-        //get columns based on screen orientation
-        numColumns = (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT ?
-                PORTRAIT_COLUMNS : LANDSCAPE_COLUMNS);
-
-        //set bitmap size
-        bitmapSize = dialogWidth / numColumns;
-
-        //get imageview from top left of layout and place the domino background
-        imageView = (ImageView) drawView.findViewById(R.id.imageViewBG);
-        imageView.setImageResource(R.drawable.dom_bg);
-
-        //get sides
-        leftSide = (ImageView) drawView.findViewById(R.id.leftSide);
-        rightSide = (ImageView) drawView.findViewById(R.id.rightSide);
-
-        leftSide.setOnClickListener(clickListener);
-        rightSide.setOnClickListener(clickListener);
-
-        //retrieve gridview from layout, set adapter
-        gridView = (GridView) drawView.findViewById(R.id.gridView);
-        bitmapAdapter = new BitmapAdapter(getActivity(), Domino.domIdList, deckMax + 1);
-        bitmapAdapter.setImageSize(bitmapSize);
-        gridView.setAdapter(bitmapAdapter);
-        gridView.setNumColumns(numColumns);
-
-
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                //mark piece, toggle side of preview domino
-                switch (currentSide)
-                {
-                    default:
-                    case 0:
-                        var1 = position;
-                        leftSide.setImageBitmap(Domino.getSide(position, getActivity().getApplicationContext()));
-                        break;
-                    case 1:
-                        var2 = position;
-                        rightSide.setImageBitmap(Domino.getSide(position, getActivity().getApplicationContext()));
-                }
-
-                currentSide ^= 1;
-            }
-        });
-
-        //create alert dialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setView(drawView);
-
         builder.setPositiveButton(R.string.txtDlgAddContinue, new DialogInterface.OnClickListener()
         {
             @Override
             public void onClick(DialogInterface dialog, int which)
             {
-                //Add domino to hand
                 mListener.onDrawRepeatClose(new Domino(var1, var2));
             }
         })
-               .setNegativeButton(R.string.txtDlgAddClose, new DialogInterface.OnClickListener()
-               {
-                   @Override
-                   public void onClick(DialogInterface dialog, int which)
-                   {
-                       //Add domino to hand
-                       mListener.onDrawClose(null, new Domino(var1, var2));
-                   }
-               })
-               .setNeutralButton(R.string.txtDlgCancel, new DialogInterface.OnClickListener()
-               {
-                   @Override
-                   public void onClick(DialogInterface dialog, int which)
-                   {
-                       //nothing, exit out!
-                   }
-               });
-        return builder.create();
-    }
-
-    public class Clicker implements View.OnClickListener
-    {
-        @Override
-        public void onClick(View v)
+        .setNegativeButton(R.string.txtDlgAddClose, new DialogInterface.OnClickListener()
         {
-
-            if (v == leftSide)
+            @Override
+            public void onClick(DialogInterface dialog, int which)
             {
-                var1 = 0;
-                leftSide.setImageDrawable(null);
-                currentSide = 0;
+                mListener.onDrawClose(null, new Domino(var1, var2));
             }
-            else
+        })
+        .setNeutralButton(R.string.txtDlgCancel, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
             {
-                var2 = 0;
-                rightSide.setImageDrawable(null);
-                currentSide = 1;
+                //nothing, exit out!
             }
-        }
+        });
     }
 }
