@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -55,10 +56,10 @@ public class GameWindowMT extends ActionBarActivity implements
         NewGameMT.NewGameListener,
         OptionPickerFragment.OptionPickerListener
 {
-    private static int DOUBLE_NINE = 9;
-    private static int DOUBLE_TWELVE = 12;
-    private static int DOUBLE_FIFTEEN = 15;
-    private static int DOUBLE_EIGHTEEN = 18;
+    private static final int DOUBLE_NINE = 9;
+    private static final int DOUBLE_TWELVE = 12;
+    private static final int DOUBLE_FIFTEEN = 15;
+    private static final int DOUBLE_EIGHTEEN = 18;
 
     private HandMT hand;
     private GridView listView;
@@ -67,13 +68,13 @@ public class GameWindowMT extends ActionBarActivity implements
     private TextView titleText;
     private DominoAdapter adapter;
     private Bundle scoreHistory = new Bundle();
-    private ArrayList<GameSet> setList = new ArrayList<GameSet>();
-    private ArrayList<String> playerList = new ArrayList<String>();
+    private ArrayList<GameSet> setList = new ArrayList<>();
+    private ArrayList<String> playerList = new ArrayList<>();
     private int trainHead = 0;
     private int originalStartHead;
 
     /**
-     * @param handInformation keys:
+     * handInformation keys:
      * "dominoList" : serializable, int[][] representing hand
      * "dominoTotal" : int, total number of dominoes in array
      * "maxDouble" : int, highest possible domino in set
@@ -88,21 +89,20 @@ public class GameWindowMT extends ActionBarActivity implements
      * booleans : "loadGame", "gameTypeSelected", "trainHeadSelected", "gameStarted"
      */
     private Bundle handInformation;
-    private int dominoTotal = 0;
     Domino[] data = new Domino[0];
     private int maxDouble = 0;
     private int rules;
     private int players;
-
-    /**
-     * @param loadGame new game selected, deck size/players dialog has been created
-     * @param gameTypeSelected deck/players selected, train head dialog has been created
-     * @param trainHeadSelected train head selected, camera dialog has been created
-     */
-    private boolean loadGame = false;
-    private boolean gameTypeSelected = false;
-    private boolean trainHeadSelected = false;
     static final int SCOREBOARD_EXIT = 10;
+
+    /** loadGame new game selected, deck size/players dialog has been created */
+    private boolean loadGame = false;
+
+    /** gameTypeSelected deck/players selected, train head dialog has been created */
+    private boolean gameTypeSelected = false;
+
+    /** trainHeadSelected train head selected, camera dialog has been created */
+    private boolean trainHeadSelected = false;
 
     /**
      * Context of a play. Whether we played on the longest, the most points, or the unsorted screen.
@@ -340,14 +340,13 @@ public class GameWindowMT extends ActionBarActivity implements
         {
             case R.id.action_new_game:
                 b = new Bundle();
-                b.putString("positive", getString(R.string.txtDlgYes));
-                b.putString("negative", getString(R.string.txtDlgCancel));
-                b.putString("mainText", getString(R.string.newGameText));
-                b.putString("callName", getString(R.string.newGame));
+                b.putString(ConfirmationFragment.ARG_POSITIVE, getString(R.string.txtDlgYes));
+                b.putString(ConfirmationFragment.ARG_NEGATIVE, getString(R.string.txtDlgCancel));
+                b.putString(ConfirmationFragment.ARG_MAIN_TEXT, getString(R.string.newGameText));
+                b.putString(ConfirmationFragment.ARG_CALL_NAME, getString(R.string.newGame));
                 newFragment = new ConfirmationFragment();
                 newFragment.setArguments(b);
                 newFragment.show(getSupportFragmentManager(), getString(R.string.newGame));
-
                 break;
 
             case R.id.action_score_board:
@@ -356,28 +355,23 @@ public class GameWindowMT extends ActionBarActivity implements
                 scoreHistory.putSerializable("setList", setList);
                 scoreHistory.putStringArrayList("playerList", playerList);
                 startActivityForResult(new Intent(GameWindowMT.this, ScoreBoard.class).putExtras(scoreHistory), 0);
-//                startActivity(new Intent(GameWindow.this, ScoreBoard.class).putExtras(scoreHistory));
-
                 break;
 
             case R.id.action_end_round:
                 //write to scoreboard and wipe hand
                 b = new Bundle();
-                b.putString("positive", getString(R.string.txtDlgYes));
-                b.putString("negative", getString(R.string.txtDlgCancel));
-                b.putString("mainText", getString(R.string.endSetText));
-                b.putString("callName", getString(R.string.endSet));
+                b.putString(ConfirmationFragment.ARG_POSITIVE, getString(R.string.txtDlgYes));
+                b.putString(ConfirmationFragment.ARG_NEGATIVE, getString(R.string.txtDlgNo));
+                b.putString(ConfirmationFragment.ARG_MAIN_TEXT, getString(R.string.endSetText));
+                b.putString(ConfirmationFragment.ARG_CALL_NAME, getString(R.string.endSet));
                 newFragment = new ConfirmationFragment();
                 newFragment.setArguments(b);
                 newFragment.show(getSupportFragmentManager(), getString(R.string.endSet));
-
                 break;
-
 
             case R.id.action_camera:
                 //camera call, overwrite hand
                 startActivityForResult(new Intent(GameWindowMT.this, MainActivity.class), 1);
-
                 break;
 
             case R.id.menu_rules:
@@ -392,7 +386,6 @@ public class GameWindowMT extends ActionBarActivity implements
                 Intent activity = new Intent(this, RuleDetailActivity.class);
                 activity.putExtras(bundle);
                 startActivityForResult(activity, RuleDetailActivity.RULES_EXIT);
-
                 break;
             }
 
@@ -405,7 +398,6 @@ public class GameWindowMT extends ActionBarActivity implements
 
             default:
                 //TODO perform other
-
                 break;
         }
 
@@ -449,7 +441,6 @@ public class GameWindowMT extends ActionBarActivity implements
             loadGame = false;
             gameTypeSelected = false;
             trainHeadSelected = false;
-            dominoTotal = 0;
             saveInformation();
             newGame();
         }
@@ -458,7 +449,6 @@ public class GameWindowMT extends ActionBarActivity implements
             //create gameset from hand and add to scoreboard
             trainHeadSelected = false;
             GameSet newSet = new GameSet(hand);
-            dominoTotal = 0;
 
             DialogFragment fragment = new EndSelectFragment();
             fragment.setArguments(handInformation);
@@ -492,6 +482,12 @@ public class GameWindowMT extends ActionBarActivity implements
             newFragment.setArguments(handInformation);
             newFragment.show(getSupportFragmentManager(), getString(R.string.draw));
         }
+    }
+
+    @Override
+    public void onDialogNeutralClick(String tag)
+    {
+        // Not used.
     }
 
     @Override
@@ -596,17 +592,10 @@ public class GameWindowMT extends ActionBarActivity implements
                     List<Domino> dominoes = loadDominoesFromBundle(b);
                     hand = new HandMT(dominoes, maxDouble, originalStartHead);
                     hand.setTrainHead(trainHead);
-                    dominoTotal = b.getInt("dominoTotal");
 
                     //create domino array for adapter, set pointValText and image to corresponding values
                     Domino temp[] = hand.toArray();
-                    this.data = new Domino[(temp.length < DominoPlugin.MAX_DOMINO_DISPLAY) ? temp.length : DominoPlugin.MAX_DOMINO_DISPLAY];
-
-                    //generate bitmaps for hand
-                    for (int i = 0; i < this.data.length; i++)
-                    {
-                        this.data[i] = temp[i];
-                    }
+                    this.data = Arrays.copyOf(temp, Math.max(temp.length, DominoPlugin.MAX_DOMINO_DISPLAY));
 
                     trainHeadImage.setImageBitmap(Domino.getSide(hand.getTrainHead(), getApplicationContext()));
                     updatePointValueText();
@@ -618,11 +607,6 @@ public class GameWindowMT extends ActionBarActivity implements
                 }
 
                 Log.w("MainWindow", "No camera data found");
-                return;
-
-            default:
-                //other
-                return;
         }
     }
 
@@ -740,7 +724,6 @@ public class GameWindowMT extends ActionBarActivity implements
 
         ArrayList<Domino> dominoes = new ArrayList<>();
 
-        int i = 0;
         for (Object o : object)
         {
             int[] domArr = (int[])o;
@@ -777,8 +760,6 @@ public class GameWindowMT extends ActionBarActivity implements
         loadGame = handInformation.getBoolean("loadGame");
         gameTypeSelected = handInformation.getBoolean("gameTypeSelected");
         trainHeadSelected = handInformation.getBoolean("trainHeadSelected");
-
-        if (hand != null) dominoTotal = hand.getTotalDominos();
 
         //set/player data selected, train head not yet selected
         if (loadGame)

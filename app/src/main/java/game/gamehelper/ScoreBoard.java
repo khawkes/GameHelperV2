@@ -276,13 +276,13 @@ public class ScoreBoard extends ActionBarActivity implements
                                 if (playerList.size() > 1)
                                 {
                                     b = new Bundle();
-                                    b.putString("positive", getString(R.string.txtDlgRemove));
-                                    b.putString("negative", getString(R.string.txtDlgCancel));
+                                    b.putString(ConfirmationFragment.ARG_POSITIVE, getString(R.string.txtDlgRemove));
+                                    b.putString(ConfirmationFragment.ARG_NEGATIVE, getString(R.string.txtDlgCancel));
 
-                                    b.putString("mainText", getString(R.string.deleteRowText)
+                                    b.putString(ConfirmationFragment.ARG_MAIN_TEXT, getString(R.string.deleteRowText)
                                             + " " + selectedField.getText().toString() + "?");
 
-                                    b.putString("callName", getString(R.string.deleteRow));
+                                    b.putString(ConfirmationFragment.ARG_CALL_NAME, getString(R.string.deleteRow));
                                     newFragment = new ConfirmationFragment();
                                     newFragment.setArguments(b);
                                     newFragment.show(getSupportFragmentManager(), getString(R.string.deleteRow));
@@ -304,29 +304,30 @@ public class ScoreBoard extends ActionBarActivity implements
                             case MODE_ADD:
                                 //add column
                                 b = new Bundle();
-                                b.putString("positive", getString(R.string.txtDlgAdd));
-                                b.putString("negative", getString(R.string.txtDlgCancel));
-                                b.putString("mainText", getString(R.string.addColumnText));
-                                b.putString("callName", getString(R.string.addColumn));
+                                b.putString(ConfirmationFragment.ARG_POSITIVE, getString(R.string.txtDlgAdd));
+                                b.putString(ConfirmationFragment.ARG_NEGATIVE, getString(R.string.txtDlgCancel));
+                                b.putString(ConfirmationFragment.ARG_MAIN_TEXT, getString(R.string.addColumnText));
+                                b.putString(ConfirmationFragment.ARG_CALL_NAME, getString(R.string.addColumn));
                                 newFragment = new ConfirmationFragment();
                                 newFragment.setArguments(b);
                                 newFragment.show(getSupportFragmentManager(), getString(R.string.addColumn));
-
                                 return;
+
                             case MODE_REMOVE:
                                 //remove column
                                 b = new Bundle();
-                                b.putString("positive", getString(R.string.txtDlgRemove));
-                                b.putString("negative", getString(R.string.txtDlgCancel));
+                                b.putString(ConfirmationFragment.ARG_POSITIVE, getString(R.string.txtDlgRemove));
+                                b.putString(ConfirmationFragment.ARG_NEGATIVE, getString(R.string.txtDlgCancel));
 
-                                b.putString("mainText", getString(R.string.deleteColumnText)
+                                b.putString(ConfirmationFragment.ARG_MAIN_TEXT, getString(R.string.deleteColumnText)
                                         + " " + selectedField.getText().toString() + "?");
 
-                                b.putString("callName", getString(R.string.deleteColumn));
+                                b.putString(ConfirmationFragment.ARG_CALL_NAME, getString(R.string.deleteColumn));
                                 newFragment = new ConfirmationFragment();
                                 newFragment.setArguments(b);
                                 newFragment.show(getSupportFragmentManager(), getString(R.string.deleteColumn));
                                 return;
+
                             default:
                                 //do nothing
                                 return;
@@ -520,7 +521,13 @@ public class ScoreBoard extends ActionBarActivity implements
     @Override
     public void onDialogNegativeClick(String s)
     {
-        //nothing, blank override.
+        // Not used.
+    }
+
+    @Override
+    public void onDialogNeutralClick(String s)
+    {
+        // Not used.
     }
 
     @Override

@@ -67,6 +67,7 @@
     <string name="txtDlgCancel">Cancel</string>
     <string name="txtDlgAdd">Add</string>
     <string name="txtDlgYes">Yes</string>
+    <string name="txtDlgOK">OK</string>
     <string name="txtDlgDone">Done</string>
     <string name="txtDlgRemove">Remove</string>
     <string name="txtDlgNo">No</string>

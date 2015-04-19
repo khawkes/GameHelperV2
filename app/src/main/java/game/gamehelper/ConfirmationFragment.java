@@ -21,6 +21,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 
+import java.util.HashMap;
+
 /**
  * Created by Mark Andrews on 2/23/2015.
  * Fragment for handling confirmation dialog
@@ -28,58 +30,103 @@ import android.support.v4.app.DialogFragment;
 
 public class ConfirmationFragment extends DialogFragment
 {
+    /**
+     * confirm button text argument name
+     */
+    public static final String ARG_POSITIVE = "positive";
+
+    /**
+     * cancel button text argument name
+     */
+    public static final String ARG_NEGATIVE = "negative";
+
+    /**
+     * neutral button text argument name
+     */
+    public static final String ARG_NEUTRAL = "neutral";
+
+    /**
+     * action description text argument name
+     */
+    public static final String ARG_MAIN_TEXT = "mainText";
+
+    /**
+     * dialog fragment argument name
+     */
+    public static final String ARG_CALL_NAME = "callName";
 
     public interface ConfirmationListener
     {
         public void onDialogPositiveClick(String tag);
 
         public void onDialogNegativeClick(String tag);
+
+        public void onDialogNeutralClick(String tag);
     }
 
-    String[] dialogText = new String[4];
-    ConfirmationListener mListener;
+    /**
+     * Handle back to the activity that called this dialog.
+     */
+    private ConfirmationListener mListener;
 
     @Override
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
         Bundle b = getArguments();
-
-        /**
-         * "positive" = confirm button text
-         * "negative" = cancel button text
-         * "mainText" = action description text
-         * "callName" = fragment tag
-         */
+        final HashMap<String, String> dlgArgs = new HashMap<>();
 
         //read dialog text
+        dlgArgs.put(ARG_POSITIVE, getString(R.string.txtDlgOK));
+        dlgArgs.put(ARG_NEGATIVE, getString(R.string.txtDlgCancel));
+        dlgArgs.put(ARG_MAIN_TEXT, "Dialog");
+        dlgArgs.put(ARG_CALL_NAME, "Tag");
+
         if (b != null)
         {
-            dialogText[0] = b.getString("positive");
-            dialogText[1] = b.getString("negative");
-            dialogText[2] = b.getString("mainText");
-            dialogText[3] = b.getString("callName");
+            String val = b.getString(ARG_POSITIVE);
+            if (val != null) dlgArgs.put(ARG_POSITIVE, val);
+
+            val = b.getString(ARG_NEGATIVE);
+            if (val != null) dlgArgs.put(ARG_NEGATIVE, val);
+
+            val = b.getString(ARG_NEUTRAL);
+            if (val != null) dlgArgs.put(ARG_NEUTRAL, val);
+
+            val = b.getString(ARG_MAIN_TEXT);
+            if (val != null) dlgArgs.put(ARG_MAIN_TEXT, val);
+
+            val = b.getString(ARG_CALL_NAME);
+            if (val != null) dlgArgs.put(ARG_CALL_NAME, val);
         }
 
         //setup window and handle click
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(dialogText[2])
-               .setPositiveButton(dialogText[0], new DialogInterface.OnClickListener()
-               {
-                   public void onClick(DialogInterface dialog, int id)
-                   {
-                       //return dialog name on positive click
-                       mListener.onDialogPositiveClick(dialogText[3]);
-                   }
-               })
-               .setNegativeButton(dialogText[1], new DialogInterface.OnClickListener()
-               {
-                   public void onClick(DialogInterface dialog, int id)
-                   {
-                       //do nothing
-                       mListener.onDialogNegativeClick(dialogText[3]);
-                   }
-               });
+        builder.setMessage(dlgArgs.get(ARG_MAIN_TEXT));
+        builder.setPositiveButton(dlgArgs.get(ARG_POSITIVE), new DialogInterface.OnClickListener()
+        {
+            public void onClick(DialogInterface dialog, int id)
+            {
+                mListener.onDialogPositiveClick(dlgArgs.get(ARG_CALL_NAME));
+            }
+        });
+        builder.setNegativeButton(dlgArgs.get(ARG_NEGATIVE), new DialogInterface.OnClickListener()
+        {
+            public void onClick(DialogInterface dialog, int id)
+            {
+                mListener.onDialogNegativeClick(dlgArgs.get(ARG_CALL_NAME));
+            }
+        });
+        if (dlgArgs.containsKey(ARG_NEUTRAL))
+        {
+            builder.setNeutralButton(dlgArgs.get(ARG_NEUTRAL), new DialogInterface.OnClickListener()
+            {
+                public void onClick(DialogInterface dialog, int id)
+                {
+                    mListener.onDialogNeutralClick(dlgArgs.get(ARG_CALL_NAME));
+                }
+            });
+        }
 
         return builder.create();
     }

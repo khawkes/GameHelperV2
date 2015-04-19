@@ -54,7 +54,8 @@ public class NewGameMT extends DialogFragment
     }
 
     @Override
-    public Dialog onCreateDialog(@NonNull Bundle savedInstanceState)
+    @NonNull
+    public Dialog onCreateDialog(Bundle savedInstanceState)
     {
         //retrieve draw_layout view
         newGameView = View.inflate(getActivity(), R.layout.new_game_layout, null);
