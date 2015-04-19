@@ -25,14 +25,15 @@ import android.widget.ImageView;
 import game.gamehelper.R;
 
 /**
+ * Adapter for displaying the list of domino images.
+ *
  * Created by Mark Andrews on 2/14/2015.
- * Adapter for image lists
  */
 public class DominoAdapter extends ArrayAdapter<Domino>
 {
     private Context context;
     private Domino[] data;
-    int layoutResourceId;
+    private int layoutResourceId;
 
     public DominoAdapter(Context context, int layoutResourceId, Domino[] data)
     {
@@ -42,12 +43,22 @@ public class DominoAdapter extends ArrayAdapter<Domino>
         this.layoutResourceId = layoutResourceId;
     }
 
+    /**
+     * Returns the number of dominoes in the array adapter.
+     *
+     * @return the number of dominoes in the adapter
+     */
     @Override
     public int getCount()
     {
         return data.length;
     }
 
+    /**
+     * Update the adapter with a new domino set.
+     *
+     * @param data the new domino array to display
+     */
     public void changeData(Domino[] data)
     {
         clear();
@@ -57,11 +68,21 @@ public class DominoAdapter extends ArrayAdapter<Domino>
     }
 
     //Updates view for list
+
+    /**
+     * Return an view for an item from the adapter.
+     *
+     * @param position the item to return
+     * @param convertView the inflated view if already constructed
+     * @param parent parent view
+     * @return return the inflated view for the domino in the adapter
+     */
+    @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
-        View row = convertView;
-        DominoHolder holder = null;
+        DominoHolder holder;
 
+        View row = convertView;
         if (row == null)
         {
 
@@ -96,14 +117,18 @@ public class DominoAdapter extends ArrayAdapter<Domino>
         return row;
     }
 
+    /**
+     * Clear all the dominoes from the adapter.
+     */
+    @Override
     public void clear()
     {
-        for (int i = 0; i < data.length; i++)
-        {
-            data[i] = null;
-        }
+        data = null;
     }
 
+    /**
+     * Inner class for holding the domino images.
+     */
     private class DominoHolder
     {
         ImageView domino;
