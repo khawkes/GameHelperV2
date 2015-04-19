@@ -117,17 +117,11 @@ public class GameWindowMT extends ActionBarActivity implements
         SHOWING_LONGEST,
         SHOWING_MOST_POINTS,
         SHOWING_UNSORTED,
-        SHOWING_UNUSED
-    }
-
-    public enum LastRunTypeShown
-    {
-        SHOWING_LONGEST,
-        SHOWING_MOST_POINTS
+        SHOWING_UNUSED_LONGEST,
+        SHOWING_UNUSED_MOST_POINTS
     }
 
     private WindowContext windowState;
-    private LastRunTypeShown lastWindowState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -210,20 +204,16 @@ public class GameWindowMT extends ActionBarActivity implements
                     + " (" + (hand.getTotalDominos())
                     + " domino" + ((hand.getTotalDominos() == 1) ? ")" : "s)"));
         }
-        else if (windowState == WindowContext.SHOWING_UNUSED)
+        else if (windowState == WindowContext.SHOWING_UNUSED_LONGEST)
         {
             titleText.setText("Unused Dominos");
-
-            if (lastWindowState == LastRunTypeShown.SHOWING_LONGEST)
-            {
-                pointValText.setText("Junk Value: " + (hand.getTotalPointsHand() - hand.getLongestRun().getPointVal())
-                        + " (" + (hand.getTotalDominos() - hand.getLongestRun().getLength()) + ")");
-            }
-            else if (lastWindowState == LastRunTypeShown.SHOWING_MOST_POINTS)
-            {
-                pointValText.setText("Junk Value: " + (hand.getTotalPointsHand() - hand.getMostPointRun().getPointVal())
-                        + " (" + (hand.getTotalDominos() - hand.getMostPointRun().getLength()) + ")");
-            }
+            pointValText.setText("Junk Value: " + (hand.getTotalPointsHand() - hand.getLongestRun().getPointVal())
+                    + " (" + (hand.getTotalDominos() - hand.getLongestRun().getLength()) + ")");
+        }
+        else if (windowState == WindowContext.SHOWING_UNUSED_MOST_POINTS)
+        {
+            pointValText.setText("Junk Value: " + (hand.getTotalPointsHand() - hand.getMostPointRun().getPointVal())
+                    + " (" + (hand.getTotalDominos() - hand.getMostPointRun().getLength()) + ")");
         }
     }
 
@@ -257,7 +247,6 @@ public class GameWindowMT extends ActionBarActivity implements
                     public void onClick(View v)
                     {
                         windowState = WindowContext.SHOWING_LONGEST;
-                        lastWindowState = LastRunTypeShown.SHOWING_LONGEST;
                         updateUI();
                     }
                 }
@@ -270,7 +259,6 @@ public class GameWindowMT extends ActionBarActivity implements
                     public void onClick(View v)
                     {
                         windowState = WindowContext.SHOWING_MOST_POINTS;
-                        lastWindowState = LastRunTypeShown.SHOWING_MOST_POINTS;
                         updateUI();
                     }
                 }
@@ -352,7 +340,10 @@ public class GameWindowMT extends ActionBarActivity implements
                 {
                     public void onClick(View v)
                     {
-                        windowState = WindowContext.SHOWING_UNUSED;
+                        if (windowState == WindowContext.SHOWING_LONGEST)
+                            windowState = WindowContext.SHOWING_UNUSED_LONGEST;
+                        else if (windowState == WindowContext.SHOWING_MOST_POINTS)
+                            windowState = WindowContext.SHOWING_UNUSED_MOST_POINTS;
                         updateUI();
                     }
                 }
@@ -728,16 +719,13 @@ public class GameWindowMT extends ActionBarActivity implements
         {
             data = hand.toArray();
         }
-        else if (windowState == WindowContext.SHOWING_UNUSED)
+        else if (windowState == WindowContext.SHOWING_UNUSED_LONGEST)
         {
-            if (lastWindowState == LastRunTypeShown.SHOWING_LONGEST)
-            {
-                data = UnusedFinder.FindUnused(hand.getLongestRun(), hand);
-            }
-            else if (lastWindowState == LastRunTypeShown.SHOWING_MOST_POINTS)
-            {
-                data = UnusedFinder.FindUnused(hand.getMostPointRun(), hand);
-            }
+            data = UnusedFinder.FindUnused(hand.getLongestRun(), hand);
+        }
+        else if (windowState == WindowContext.SHOWING_UNUSED_MOST_POINTS)
+        {
+            data = UnusedFinder.FindUnused(hand.getMostPointRun(), hand);
         }
 
         updatePointValueText();

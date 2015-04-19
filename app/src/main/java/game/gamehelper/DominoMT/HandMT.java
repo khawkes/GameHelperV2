@@ -50,6 +50,12 @@ public class HandMT implements Hand, Parcelable
     private Stack<Integer> trainHeadHistory = new Stack<>();
     private Stack<Integer> positionPlayedHistory = new Stack<>();
     private Stack<Pair<DominoRun, DominoRun>> runsHistory = new Stack<>();
+    private Stack<PlayType> undoTypeHistory = new Stack<>();
+
+    private enum PlayType
+    {
+        ADDED_DOMINO, PLAYED_DOMINO, CHANGED_TRAIN_HEAD, CHANGED_DOMINO
+    }
 
     //Initializes the hand
     //Requires maximum double possible.
@@ -81,7 +87,7 @@ public class HandMT implements Hand, Parcelable
         runs = new RunController(this, ORIGINAL_TRAIN_HEAD);
     }
 
-    //NOTE: We have to have the largest double so the pathfinding calculates a legal path.
+    //NOTE: We have to have the start double so the pathfinding calculates a legal path.
     public HandMT(int largestDouble, int startHead)
     {
         dominoHandHistory = new ArrayList<Domino>();
@@ -144,56 +150,56 @@ public class HandMT implements Hand, Parcelable
     //Adds a domino to the hand, but only if it doesn't exist
     public void addDomino(Domino d)
     {
-        if (exists(d)) return;
+        if (exists(d))
+            return;
 
-        //Sorta like memoization, remembering previous runs.
+        //undo segment
+        playHistory.push(d);
+        undoTypeHistory.push(PlayType.ADDED_DOMINO);
         rememberRuns();
 
+        //adds it to the hand, and the previous history. Adjusts point value.
         dominoHandHistory.add(d);
         currentHand.add(d);
         totalPointsHand = getTotalPointsHand() + d.getDominoValue();
         totalDominos++;
         runs.addDomino(d);
-
-        playHistory.push(d);
-        trainHeadHistory.push(trainHead);
-        positionPlayedHistory.push(null);
     }
 
-    public void replaceDomino(Domino overwrite, Domino d)
+    public void replaceDomino(Domino oldDomino, Domino newDomino)
     {
-        if (exists(d)) return;
+        //we can't replace the old domino with a domino that already exists!
+        if (exists(newDomino))
+            return;
+        //tricky user... validates oldDomino, too.
+        if (!exists(oldDomino))
+            return;
 
+        //undo segment
+        playHistory.push(oldDomino);
+        positionPlayedHistory.push(HandMT.findDomino(currentHand, oldDomino));
+        undoTypeHistory.push(PlayType.CHANGED_DOMINO);
         rememberRuns();
 
-        int pos = findDomino(dominoHandHistory, overwrite);
-        if (pos != -1) dominoHandHistory.set(pos, d);
+        //blot this domino out of history, it was a bad domino.
+        dominoHandHistory.set(HandMT.findDomino(dominoHandHistory, oldDomino), newDomino);
 
-        pos = findDomino(currentHand, overwrite);
-        if (pos != -1) currentHand.set(pos, d);
+        //blot this domino out of the current hand, it was a bad domino.
+        currentHand.set(HandMT.findDomino(currentHand, oldDomino), newDomino);
 
-        totalPointsHand = computeHandTotal();
-        runs.removeDomino(overwrite);
-        runs.addDomino(d);
+        //reset points
+        totalPointsHand += oldDomino.getDominoValue() - newDomino.getDominoValue();
+
+        runs.removeDomino(oldDomino);
+        runs.addDomino(newDomino);
+        runs.setTrainHead(trainHead);
     }
 
-    public int computeHandTotal()
-    {
-        int total = 0;
-
-        for(Domino d : currentHand)
-        {
-            total += d.getDominoValue();
-        }
-
-        return total;
-    }
-
-    public int findDomino(ArrayList<Domino> list, Domino d)
+    public static int findDomino(ArrayList<Domino> list, Domino d)
     {
         if (d == null) return -1;
 
-        for(int i = 0; i < list.size(); i++)
+        for (int i = 0; i < list.size(); i++)
             if (d.equals(list.get(i))) return i;
 
         return -1;
@@ -228,34 +234,48 @@ public class HandMT implements Hand, Parcelable
         }
     }
 
-    public Domino getDomino(int position, GameWindowMT.WindowContext playContext) {
+    public Domino getDomino(int position, GameWindowMT.WindowContext playContext)
+    {
+        Domino found;
 
-        //We find the "real" position, and change position to match it so we can delete it below.
-
-        //find the longest path position.
+        //find the domino based on the longest path screen's run.
         if (playContext == GameWindowMT.WindowContext.SHOWING_LONGEST)
         {
             // Converts the longest run to an array and indexes the position.
-            Domino d = getLongestRun().toArray()[position];
-            //finds the domino in the current hand, and sets the correct position.
-            position = currentHand.indexOf(d);
+            found = getLongestRun().toArray()[position];
         }
-        //find the most points path position.
+        //find the domino based on the most point path screen's run.
         else if (playContext == GameWindowMT.WindowContext.SHOWING_MOST_POINTS)
         {
             // Converts the most points run to an array and indexes the position.
-            Domino d = getMostPointRun().toArray()[position];
-            //finds the domino in the current hand, and sets the correct position.
-            position = currentHand.indexOf(d);
+            found = getMostPointRun().toArray()[position];
         }
-        //the position given is actually the correct position.
+        //find the domino based on the unused domino screen for the longest run.
+        else if (playContext == GameWindowMT.WindowContext.SHOWING_UNUSED_LONGEST)
+        {
+            // Converts the unused dominos in the longest run to an array and indexes the position.
+            found = UnusedFinder.FindUnused(getLongestRun(), this)[position];
+        }
+        //find the domino based on the unused domino screen for the most point run.
+        else if (playContext == GameWindowMT.WindowContext.SHOWING_UNUSED_MOST_POINTS)
+        {
+            // Converts the unused dominos in the most points run to an array and indexes the position.
+            found = UnusedFinder.FindUnused(getMostPointRun(), this)[position];
+        }
+        //find the domino based on the unsorted hand screen's run.
+        else if (playContext == GameWindowMT.WindowContext.SHOWING_UNSORTED)
+        {
+            // Gets the domino from the position given in the hand.
+            found = currentHand.get(position);
+        }
         else
         {
-            //position = position;
+            //so things like this error don't happen again.
+            throw new AssertionError("Add new context in HandMT getDomino");
         }
 
-        //find the domino to remove, and get it from the current hand.
-        return currentHand.get(position);
+        //returns the found domino
+        return found;
     }
 
     /**
@@ -272,8 +292,7 @@ public class HandMT implements Hand, Parcelable
         playHistory.push(toRemove);
         positionPlayedHistory.push(position);
         trainHeadHistory.push(trainHead);
-
-        //Sorta like memoization, remembering previous runs.
+        undoTypeHistory.push(PlayType.PLAYED_DOMINO);
         rememberRuns();
 
         //we removed the train head, adjust the train head accordingly.
@@ -296,55 +315,90 @@ public class HandMT implements Hand, Parcelable
      */
     public boolean undo()
     {
-        if (positionPlayedHistory.size() == 0)
+        if (undoTypeHistory.size() == 0)
             return false;
 
-        Domino lastDomino;
-        Integer position;
-        Integer savedTrainHead;
-        Pair<DominoRun, DominoRun> oldRuns;
-
-        //retrieve last move
-        position = positionPlayedHistory.pop();
-        savedTrainHead = trainHeadHistory.pop();
-        lastDomino = playHistory.pop();
-        oldRuns = runsHistory.pop();
+        //take the old type, and get the old runs. The others are undo-specific changes.
+        PlayType undoType = undoTypeHistory.pop();
+        Pair<DominoRun, DominoRun> oldRuns = runsHistory.pop();
 
         //in the case we only changed the train head
-        if (position == null && lastDomino == null)
+        if (undoType == PlayType.CHANGED_TRAIN_HEAD)
         {
+            //retrieve old information
+            int savedTrainHead = trainHeadHistory.pop();
+
+            //reset train head to the saved one.
             runs.setTrainHead(savedTrainHead);
+            trainHead = savedTrainHead;
+
             //re-sets the runs if possible, saving calculation time.
             runs.reSetRuns(oldRuns);
 
-            trainHead = savedTrainHead;
             return true;
         }
-
         //in the case we added something before (null), we want to remove it now.
-        if (position == null)
+        else if (undoType == PlayType.ADDED_DOMINO)
         {
-            removeDomino(lastDomino);
+            //retrieve old information
+            Domino savedDomino = playHistory.pop();
 
-            //re-set train head to the saved one, fixes a bug where the runs decides to "play" the domino.
-            trainHead = savedTrainHead;
+            //remove might try to change the trainHead, so this will re-set it.
+            removeDomino(savedDomino);
             runs.setTrainHead(trainHead);
 
             //re-sets the runs if possible, saving calculation time.
             runs.reSetRuns(oldRuns);
+
             return true;
         }
+        else if (undoType == PlayType.PLAYED_DOMINO)
+        {
+            //retrieve old information
+            int savedTrainHead = trainHeadHistory.pop();
+            int position = positionPlayedHistory.pop();
+            Domino savedDomino = playHistory.pop();
 
-        //add information back to hand
-        currentHand.add(position, lastDomino);
-        runs.reAddDomino(lastDomino, savedTrainHead);
-        totalPointsHand += lastDomino.getDominoValue();
-        totalDominos++;
-        trainHead = savedTrainHead;
+            //add information back to hand
+            currentHand.add(position, savedDomino);
+            runs.reAddDomino(savedDomino, savedTrainHead);
+            totalPointsHand += savedDomino.getDominoValue();
+            totalDominos++;
+            trainHead = savedTrainHead;
 
-        //re-sets the runs if possible, saving calculation time.
-        runs.reSetRuns(oldRuns);
-        return true;
+            //re-sets the runs if possible, saving calculation time.
+            runs.reSetRuns(oldRuns);
+
+            return true;
+        }
+        else if (undoType == PlayType.CHANGED_DOMINO)
+        {
+            //retrieve old information
+            int position = positionPlayedHistory.pop();
+            Domino originalDomino = playHistory.pop();
+
+            //removes the bad domino from the runs, and adds in the old domino.
+            Domino dominoToRemove = currentHand.get(position);
+            runs.removeDomino(dominoToRemove);
+            runs.addDomino(originalDomino);
+            runs.setTrainHead(trainHead);
+
+            //resets the old points
+            totalPointsHand += originalDomino.getDominoValue() - dominoToRemove.getDominoValue();
+
+            //swaps out this domino.
+            dominoHandHistory.set(position, originalDomino);
+            currentHand.set(position, originalDomino);
+
+            //re-sets the runs if possible, saving calculation time.
+            runs.reSetRuns(oldRuns);
+
+            return true;
+        }
+        else
+        {
+            throw new AssertionError("Forgot to add the new type of play to undo!");
+        }
     }
 
     /**
@@ -447,9 +501,8 @@ public class HandMT implements Hand, Parcelable
         rememberRuns();
 
         //undo stacks
-        playHistory.push(null);
         trainHeadHistory.push(trainHead);
-        positionPlayedHistory.push(null);
+        undoTypeHistory.push(PlayType.CHANGED_TRAIN_HEAD);
 
         trainHead = head;
         runs.setTrainHead(head);
