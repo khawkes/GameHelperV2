@@ -13,7 +13,6 @@
 
 package game.gamehelper;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import java.util.Map;
@@ -85,5 +84,10 @@ public interface GameHelperPlugin
      */
     public boolean isRuleSetReady();
 
+    /**
+     * Return an instance of the game scoreboard.
+     *
+     * @return the game scoreboard
+     */
     public ScoreBoard getScoreBoard();
 }

@@ -20,12 +20,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import game.gamehelper.R;
-/**
- * Author History:
- * Jacob
- * Mark
- * Jacob
- */
 
 /**
  * Defines a single domino instance consisting of
@@ -63,18 +57,6 @@ public class Domino implements Parcelable
     private final int val1;
     private final int val2;
     private final int sum;
-
-    /**
-     * Required for Parcelable interface.
-     * Not used.
-     *
-     * @return zero
-     */
-    @Override
-    public int describeContents()
-    {
-        return 0;
-    }
 
     /**
      * Create a new domino based on the two provided
@@ -161,6 +143,18 @@ public class Domino implements Parcelable
         return o != null &&
                ((val1 == o.getVal1() && val2 == o.getVal2()) ||
                 (val1 == o.getVal2() && val2 == o.getVal1()));
+    }
+
+    /**
+     * Required for Parcelable interface.
+     * Not used.
+     *
+     * @return zero
+     */
+    @Override
+    public int describeContents()
+    {
+        return 0;
     }
 
     /**

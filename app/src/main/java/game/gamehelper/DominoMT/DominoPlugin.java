@@ -73,7 +73,7 @@ public class DominoPlugin implements GameHelperPlugin
     @Override
     public Bundle getDebugBundle()
     {
-        randomDominos(24);
+        randomDominoes(24);
         randomScoreBoard(4, 8);
 
         Bundle debugBundle = new Bundle();
@@ -114,7 +114,14 @@ public class DominoPlugin implements GameHelperPlugin
 
     //generate a random set of tiles for hand
     //produces a maximum double of 12
-    public void randomDominos(int total)
+
+    /**
+     * Generates a random set of dominoes for the
+     * testing bundle.
+     *
+     * @param total the number of dominoes to generate
+     */
+    private void randomDominoes(int total)
     {
         Random generator = new Random(222);
         boolean[][] used = new boolean[13][13];
@@ -123,14 +130,6 @@ public class DominoPlugin implements GameHelperPlugin
         if (total > (13 * 14 / 2 - 1))
         {
             total = (13 * 14 / 2) - 1;
-        }
-
-        for (boolean[] a : used)
-        {
-            for (boolean b : a)
-            {
-                b = false;
-            }
         }
 
         used[maxDouble][maxDouble] = true;
@@ -144,7 +143,7 @@ public class DominoPlugin implements GameHelperPlugin
             i[0] = generator.nextInt(13);
             i[1] = generator.nextInt(13);
 
-            while (used[i[0]][i[1]] != false)
+            while (used[i[0]][i[1]])
             {
                 i[0] = generator.nextInt(13);
                 i[1] = generator.nextInt(13);
@@ -157,7 +156,12 @@ public class DominoPlugin implements GameHelperPlugin
         }
     }
 
-    //create random list of players and scores
+    /**
+     * Generates a random scoreboard for the testing bundle.
+     *
+     * @param player total number of players to generate
+     * @param set total number of sets to generate
+     */
     public void randomScoreBoard(int player, int set)
     {
         Random generator = new Random();

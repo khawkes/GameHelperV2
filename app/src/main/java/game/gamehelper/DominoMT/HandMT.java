@@ -513,7 +513,7 @@ public class HandMT implements Hand, Parcelable
     {
         if (runsAreUpToDate() && enableExperimentalUndoHistory)
             runsHistory.push(new Pair<DominoRun, DominoRun>
-                    (getLongestRun().deepCopy(), getMostPointRun().deepCopy()));
+                    (getLongestRun().deepClone(), getMostPointRun().deepClone()));
         else
             runsHistory.push(null);
     }

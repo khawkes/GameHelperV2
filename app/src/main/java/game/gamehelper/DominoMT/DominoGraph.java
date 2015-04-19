@@ -17,10 +17,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * Created by Jacob on 2/11/2015.
  * A Domino graph, made of DominoVertexes.
- * TODO reduce brute force
+ *
+ * Created by Jacob on 2/11/2015.
  */
+// TODO: Reduce brute force
 public class DominoGraph implements Parcelable
 {
     private final int MAX_EDGE;
@@ -31,11 +32,17 @@ public class DominoGraph implements Parcelable
      *
      * @param h The hand to use to initialize the graph.
      */
+    @SuppressWarnings("unused")
     DominoGraph(HandMT h)
     {
         this(h.getMaxDouble(), h.toArray());
     }
 
+    /**
+     * Load a DominoGraph from a parcel.
+     *
+     * @param p the parcel to load the DominoGraph from
+     */
     DominoGraph(Parcel p)
     {
         MAX_EDGE = p.readInt();
@@ -46,8 +53,8 @@ public class DominoGraph implements Parcelable
     /**
      * Generates a DominoGraph from a domino edge array.
      *
-     * @param maximumDouble The biggest double possible (if double 8) -> 8.
-     * @param edges         The array of edges to use to initialize the graph.
+     * @param maximumDouble the biggest double possible (if double 8) -> 8.
+     * @param edges the array of edges to use to initialize the graph.
      */
     DominoGraph(int maximumDouble, Domino edges[])
     {
@@ -162,12 +169,24 @@ public class DominoGraph implements Parcelable
         return graph[v].getEdgeNum();
     }
 
+    /**
+     * Required for Parcelable interface.
+     * Not used.
+     *
+     * @return zero
+     */
     @Override
     public int describeContents()
     {
         return 0;
     }
 
+    /**
+     * Save this domino graph instance to a Parcel.
+     *
+     * @param dest the parcel to write the domino graph to
+     * @param flags additional flags on how to write the parcel (not used)
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags)
     {
@@ -175,6 +194,11 @@ public class DominoGraph implements Parcelable
         dest.writeTypedArray(graph, 0);
     }
 
+    /**
+     * Parcel CREATOR for the Domino class.
+     *
+     * @see android.os.Parcelable.Creator
+     */
     public static Parcelable.Creator CREATOR = new Parcelable.Creator()
     {
         @Override

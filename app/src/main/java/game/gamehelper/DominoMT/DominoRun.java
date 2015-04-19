@@ -21,25 +21,34 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 /**
+ * Class representing a domino run (path)
+ *
  * Created by Jacob on 2/11/2015.
- * A domino run (path)
  */
 public class DominoRun implements Parcelable
 {
     private LinkedList<Domino> path;
     private int pointVal;
 
+    /**
+     * Constructs a new empty domino run.
+     */
     public DominoRun()
     {
         pointVal = 0;
-        path = new LinkedList<Domino>();
+        path = new LinkedList<>();
     }
 
+    /**
+     * Construct a new domino run from the passed parcel.
+     *
+     * @param p the parcel to reconstruct the domino run from
+     */
     public DominoRun(Parcel p)
     {
         //constructor for loading from save state
         ArrayList<Domino> tempList = new ArrayList<>();
-        path = new LinkedList<Domino>();
+        path = new LinkedList<>();
 
         p.readList(tempList, null);
         pointVal = p.readInt();
@@ -62,33 +71,51 @@ public class DominoRun implements Parcelable
         pointVal += d.getDominoValue();
     }
 
+    /**
+     * Returns the domino at the front of the domino run, but does not remove domino from the run.
+     *
+     * @return the domino at the front of the run.
+     */
     public Domino peekFront()
     {
         return path.peek();
     }
 
+    /**
+     * Removes and returns the last domino from the run.  Updates the run with the new total point value.
+     *
+     * @return the last domino from the run
+     */
     public Domino popEnd()
     {
         pointVal -= path.getLast().getDominoValue();
         return path.removeLast();
     }
 
+    /**
+     * Removes and returns the first domino from the run.  Updates the run with the new total point value.
+     *
+     * @return the first domino from the run
+     */
     public Domino popFront()
     {
         pointVal -= path.getFirst().getDominoValue();
         return path.removeFirst();
     }
 
+    /**
+     * Removes all the dominoes from the run.
+     */
     public void clear()
     {
         path.clear();
     }
 
     /**
-     * compares two domino chains by length.
+     * Compares two domino chains by length and returns true if this run is longer than the other.
      *
-     * @param other The other domino chain to compare to.
-     * @return True, if this one is longer than the other.
+     * @param other the other domino chain to compare to.
+     * @return true, if this one is longer than the other.
      */
     public boolean isLongerThan(DominoRun other)
     {
@@ -96,9 +123,9 @@ public class DominoRun implements Parcelable
     }
 
     /**
-     * compares two domino chains by length.
+     * Compares two domino chains by length and returns true if this run is shorter than the other.
      *
-     * @param other The other domino chain to compare to.
+     * @param other the other domino chain to compare to.
      * @return True, if this one is shorter than the other.
      */
     public boolean isShorterThan(DominoRun other)
@@ -107,10 +134,11 @@ public class DominoRun implements Parcelable
     }
 
     /**
-     * compares two domino chains by point value.
+     * Compares two domino chains by point value and returns true if this run has a higher point
+     * value than the other run.
      *
-     * @param other The other domino chain to compare to.
-     * @return True, if this one is worth more points than the other.
+     * @param other the other domino chain to compare to.
+     * @return true, if this one is has a higher point value than the other.
      */
     public boolean hasMorePointsThan(DominoRun other)
     {
@@ -118,64 +146,64 @@ public class DominoRun implements Parcelable
     }
 
     /**
-     * compares two domino chains by point value and length.
+     * Compares two domino chains by point value and length and returns true if this run is longer
+     * and has a higher point value then the other run.
      *
-     * @param other The other domino chain to compare to.
-     * @return True, if this one has more points and is longer than the other one.
+     * @param other the other domino chain to compare to.
+     * @return true, if this one has more points and is longer than the other one.
      */
+    @SuppressWarnings("unused")
     public boolean isBetterThan(DominoRun other)
     {
         return (this.isLongerThan(other) && this.hasMorePointsThan(other));
     }
 
+    /**
+     * Returns the length of this run (number of dominoes in the run).
+     *
+     * @return the length of the run
+     */
     public int getLength()
     {
         return path.size();
     }
 
-    public int numMoves()
-    {
-        return this.getLength();
-    }
-
+    /**
+     * Returns the total point value of this run (sum of the individual dominoes in the run).
+     *
+     * @return the total point value of the run
+     */
     public int getPointVal()
     {
         return pointVal;
     }
 
-    //Deep copy of this run.
-    public DominoRun deepCopy()
+    /**
+     * Returns a clone of this domino run.
+     *
+     * @return the clone of this run
+     */
+    public DominoRun deepClone()
     {
-        DominoRun copy = new DominoRun();
+        DominoRun clone = new DominoRun();
+        clone.path.addAll(path);
+        clone.pointVal = pointVal;
 
-        for (Domino d : path)
-        {
-            copy.addDomino(d);
-        }
-        return copy;
-    }
-
-    //equals method
-    public boolean isEqualTo(DominoRun other)
-    {
-        //checks for same points, .equals will check for length
-        if (this.getPointVal() != other.getPointVal())
-            return false;
-        return path.equals(other.getPath());
+        return clone;
     }
 
     /**
-     * this method attempts to add a mid-run double, returning true if successful
+     * Attempt to add a mid-run double domino and return true if successful
      *
-     * @param other        The other run to compare against (must be equal till the vertex of d)
-     * @param dominoVertex The vertex at which to stop
-     * @param target       The original target of the run.
-     * @return True if success, false if failure.
+     * @param other the other run to compare against (must be equal till the vertex of d)
+     * @param dominoVertex the vertex at which to stop
+     * @param target the original target of the run.
+     * @return true if successful, false otherwise.
      */
     public boolean addMidRunDouble(DominoRun other, int dominoVertex, int target)
     {
-        ListIterator<Domino> thisIter = this.getPath().listIterator();
-        ListIterator<Domino> otherIter = other.getPath().listIterator();
+        ListIterator<Domino> thisIter = this.path.listIterator();
+        ListIterator<Domino> otherIter = other.path.listIterator();
         boolean firstRun = true;
 
         //DominoRun isn't guaranteed to be ordered, as that would be dangerous during development.
@@ -218,24 +246,34 @@ public class DominoRun implements Parcelable
         return false;
     }
 
-    //returns these dominoes as an array.
+    /**
+     * Returns the domino run as an array.
+     *
+     * @return domino run as an array
+     */
     public Domino[] toArray()
     {
         return path.toArray(new Domino[path.size()]);
     }
 
-    //returns the path for private functionality
-    private LinkedList<Domino> getPath()
-    {
-        return this.path;
-    }
-
+    /**
+     * Required for Parcelable interface.
+     * Not used.
+     *
+     * @return zero
+     */
     @Override
     public int describeContents()
     {
         return 0;
     }
 
+    /**
+     * Save this domino graph instance to a Parcel.
+     *
+     * @param dest the parcel to write the domino graph to
+     * @param flags additional flags on how to write the parcel (not used)
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags)
     {
@@ -249,6 +287,11 @@ public class DominoRun implements Parcelable
         dest.writeInt(pointVal);
     }
 
+    /**
+     * Parcel CREATOR for the Domino class.
+     *
+     * @see android.os.Parcelable.Creator
+     */
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator()
     {
         public DominoRun createFromParcel(Parcel in)

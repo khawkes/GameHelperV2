@@ -217,12 +217,12 @@ public class RunController implements Parcelable
         for (DominoRun run : mostPointRuns)
         {
             if (run.isShorterThan(mostPoints))
-                mostPoints = run.deepCopy();
+                mostPoints = run.deepClone();
         }
         for (DominoRun run : longestRuns)
         {
             if (run.hasMorePointsThan(longest))
-                longest = run.deepCopy();
+                longest = run.deepClone();
         }
 
         System.out.println("last repeat lens found: " + repeatLensFound);
@@ -254,8 +254,8 @@ public class RunController implements Parcelable
             else if (currentRun.hasMorePointsThan(mostPoints))
             {
                 mostPointRuns.clear();
-                mostPointRuns.add(currentRun.deepCopy());
-                mostPoints = currentRun.deepCopy();
+                mostPointRuns.add(currentRun.deepClone());
+                mostPoints = currentRun.deepClone();
                 System.out.println("more points: " + repeatPointsFound);
                 repeatPointsFound = 0;
             }
@@ -267,13 +267,13 @@ public class RunController implements Parcelable
                 if (currentRun.isShorterThan(mostPoints))
                 {
                     mostPointRuns.clear();
-                    mostPointRuns.add(currentRun.deepCopy());
-                    mostPoints = currentRun.deepCopy();
+                    mostPointRuns.add(currentRun.deepClone());
+                    mostPoints = currentRun.deepClone();
                     System.out.println("more points: " + repeatPointsFound);
                     repeatPointsFound = 0;
                 }
                 repeatPointsFound++;
-                //mostPointRuns.add(currentRun.deepCopy()); // removed because of memory problems.
+                //mostPointRuns.add(currentRun.deepClone()); // removed because of memory problems.
             }
 
             //this run isn't useful in terms of length, skip it.
@@ -285,8 +285,8 @@ public class RunController implements Parcelable
             else if (currentRun.isLongerThan(longest))
             {
                 longestRuns.clear();
-                longestRuns.add(currentRun.deepCopy());
-                longest = currentRun.deepCopy();
+                longestRuns.add(currentRun.deepClone());
+                longest = currentRun.deepClone();
 
                 //early exit if we touch everything.
                 if (longest.getLength() == totalEdgeNum)
@@ -303,8 +303,8 @@ public class RunController implements Parcelable
                 if (currentRun.hasMorePointsThan(longest))
                 {
                     longestRuns.clear();
-                    longestRuns.add(currentRun.deepCopy());
-                    longest = currentRun.deepCopy();
+                    longestRuns.add(currentRun.deepClone());
+                    longest = currentRun.deepClone();
                     System.out.println("longer run: " + repeatLensFound);
                     repeatLensFound = 0;
                 }
@@ -438,8 +438,8 @@ public class RunController implements Parcelable
 
         //copy in old runs
         pathsAreCurrent = true;
-        longest = oldRuns.first.deepCopy();
-        mostPoints = oldRuns.second.deepCopy();
+        longest = oldRuns.first.deepClone();
+        mostPoints = oldRuns.second.deepClone();
     }
 
     /**
