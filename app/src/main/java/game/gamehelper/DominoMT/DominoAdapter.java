@@ -86,9 +86,13 @@ public class DominoAdapter extends ArrayAdapter<Domino>
 
         if (data[position].getVal1() != 0)
             holder.left.setImageResource(Domino.domIdList[data[position].getVal1()]);
+        else
+            holder.left.setImageResource(R.drawable.dom_zero);
 
         if (data[position].getVal2() != 0)
             holder.right.setImageResource(Domino.domIdList[data[position].getVal2()]);
+        else
+            holder.right.setImageResource(R.drawable.dom_zero);
         return row;
     }
 
