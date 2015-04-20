@@ -574,21 +574,23 @@ public class DominoDetection
             }
 
             //checking if length is about twice as long as height
-            boolean check1 = rectangle.checkLong(leftBottom, leftTop, rightBottom, rightTop);
+            boolean check1 = rectangle.checkLong(leftBottom, leftTop, rightTop, rightBottom);
 
             //checking if length is about the same as height
-            boolean check2 = rectangle.checkSquare(rightTop, rightBottom, leftBottom, leftTop);
+            boolean check2 = rectangle.checkSquare(leftBottom, leftTop, rightTop, rightBottom);
 
             //add object to corresponding list
             if (check1)
             {
-                rectangle.addRectangle(leftBottom, leftTop, rightBottom, rightTop);
+                rectangle.addShape(leftBottom, leftTop, rightTop, rightBottom, 0);
             }
             else if (check2)
             {
-                rectangle.addCircle(rightTop, rightBottom, leftBottom, leftTop);
+                rectangle.addShape(leftBottom, leftTop, rightTop, rightBottom, 1);
             }
         }
+
+        shapesfile = rectangle.getShapes();
         //remove or swap misclassified objects
         rectangle.deleteOutliers(2);
     }

@@ -21,10 +21,11 @@
     <string name="txtBtnReturn">Return</string>
 
     <string name="txtBtnGray">Gray</string>
-    <string name="txtBtnHistogram">Histogram</string>
+    <string name="txtBtnMagnitude">Magnitude</string>
     <string name="txtBtnPeaks">Peaks</string>
-    <string name="txtBtnShapes">Shapes</string>
-    <string name="txtBtnFinal">Final</string>
+    <string name="txtBtnDetectedShapes">D. Shapes</string>
+    <string name="txtBtnCategorizedShapes">C. Shapes</string>
+    <string name="txtBtnEdges">Edges</string>
     <string name="txtBtnOriginal">Original</string>
 
     <string name="imgDescr">pictureView</string>

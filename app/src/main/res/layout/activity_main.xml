@@ -44,18 +44,26 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/txtBtnShapes"
-            android:id="@+id/btnShowUsedShapes"
+            android:text="@string/txtBtnDetectedShapes"
+            android:id="@+id/btnShowDetectedShapes"
             android:layout_alignTop="@+id/btnProcess"
             android:layout_toEndOf="@+id/btnProcess" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/txtBtnCategorizedShapes"
+            android:id="@+id/btnShowCategorizedShapes"
+            android:layout_alignTop="@+id/btnShowDetectedShapes"
+            android:layout_toEndOf="@+id/btnShowDetectedShapes" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/txtBtnReturn"
             android:id="@+id/btnReturn"
-            android:layout_alignTop="@+id/btnShowUsedShapes"
-            android:layout_toEndOf="@+id/btnShowUsedShapes" />
+            android:layout_alignTop="@+id/btnShowCategorizedShapes"
+            android:layout_toEndOf="@+id/btnShowCategorizedShapes" />
 
         <Button
             android:layout_width="wrap_content"
@@ -76,7 +84,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/txtBtnHistogram"
+            android:text="@string/txtBtnMagnitude"
             android:id="@+id/btnShowHistogram"
             android:layout_alignTop="@id/btnShowGray"
             android:layout_toEndOf="@+id/btnShowGray" />
@@ -92,7 +100,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/txtBtnFinal"
+            android:text="@string/txtBtnEdges"
             android:id="@+id/btnShowFinal"
             android:layout_alignTop="@id/btnShowPeaks"
             android:layout_toEndOf="@+id/btnShowPeaks" />

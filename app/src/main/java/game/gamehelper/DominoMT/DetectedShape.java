@@ -46,6 +46,7 @@ public class DetectedShape
     double upperAreaThreshold = 3;
     double lowerAreaThreshold = .125;
     Bitmap usedShapes;
+    Bitmap shapes;
     Canvas canvas = new Canvas();
     Paint paint = new Paint();
 
@@ -55,24 +56,43 @@ public class DetectedShape
     public DetectedShape(int width, int height)
     {
         usedShapes = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        shapes = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         canvas.setBitmap(usedShapes);
     }
 
-    public boolean addRectangle(Point lb, Point lt, Point rb, Point rt)
+    public boolean addShape(Point lb, Point lt, Point rt, Point rb, int option)
     {
         //redundant but makes it easier to visualize
-        a = lt;
-        b = rt;
-        c = rb;
-        d = lb;
-
+        a = lb;
+        b = lt;
+        c = rt;
+        d = rb;
         Point[] corners = new Point[7];
-        corners[0] = a;
-        corners[1] = b;
-        corners[2] = c;
-        corners[3] = d;
+        if(getLength(a,b) > getLength(b,c) )
+        {
+            corners[0] = a;
+            corners[1] = b;
+            corners[2] = c;
+            corners[3] = d;
+        }
+        else
+        {
+            corners[0] = b;
+            corners[1] = c;
+            corners[2] = d;
+            corners[3] = a;
 
-        rectangles.add(corners);
+        }
+
+        switch(option){
+            case 0:
+                rectangles.add(corners);
+                break;
+            case 1:
+                circles.add(corners);
+                break;
+        }
+
         return true;
     }
 
@@ -88,7 +108,7 @@ public class DetectedShape
         return true;
     }
 
-    public boolean checkSquare(Point t, Point r, Point b, Point l)
+    public boolean checkSquare(Point b, Point l, Point t, Point r)
     {
 
         //must be square
@@ -107,7 +127,7 @@ public class DetectedShape
     {
         double side1 = getLength(a, b);
         double side2 = getLength(b, c);
-        double sidetoside = side1 / side2;
+        double sidetoside = Math.abs(side1 / side2);
 
         //must be rectangle
         if (sidetoside > 2.25 || (sidetoside < 1.85 && sidetoside > .625) || sidetoside < .375)
@@ -301,7 +321,7 @@ public class DetectedShape
         }
         else if(option == 1)
         {
-            paint.setColor(Color.GREEN);
+            paint.setColor(Color.MAGENTA);
             canvas.drawLine(points[0].x, points[0].y, points[1].x, points[1].y, paint);
             canvas.drawLine(points[1].x, points[1].y, points[2].x, points[2].y, paint);
             canvas.drawLine(points[2].x, points[2].y, points[3].x, points[3].y, paint);
@@ -351,5 +371,24 @@ public class DetectedShape
             c[4] = getCenter(c);
         }
 
+    }
+
+    public Bitmap getShapes(){
+        //draw current categorization to bitmap
+        calculateExtraPoints();
+        canvas.setBitmap(shapes);
+
+        for(Point[] r: rectangles)
+        {
+            drawShape(r, 0);
+        }
+
+        for(Point[] c: circles)
+        {
+            drawShape(c, 2);
+        }
+
+        canvas.setBitmap(usedShapes);
+        return shapes;
     }
 }
