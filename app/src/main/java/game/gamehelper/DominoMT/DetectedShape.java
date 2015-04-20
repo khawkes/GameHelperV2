@@ -119,7 +119,7 @@ public class DetectedShape
                 for (Point[] e : circles)
                 {
                     //ignore if circle is found in the center of the rectangle
-                    if (getLength(e[4], a[6]) < 10)
+                    if ( (getPointDistance(e[4], a[4], a[5])) < 10)
                         continue;
 
                     //check if center circle is inside rectangle ABCD
@@ -134,7 +134,7 @@ public class DetectedShape
                 for (Point[] e : circles)
                 {
                     //ignore if circle is found in the center of the rectangle
-                    if (getLength(e[4], a[6]) < 10)
+                    if ( (getPointDistance(e[4], a[4], a[5])) < 10)
                         continue;
 
                     //check if center circle is inside rectangle ABCD
@@ -338,6 +338,28 @@ public class DetectedShape
     private Point getCenter(Point[] a)
     {
         return new Point((a[0].x + a[2].x) / 2, (a[1].y + a[3].y) / 2);
+    }
+
+    private double getPointDistance(Point check, Point start, Point end){
+        //get distance from point to a line
+        Point v = new Point(end.x - start.x, end.y - start.y);
+        Point w = new Point(check.x - start.x, check.y - start.y);
+        double c1 = v.x * w.x + v.y * w.y;
+        double c2 = v.x * v.x + v.y * v.y;
+
+        if(c1 <= 0 )
+        {
+            return getLength(check, start);
+        }
+        if(c2 <= c1)
+        {
+            return getLength(check, end);
+        }
+
+        double b = c1 / c2;
+        Point Pb = new Point( (int) (start.x + b * v.x), (int) (start.y + b * v.y));
+
+        return getLength(check, Pb);
     }
 
     private void calculateExtraPoints()
