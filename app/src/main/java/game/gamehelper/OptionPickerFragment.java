@@ -11,7 +11,7 @@
  *   Amber Stewart
  */
 
-package game.gamehelper.DominoMT;
+package game.gamehelper;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.NumberPicker;
 
+import game.gamehelper.DominoMT.NewGameMT;
 import game.gamehelper.R;
 
 /**

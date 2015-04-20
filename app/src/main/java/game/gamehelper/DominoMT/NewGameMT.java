@@ -23,6 +23,7 @@ import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.widget.TextView;
 
+import game.gamehelper.OptionPickerFragment;
 import game.gamehelper.R;
 
 /**

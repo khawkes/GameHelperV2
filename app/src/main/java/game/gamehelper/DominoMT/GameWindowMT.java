@@ -38,6 +38,7 @@ import java.util.Map;
 import game.gamehelper.ConfirmationFragment;
 import game.gamehelper.GameSet;
 import game.gamehelper.MainActivity;
+import game.gamehelper.OptionPickerFragment;
 import game.gamehelper.R;
 import game.gamehelper.RuleDetailActivity;
 import game.gamehelper.ScoreBoard;
