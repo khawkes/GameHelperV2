@@ -18,7 +18,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -29,19 +28,6 @@ public class DetectedShape
 {
     ArrayList<Point[]> rectangles = new ArrayList();
     //corners of rectangle and midpoints of long sides
-    Point a;
-    Point b;
-    Point c;
-    Point d;
-    Point mpTop;
-    Point mpBottom;
-
-    double ab = 0;
-    double bc = 0;
-    double cd = 0;
-    double da = 0;
-
-    double lengthThreshold = .25;
     double circleThreshold = .50;
     double upperAreaThreshold = 3;
     double lowerAreaThreshold = .125;
@@ -63,10 +49,10 @@ public class DetectedShape
     public boolean addShape(Point lb, Point lt, Point rt, Point rb, int option)
     {
         //redundant but makes it easier to visualize
-        a = lb;
-        b = lt;
-        c = rt;
-        d = rb;
+        Point a = lb;
+        Point b = lt;
+        Point c = rt;
+        Point d = rb;
         Point[] corners = new Point[7];
         if(getLength(a,b) > getLength(b,c) )
         {
@@ -96,18 +82,6 @@ public class DetectedShape
         return true;
     }
 
-    public boolean addCircle(Point t, Point r, Point b, Point l)
-    {
-        Point[] circle = new Point[7];
-        circle[0] = t;
-        circle[1] = r;
-        circle[2] = b;
-        circle[3] = l;
-
-        circles.add(circle);
-        return true;
-    }
-
     public boolean checkSquare(Point b, Point l, Point t, Point r)
     {
 
@@ -130,7 +104,7 @@ public class DetectedShape
         double sidetoside = Math.abs(side1 / side2);
 
         //must be rectangle
-        if (sidetoside > 2.25 || (sidetoside < 1.85 && sidetoside > .625) || sidetoside < .375)
+        if (sidetoside > 2.75 || (sidetoside < 1.85 && sidetoside > .625) || sidetoside < .25)
             return false;
         return true;
     }
@@ -139,7 +113,6 @@ public class DetectedShape
     {
         //counts the number of circles on one side of a rectangle
         int count = 0;
-        ArrayList<Point[]> toRemove = new ArrayList<>();
         switch (side)
         {
             case 1:
@@ -167,7 +140,6 @@ public class DetectedShape
                     //check if center circle is inside rectangle ABCD
                     if (isInside(e[4], a[4], a[1], a[2], a[5]))
                     {
-                        toRemove.add(e);
                         drawShape(e, 2);
                         count++;
                     }
@@ -240,6 +212,11 @@ public class DetectedShape
         for (Point[] c : toRemove)
         {
             circles.remove(c);
+            if(rem > 1)
+            {
+                //add object to opposite category if one more pass is remaining
+                rectangles.add(c);
+            }
         }
 
         toRemove.clear();
@@ -267,10 +244,12 @@ public class DetectedShape
 
         //if the sum of the areas of all triangles generated using point e is larger than the area
         //of the rectangle, then the point is outside
-        ab = getLength(a, b);
-        bc = getLength(b, c);
-        cd = getLength(c, d);
-        da = getLength(d, a);
+        double ab = getLength(a, b);
+        double bc = getLength(b, c);
+        double cd = getLength(c, d);
+        double da = getLength(d, a);
+        double db = getLength(d, b);
+
 
         double ae = getLength(a, e);
         double be = getLength(b, e);
@@ -281,16 +260,20 @@ public class DetectedShape
         double u2 = (bc + be + ce) / 2;
         double u3 = (cd + ce + de) / 2;
         double u4 = (da + de + ae) / 2;
+        double u5 = (da + db + ab) / 2;
+        double u6 = (cd + db + bc) / 2;
 
         double a1 = Math.sqrt(u1 * (u1 - ab) * (u1 - ae) * (u1 - be));
         double a2 = Math.sqrt(u2 * (u2 - bc) * (u2 - be) * (u2 - ce));
         double a3 = Math.sqrt(u3 * (u3 - cd) * (u3 - ce) * (u3 - de));
         double a4 = Math.sqrt(u4 * (u4 - da) * (u4 - de) * (u4 - ae));
+        double a5 = Math.sqrt(u5 * (u5 - da) * (u5 - db) * (u5 - ab));
+        double a6 = Math.sqrt(u6 * (u6 - cd) * (u6 - db) * (u6 - bc));
 
-        double area = (ab * bc);
+        double area = a5 + a6;
         double area2 = a1 + a2 + a3 + a4;
 
-        if (area2 > area * 1.02)
+        if (area2 > area * 1.00001)
         {
             return false;
         }
@@ -311,13 +294,26 @@ public class DetectedShape
     {
         if(option == 0)
         {
-            paint.setColor(Color.BLACK);
+            paint.setColor(0xff000066);
             canvas.drawLine(points[0].x, points[0].y, points[1].x, points[1].y, paint);
+            paint.setColor(0xff6600cc);
             canvas.drawLine(points[1].x, points[1].y, points[2].x, points[2].y, paint);
+            paint.setColor(0xffcc0066);
             canvas.drawLine(points[2].x, points[2].y, points[3].x, points[3].y, paint);
+            paint.setColor(0xff669900);
             canvas.drawLine(points[3].x, points[3].y, points[0].x, points[0].y, paint);
             paint.setColor(Color.RED);
             canvas.drawLine(points[4].x, points[4].y, points[5].x, points[5].y, paint);
+
+            paint.setColor(Color.GRAY);
+            Point center = new Point(getCenter(points));
+            canvas.drawCircle(center.x,center.y,1,paint);
+
+            center = new Point(getCenter(new Point[] {points[0],points[4],points[5],points[3]}));
+            canvas.drawCircle(center.x,center.y,1,paint);
+
+            center = new Point(getCenter(new Point[] {points[4],points[1],points[2],points[5]}));
+            canvas.drawCircle(center.x,center.y,1,paint);
         }
         else if(option == 1)
         {
@@ -347,6 +343,8 @@ public class DetectedShape
     private void calculateExtraPoints()
     {
         //calculates middle of circle and midpoints of top and bottom of rectangles
+        Point mpTop;
+        Point mpBottom;
         for(Point[] r: rectangles)
         {
             //find midpoints of long sides

@@ -283,7 +283,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         picture.setImageBitmap(file);
 
         //arguments: image, sigma, mask size, adjacent limit, edge search limit, percent
-        detector = new DominoDetection(file, 2, 50, 25, 3, 16);
+        detector = new DominoDetection(file, 2.55, 50, 25, 2, 25);
         detector.processImage();
         Log.w("ImageProcessing", "Processing Image Done");
 
