@@ -367,13 +367,15 @@ public class DominoDetection
                 peaks[i][j] = 0;
                 finalPic[i][j] = (255);
                 checkNeighbors(i - 1, j);
-                checkNeighbors(i - 1, j - 1);
-                checkNeighbors(i, j - 1);
-                checkNeighbors(i + 1, j - 1);
-                checkNeighbors(i + 1, j);
-                checkNeighbors(i + 1, j + 1);
-                checkNeighbors(i, j + 1);
-                checkNeighbors(i - 1, j + 1);
+                //these never do anything, by the time they're called, stopcheck is always > limit.
+                //this may be a bug, come to think of it. But, if it works without it, it might be a bad idea to "fix" it.
+//                checkNeighbors(i - 1, j - 1);
+//                checkNeighbors(i, j - 1);
+//                checkNeighbors(i + 1, j - 1);
+//                checkNeighbors(i + 1, j);
+//                checkNeighbors(i + 1, j + 1);
+//                checkNeighbors(i, j + 1);
+//                checkNeighbors(i - 1, j + 1);
             }
             else if (ival[i][j] < low)
             {
@@ -409,10 +411,10 @@ public class DominoDetection
                         for (int m = k; m < pointCount; m++)
                         {
                             Point p = points.get(m);
-                            checkUp(p.x, p.y - 1, 0);
-                            checkRight(p.x + 1, p.y, 0);
-                            checkLeft(p.x - 1, p.y, 0);
-                            checkDown(p.x, p.y + 1, 0);
+                            seedCheckUp(p.x, p.y - 1, 0);
+                            seedCheckRight(p.x + 1, p.y, 0);
+                            seedCheckLeft(p.x - 1, p.y, 0);
+                            seedCheckDown(p.x, p.y + 1, 0);
                         }
                         pointCount2 = pointCount;
                         pointCount = points.size();
@@ -440,9 +442,15 @@ public class DominoDetection
         }
     }
 
-    //traversal functions, check is the number of empty spaces skipped over, checkLimit being how many
-    //pixels this program is allowed to skip
-    private void checkUp(int i, int j, int check)
+    /**
+     * seedCheckUp "seeds" dumb path checkers to the right and left as it goes up
+     * traversal functions, check is the number of empty spaces skipped over, checkLimit being how many
+     * pixels this program is allowed to skip
+     * @param i x
+     * @param j y
+     * @param check how many times it's recursed.
+     */
+    private void seedCheckUp(int i, int j, int check)
     {
         check++;
         if (check > checkLimit)
@@ -460,12 +468,20 @@ public class DominoDetection
             finalPic[i][j] = 0;
         }
 
-        checkUp(i, j - 1, check);
-        checkRight(i + 1, j, check);
-        checkLeft(i - 1, j, check);
+        seedCheckUp(i, j - 1, check);
+        checkRightDumb(i + 1, j, check);
+        checkLeftDumb(i - 1, j, check);
     }
 
-    private void checkRight(int i, int j, int check)
+    /**
+     * CheckUpDumb just goes up, and doesn't look right or left.
+     * traversal functions, check is the number of empty spaces skipped over, checkLimit being how many
+     * pixels this program is allowed to skip
+     * @param i x
+     * @param j y
+     * @param check how many times it's recursed.
+     */
+    private void checkUpDumb(int i, int j, int check)
     {
         check++;
         if (check > checkLimit)
@@ -483,12 +499,18 @@ public class DominoDetection
             finalPic[i][j] = 0;
         }
 
-        checkUp(i, j - 1, check);
-        checkRight(i + 1, j, check);
-        checkDown(i, j + 1, check);
+        checkUpDumb(i, j - 1, check);
     }
 
-    private void checkDown(int i, int j, int check)
+    /**
+     * seedCheckRight "seeds" dumb path checkers down and up as it goes to the right.
+     * traversal functions, check is the number of empty spaces skipped over, checkLimit being how many
+     * pixels this program is allowed to skip
+     * @param i x
+     * @param j y
+     * @param check how many times it's recursed.
+     */
+    private void seedCheckRight(int i, int j, int check)
     {
         check++;
         if (check > checkLimit)
@@ -506,12 +528,20 @@ public class DominoDetection
             finalPic[i][j] = 0;
         }
 
-        checkDown(i, j + 1, check);
-        checkRight(i + 1, j, check);
-        checkLeft(i - 1, j, check);
+        checkUpDumb(i, j - 1, check);
+        seedCheckRight(i + 1, j, check);
+        checkDownDumb(i, j + 1, check);
     }
 
-    private void checkLeft(int i, int j, int check)
+    /**
+     * CheckRightDumb just goes right, and doesn't look up or down.
+     * traversal functions, check is the number of empty spaces skipped over, checkLimit being how many
+     * pixels this program is allowed to skip
+     * @param i x
+     * @param j y
+     * @param check how many times it's recursed.
+     */
+    private void checkRightDumb(int i, int j, int check)
     {
         check++;
         if (check > checkLimit)
@@ -529,9 +559,127 @@ public class DominoDetection
             finalPic[i][j] = 0;
         }
 
-        checkUp(i, j - 1, check);
-        checkDown(i, j + 1, check);
-        checkLeft(i - 1, j, check);
+        checkRightDumb(i + 1, j, check);
+    }
+
+    /**
+     * seedCheckDown "seeds" dumb path checkers to the right and left as it goes down.
+     * traversal functions, check is the number of empty spaces skipped over, checkLimit being how many
+     * pixels this program is allowed to skip
+     * @param i x
+     * @param j y
+     * @param check how many times it's recursed.
+     */
+    private void seedCheckDown(int i, int j, int check)
+    {
+        check++;
+        if (check > checkLimit)
+        {
+            return;
+        }
+        if (i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
+            return;
+
+        if (finalPic[i][j] >= (1))
+        {
+            Point point = new Point();
+            point.set(i, j);
+            points.add(point);
+            finalPic[i][j] = 0;
+        }
+
+        seedCheckDown(i, j + 1, check);
+        checkRightDumb(i + 1, j, check);
+        checkLeftDumb(i - 1, j, check);
+    }
+
+    /**
+     * CheckDownDumb just goes down, and doesn't look to the right or left.
+     * traversal functions, check is the number of empty spaces skipped over, checkLimit being how many
+     * pixels this program is allowed to skip
+     * @param i x
+     * @param j y
+     * @param check how many times it's recursed.
+     */
+    private void checkDownDumb(int i, int j, int check)
+    {
+        check++;
+        if (check > checkLimit)
+        {
+            return;
+        }
+        if (i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
+            return;
+
+        if (finalPic[i][j] >= (1))
+        {
+            Point point = new Point();
+            point.set(i, j);
+            points.add(point);
+            finalPic[i][j] = 0;
+        }
+
+        checkDownDumb(i, j + 1, check);
+    }
+
+    /**
+     * seedCheckLeft "seeds" dumb path checkers up and down as it goes left.
+     * traversal functions, check is the number of empty spaces skipped over, checkLimit being how many
+     * pixels this program is allowed to skip
+     * @param i x
+     * @param j y
+     * @param check how many times it's recursed.
+     */
+    private void seedCheckLeft(int i, int j, int check)
+    {
+        check++;
+        if (check > checkLimit)
+        {
+            return;
+        }
+        if (i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
+            return;
+
+        if (finalPic[i][j] >= (1))
+        {
+            Point point = new Point();
+            point.set(i, j);
+            points.add(point);
+            finalPic[i][j] = 0;
+        }
+
+        checkUpDumb(i, j - 1, check);
+        checkDownDumb(i, j + 1, check);
+        seedCheckLeft(i - 1, j, check);
+    }
+
+    /**
+     * CheckLeftDumb just goes left, and doesn't look up or down.
+     * traversal functions, check is the number of empty spaces skipped over, checkLimit being how many
+     * pixels this program is allowed to skip
+     * @param i x
+     * @param j y
+     * @param check how many times it's recursed.
+     */
+    private void checkLeftDumb(int i, int j, int check)
+    {
+        check++;
+        if (check > checkLimit)
+        {
+            return;
+        }
+        if (i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
+            return;
+
+        if (finalPic[i][j] >= (1))
+        {
+            Point point = new Point();
+            point.set(i, j);
+            points.add(point);
+            finalPic[i][j] = 0;
+        }
+
+        checkLeftDumb(i - 1, j, check);
     }
 
     public void makeShapes()
