@@ -26,6 +26,8 @@ import android.widget.TextView;
 import game.gamehelper.R;
 
 /**
+ * Dialog fragment for prompting the user for the new game parameters.
+ *
  * Created by Mark Andrews on 3/20/2015.
  */
 public class NewGameMT extends DialogFragment
@@ -34,17 +36,16 @@ public class NewGameMT extends DialogFragment
     public static final int PLAYER_SELECT_OPTION = 1;
     public static final int RULES_SELECT_OPTION = 2;
 
-    TextView set;
-    TextView player;
-    TextView rules;
+    private TextView set;
+    private TextView player;
+    private TextView rules;
 
-    int setOption = 0;
-    int playerOption = 1;
-    int rulesOption = 0;
-    final Bundle bundle = new Bundle();
+    private int setOption = 0;
+    private int playerOption = 1;
+    private int rulesOption = 0;
+    private final Bundle bundle = new Bundle();
 
-    NewGameListener mListener;
-    View newGameView;
+    private NewGameListener mListener;
 
     public interface NewGameListener
     {
@@ -58,7 +59,7 @@ public class NewGameMT extends DialogFragment
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
         //retrieve draw_layout view
-        newGameView = View.inflate(getActivity(), R.layout.new_game_layout, null);
+        View newGameView = View.inflate(getActivity(), R.layout.new_game_layout, null);
 
         //get option text
         set = (TextView) newGameView.findViewById(R.id.max_double_picker);
@@ -77,7 +78,6 @@ public class NewGameMT extends DialogFragment
             }
         });
 
-
         player.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -89,7 +89,6 @@ public class NewGameMT extends DialogFragment
                 fragment.show(getActivity().getSupportFragmentManager(), "optionPicker");
             }
         });
-
 
         rules.setOnClickListener(new View.OnClickListener()
         {
@@ -117,19 +116,25 @@ public class NewGameMT extends DialogFragment
 
             }
         })
-               .setNegativeButton(R.string.txtDlgCancel, new DialogInterface.OnClickListener()
-               {
-                   @Override
-                   public void onClick(DialogInterface dialog, int which)
-                   {
-                       mListener.onNewGameCancel();
+        .setNegativeButton(R.string.txtDlgCancel, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                mListener.onNewGameCancel();
 
-                   }
-               });
+            }
+        });
         return builder.create();
 
     }
 
+    /**
+     * Callback for the options fragment. Used to set dialog choices from the picker.
+     *
+     * @param option the value from the picker
+     * @param caller the option the picker is updating
+     */
     public void setOption(int option, int caller)
     {
         String[] set = new String[] {"Double Nine", "Double Twelve", "Double Fifteen", "Double Eighteen"};

@@ -22,11 +22,13 @@ import android.graphics.Point;
 import java.util.ArrayList;
 
 /**
+ * Class responsible for detecting shapes in the image data.
+ *
  * Created by Mark Andrews on 4/11/2015.
  */
 public class DetectedShape
 {
-    ArrayList<Point[]> rectangles = new ArrayList();
+    ArrayList<Point[]> rectangles = new ArrayList<>();
     //corners of rectangle and midpoints of long sides
     double circleThreshold = .50;
     double upperAreaThreshold = 3;
@@ -36,8 +38,7 @@ public class DetectedShape
     Canvas canvas = new Canvas();
     Paint paint = new Paint();
 
-
-    ArrayList<Point[]> circles = new ArrayList();
+    ArrayList<Point[]> circles = new ArrayList<>();
 
     public DetectedShape(int width, int height)
     {
@@ -84,29 +85,26 @@ public class DetectedShape
 
     public boolean checkSquare(Point b, Point l, Point t, Point r)
     {
-
         //must be square
         if (Math.abs(getLength(t, b) / getLength(l, r)) > 1 + circleThreshold)
         {
             return false;
         }
-        if (Math.abs(getLength(t, b) / getLength(l, r)) < 1 - circleThreshold)
+        else if (Math.abs(getLength(t, b) / getLength(l, r)) < 1 - circleThreshold)
         {
             return false;
         }
         return true;
     }
 
-    public boolean checkLong(Point a, Point b, Point c, Point d)
+    public boolean checkLong(Point a, Point b, Point c)
     {
         double side1 = getLength(a, b);
         double side2 = getLength(b, c);
-        double sidetoside = Math.abs(side1 / side2);
+        double sideToSide = Math.abs(side1 / side2);
 
         //must be rectangle
-        if (sidetoside > 2.75 || (sidetoside < 1.85 && sidetoside > .625) || sidetoside < .25)
-            return false;
-        return true;
+        return !(sideToSide > 2.75 || (sideToSide < 1.85 && sideToSide > .625) || sideToSide < .25);
     }
 
     public int countSide(int side, Point[] a)
@@ -273,11 +271,7 @@ public class DetectedShape
         double area = a5 + a6;
         double area2 = a1 + a2 + a3 + a4;
 
-        if (area2 > area * 1.00001)
-        {
-            return false;
-        }
-        return true;
+        return !(area2 > area * 1.00001);
     }
 
     public double getLength(Point a, Point b)

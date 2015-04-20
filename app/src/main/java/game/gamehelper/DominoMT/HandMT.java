@@ -26,18 +26,22 @@ import java.util.Stack;
 import game.gamehelper.Hand;
 
 /**
+ * A class to describe and hold hand of Dominoes.
+ *
  * Original creation date: 2/11/2015.
- * A hand of Dominoes.
- * TODO add remove/add domino functionality.
  */
-
+// TODO: add remove/add domino functionality.
 public class HandMT implements Hand, Parcelable
 {
     //experimental undo history may cause problems with pathfinding, if something goes wrong
     private static final boolean enableExperimentalUndoHistory = true;
 
+    private final int MAXIMUM_DOUBLE;
+    private final int ORIGINAL_TRAIN_HEAD;
+
     //domino hand history holds all dominoes that were ever in your hand.
     private ArrayList<Domino> dominoHandHistory;
+
     //current hand is only the playable hand.
     private ArrayList<Domino> currentHand;
 
@@ -45,9 +49,7 @@ public class HandMT implements Hand, Parcelable
     private RunController runController;
 
     private int totalPointsHand = 0;
-    private int totalDominos;
-    private final int MAXIMUM_DOUBLE;
-    private final int ORIGINAL_TRAIN_HEAD;
+    private int totalDominoes;
     private int trainHead;
 
     //The undo-related stacks. Relies on pseudo-command pattern.
@@ -79,7 +81,7 @@ public class HandMT implements Hand, Parcelable
             dominoHandHistory.add(d);
             totalPointsHand += d.getDominoValue();
         }
-        totalDominos = uniqDominoes.size();
+        totalDominoes = uniqDominoes.size();
 
         //sets final hand size and starting head.
         MAXIMUM_DOUBLE = largestDouble;
@@ -94,9 +96,9 @@ public class HandMT implements Hand, Parcelable
     //NOTE: We have to have the start double so the pathfinding calculates a legal path.
     public HandMT(int largestDouble, int startHead)
     {
-        dominoHandHistory = new ArrayList<Domino>();
-        currentHand = new ArrayList<Domino>();
-        totalDominos = 0;
+        dominoHandHistory = new ArrayList<>();
+        currentHand = new ArrayList<>();
+        totalDominoes = 0;
 
         //sets final hand size and starting head.
         MAXIMUM_DOUBLE = largestDouble;
@@ -110,6 +112,7 @@ public class HandMT implements Hand, Parcelable
 
     //This allows a Hand to be retrieved from a Parcel.
     //appears to never be called, given how it should have crashed if called.
+    @SuppressWarnings("unchecked")
     public HandMT(Parcel p)
     {
         //hand history
@@ -125,7 +128,7 @@ public class HandMT implements Hand, Parcelable
 
         //stored variables and constants.
         totalPointsHand = p.readInt();
-        totalDominos = p.readInt();
+        totalDominoes = p.readInt();
         MAXIMUM_DOUBLE = p.readInt();
         ORIGINAL_TRAIN_HEAD = p.readInt();
         trainHead = p.readInt();
@@ -185,7 +188,7 @@ public class HandMT implements Hand, Parcelable
         dominoHandHistory.add(d);
         currentHand.add(d);
         totalPointsHand = getTotalPointsHand() + d.getDominoValue();
-        totalDominos++;
+        totalDominoes++;
         runController.addDomino(d);
     }
 
@@ -255,7 +258,7 @@ public class HandMT implements Hand, Parcelable
                 currentHand.remove(a);
                 totalPointsHand = getTotalPointsHand() - d.getDominoValue();
                 runController.removeDomino(a);
-                totalDominos--;
+                totalDominoes--;
                 break;
             }
         }
@@ -391,7 +394,7 @@ public class HandMT implements Hand, Parcelable
             currentHand.add(position, savedDomino);
             runController.reAddDomino(savedDomino, savedTrainHead);
             totalPointsHand += savedDomino.getDominoValue();
-            totalDominos++;
+            totalDominoes++;
             trainHead = savedTrainHead;
 
             //re-sets the runs if possible, saving calculation time.
@@ -471,9 +474,9 @@ public class HandMT implements Hand, Parcelable
      *
      * @return Returns the number of dominos in this hand.
      */
-    public int getTotalDominos()
+    public int getTotalDominoes()
     {
-        return totalDominos;
+        return totalDominoes;
     }
 
     /**
@@ -484,20 +487,6 @@ public class HandMT implements Hand, Parcelable
     public Domino[] toArray()
     {
         return currentHand.toArray(new Domino[currentHand.size()]);
-    }
-
-    //returns int[][] for saving between onCreate calls in gameWindow
-    public int[][] smallArray()
-    {
-        int[][] list = new int[getTotalDominos()][2];
-        int i = 0;
-        for (Domino currentDomino : currentHand)
-        {
-            list[i][0] = currentDomino.getVal1();
-            list[i][1] = currentDomino.getVal2();
-            i++;
-        }
-        return list;
     }
 
     /**
@@ -564,7 +553,7 @@ public class HandMT implements Hand, Parcelable
 
         //write hand variables & constants
         dest.writeInt(totalPointsHand);
-        dest.writeInt(totalDominos);
+        dest.writeInt(totalDominoes);
         dest.writeInt(MAXIMUM_DOUBLE);
         dest.writeInt(ORIGINAL_TRAIN_HEAD);
         dest.writeInt(trainHead);
