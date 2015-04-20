@@ -317,7 +317,7 @@ public class HandMT implements Hand, Parcelable
 
         //add to our undo stacks.
         playHistory.push(toRemove);
-        positionsAffectedHistory.push(position);
+        positionsAffectedHistory.push(HandMT.findDomino(currentHand, toRemove));
         trainHeadHistory.push(trainHead);
         undoTypeHistory.push(PlayType.PLAYED_DOMINO);
         rememberRuns();
