@@ -289,6 +289,14 @@ public class GameWindowMT extends ActionBarActivity implements
                         {
                             data = hand.toArray();
                         }
+                        else if (windowState == WindowContext.SHOWING_UNUSED_MOST_POINTS)
+                        {
+                            data = UnusedFinder.FindUnused(hand.getMostPointRun(), hand);
+                        }
+                        else if (windowState == WindowContext.SHOWING_UNUSED_LONGEST)
+                        {
+                            data = UnusedFinder.FindUnused(hand.getLongestRun(), hand);
+                        }
 
                         updatePointValueText();
 
