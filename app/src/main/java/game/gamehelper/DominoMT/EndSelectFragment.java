@@ -31,15 +31,23 @@ import game.gamehelper.BitmapAdapter;
 import game.gamehelper.R;
 
 /**
- * Fragment for selecting the end piece to calculate runs.
+ * Fragment for selecting the end piece to calculate runs from.
 
  * Created by Mark Andrews on 2/23/2015.
  */
 public class EndSelectFragment extends DialogFragment
 {
 
+    /**
+     * Dialog fragment listener response.
+     */
     public interface EndListener
     {
+        /**
+         * Callback for the end select fragment. Used to set the response from the picker.
+         *
+         * @param var1 the domino value that the run will start from
+         */
         public void onClose(int var1);
     }
 

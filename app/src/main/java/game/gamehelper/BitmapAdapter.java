@@ -20,9 +20,9 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-/* Class for handling bitmap images in an Array
+/**
+ *  Class for handling bitmap images in an array.
  */
-
 public class BitmapAdapter extends BaseAdapter
 {
     private Context context;

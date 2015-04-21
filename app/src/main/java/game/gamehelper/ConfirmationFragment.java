@@ -55,12 +55,25 @@ public class ConfirmationFragment extends DialogFragment
      */
     public static final String ARG_CALL_NAME = "callName";
 
+    /**
+     * Dialog fragment listener response.
+     */
     public interface ConfirmationListener
     {
+        /**
+         * Callback for the confirmation fragment positive (ok) response.
+         */
         public void onDialogPositiveClick(String tag);
 
+        /**
+         * Callback for the confirmation fragment negative (cancel) response.
+         */
         public void onDialogNegativeClick(String tag);
 
+        /**
+         * Callback for the confirmation fragment neutral response.  Dialog left
+         * hand button.
+         */
         public void onDialogNeutralClick(String tag);
     }
 

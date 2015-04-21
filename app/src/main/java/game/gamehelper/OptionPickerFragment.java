@@ -25,7 +25,6 @@ import android.view.View;
 import android.widget.NumberPicker;
 
 import game.gamehelper.DominoMT.NewGameMT;
-import game.gamehelper.R;
 
 /**
  * Android dialog fragment for displaying a spinner selector with the
