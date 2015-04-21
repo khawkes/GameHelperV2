@@ -574,7 +574,7 @@ public class DominoDetection
             }
 
             //checking if length is about twice as long as height
-            boolean check1 = rectangle.checkLong(leftBottom, leftTop, rightTop, rightBottom);
+            boolean check1 = rectangle.checkLong(leftBottom, leftTop, rightTop);
 
             //checking if length is about the same as height
             boolean check2 = rectangle.checkSquare(leftBottom, leftTop, rightTop, rightBottom);

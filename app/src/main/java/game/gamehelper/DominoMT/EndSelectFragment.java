@@ -31,8 +31,9 @@ import game.gamehelper.BitmapAdapter;
 import game.gamehelper.R;
 
 /**
+ * Fragment for selecting the end piece to calculate runs.
+
  * Created by Mark Andrews on 2/23/2015.
- * Fragment for selecting the end piece to calculate runs
  */
 public class EndSelectFragment extends DialogFragment
 {
@@ -42,27 +43,20 @@ public class EndSelectFragment extends DialogFragment
         public void onClose(int var1);
     }
 
-    /**
-     * @param DIALOG_SIZE_COMPENSATION adjust for dialog window being smaller than the specified size
-     * @param PAGE_MARGIN_PERCENT percent of the screen width to be used for side margins
-     * @param PORTRAIT_COLUMNS columns for portrait mode
-     * @param LANDSCAPE_COLUMNS = columns for landscape mode
-     */
+    /** DIALOG_SIZE_COMPENSATION adjust for dialog window being smaller than the specified size */
     private static final float DIALOG_SIZE_COMPENSATION = 1.1f;
-    private final float PAGE_MARGIN_PERCENT = 0.1f;
-    private final int PORTRAIT_COLUMNS = 4;
-    private final int LANDSCAPE_COLUMNS = 7;
-    int dialogWidth;
-    int bitmapSize;
-    int numColumns;
-    int deckMax;
-    EndListener mListener;
-    GridView gridView;
-    View drawView;
-    Display display;
-    Point size = new Point();
-    BitmapAdapter bitmapAdapter;
 
+    /** PAGE_MARGIN_PERCENT percent of the screen width to be used for side margins */
+    private static final float PAGE_MARGIN_PERCENT = 0.1f;
+
+    /** PORTRAIT_COLUMNS columns for portrait mode */
+    private static final int PORTRAIT_COLUMNS = 4;
+
+    /** LANDSCAPE_COLUMNS = columns for landscape mode */
+    private static final int LANDSCAPE_COLUMNS = 7;
+
+    int dialogWidth;
+    EndListener mListener;
 
     @Override
     public void onStart()
@@ -97,32 +91,33 @@ public class EndSelectFragment extends DialogFragment
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
-        int marginSize;
         Bundle b = getArguments();
+        int deckMax = 0;
 
         if (b != null)
             deckMax = b.getInt("maxDouble");
 
         //retrieve draw_layout view
-        drawView = View.inflate(getActivity(), R.layout.end_select_layout, null);
+        View drawView = View.inflate(getActivity(), R.layout.end_select_layout, null);
 
         //get the size of the display and calculate dialog size
-        display = getActivity().getWindowManager().getDefaultDisplay();
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point size = new Point();
         display.getSize(size);
-        marginSize = (int) (PAGE_MARGIN_PERCENT * size.x * 2);
+        int marginSize = (int) (PAGE_MARGIN_PERCENT * size.x * 2);
         dialogWidth = size.x - (marginSize);
 
         //get columns based on screen orientation
-        numColumns = (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT ?
+        int numColumns = (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT ?
                 PORTRAIT_COLUMNS : LANDSCAPE_COLUMNS);
 
         //set bitmap size
-        bitmapSize = dialogWidth / numColumns;
+        int bitmapSize = dialogWidth / numColumns;
 
 
         //retrieve gridview from layout, set adapter
-        gridView = (GridView) drawView.findViewById(R.id.gridView);
-        bitmapAdapter = new BitmapAdapter(getActivity(), Domino.domIdList, deckMax + 1);
+        GridView gridView = (GridView) drawView.findViewById(R.id.gridView);
+        BitmapAdapter bitmapAdapter = new BitmapAdapter(getActivity(), Domino.domIdList, deckMax + 1);
         bitmapAdapter.setImageSize(bitmapSize);
         gridView.setAdapter(bitmapAdapter);
         gridView.setNumColumns(numColumns);

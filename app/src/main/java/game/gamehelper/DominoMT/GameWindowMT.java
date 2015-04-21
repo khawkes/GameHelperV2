@@ -38,6 +38,7 @@ import java.util.Map;
 import game.gamehelper.ConfirmationFragment;
 import game.gamehelper.GameSet;
 import game.gamehelper.MainActivity;
+import game.gamehelper.OptionPickerFragment;
 import game.gamehelper.R;
 import game.gamehelper.RuleDetailActivity;
 import game.gamehelper.ScoreBoard;
@@ -156,31 +157,31 @@ public class GameWindowMT extends ActionBarActivity implements
         {
             titleText.setText("Longest Run");
             pointValText.setText("Junk Value: " + (hand.getTotalPointsHand() - hand.getLongestRun().getPointVal())
-                    + " (" + (hand.getTotalDominos() - hand.getLongestRun().getLength()) + ")");
+                    + " (" + (hand.getTotalDominoes() - hand.getLongestRun().getLength()) + ")");
         }
         else if (windowState == WindowContext.SHOWING_MOST_POINTS)
         {
             titleText.setText("Highest Scoring Run");
             pointValText.setText("Junk Value: " + (hand.getTotalPointsHand() - hand.getMostPointRun().getPointVal())
-                    + " (" + (hand.getTotalDominos() - hand.getMostPointRun().getLength()) + ")");
+                    + " (" + (hand.getTotalDominoes() - hand.getMostPointRun().getLength()) + ")");
         }
         else if (windowState == WindowContext.SHOWING_UNSORTED)
         {
             titleText.setText("Unsorted Hand");
             pointValText.setText("Value: " + (hand.getTotalPointsHand())
-                    + " (" + (hand.getTotalDominos())
-                    + " domino" + ((hand.getTotalDominos() == 1) ? ")" : "s)"));
+                    + " (" + (hand.getTotalDominoes())
+                    + " domino" + ((hand.getTotalDominoes() == 1) ? ")" : "s)"));
         }
         else if (windowState == WindowContext.SHOWING_UNUSED_LONGEST)
         {
             titleText.setText("Unused Dominos");
             pointValText.setText("Junk Value: " + (hand.getTotalPointsHand() - hand.getLongestRun().getPointVal())
-                    + " (" + (hand.getTotalDominos() - hand.getLongestRun().getLength()) + ")");
+                    + " (" + (hand.getTotalDominoes() - hand.getLongestRun().getLength()) + ")");
         }
         else if (windowState == WindowContext.SHOWING_UNUSED_MOST_POINTS)
         {
             pointValText.setText("Junk Value: " + (hand.getTotalPointsHand() - hand.getMostPointRun().getPointVal())
-                    + " (" + (hand.getTotalDominos() - hand.getMostPointRun().getLength()) + ")");
+                    + " (" + (hand.getTotalDominoes() - hand.getMostPointRun().getLength()) + ")");
         }
     }
 
@@ -237,7 +238,7 @@ public class GameWindowMT extends ActionBarActivity implements
                 {
                     public void onClick(View v)
                     {
-                        if (hand != null && hand.getTotalDominos() > 0)
+                        if (hand != null && hand.getTotalDominoes() > 0)
                         {
                             DialogFragment newFragment = new DrawFragment();
                             newFragment.setArguments(handInformation);

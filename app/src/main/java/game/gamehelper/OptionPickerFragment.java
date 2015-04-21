@@ -11,7 +11,7 @@
  *   Amber Stewart
  */
 
-package game.gamehelper.DominoMT;
+package game.gamehelper;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -24,22 +24,33 @@ import android.util.Log;
 import android.view.View;
 import android.widget.NumberPicker;
 
+import game.gamehelper.DominoMT.NewGameMT;
 import game.gamehelper.R;
 
 /**
+ * Android dialog fragment for displaying a spinner selector with the
+ * provided values.
+ *
  * Created by Mark Andrews on 3/24/2015.
  */
 public class OptionPickerFragment extends DialogFragment
 {
 
+    /**
+     * Listener callback for options selected from this dialog fragment.
+     */
     public interface OptionPickerListener
     {
+        /**
+         * Callback for the options fragment. Used to set dialog choices from the picker.
+         *
+         * @param option the value from the picker
+         * @param caller the option the picker is updating
+         */
         public void setOption(int option, int caller);
     }
 
-    OptionPickerListener mListener;
-    View optionPickerView;
-    NumberPicker optionPicker;
+    private OptionPickerListener mListener;
 
     @Override
     public void onAttach(Activity activity)
@@ -67,14 +78,14 @@ public class OptionPickerFragment extends DialogFragment
         {
             Log.w("OptionPickerFragment", "no arguments found, integer required for picker type");
             dismiss();
-            return null;
+            throw new IllegalArgumentException("No arguments found for the OptionPickerFragment, ensure bundle is passed.");
         }
         option = b.getInt("option");
 
-        optionPickerView = View.inflate(getActivity(), R.layout.picker_layout, null);
+        View optionPickerView = View.inflate(getActivity(), R.layout.picker_layout, null);
 
         //retrieve pickers
-        optionPicker = (NumberPicker) optionPickerView.findViewById(R.id.new_game_picker);
+        final NumberPicker optionPicker = (NumberPicker) optionPickerView.findViewById(R.id.new_game_picker);
         optionPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
         switch (option)
