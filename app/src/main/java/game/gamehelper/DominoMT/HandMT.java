@@ -74,7 +74,9 @@ public class HandMT implements Hand, Parcelable
         currentHand = new ArrayList<>();
 
         Set<Domino> uniqDominoes = new HashSet<>();
-        uniqDominoes.addAll(dominoes);
+        if (dominoes != null && dominoes.size() > 0)
+            uniqDominoes.addAll(dominoes);
+
         for(Domino d : uniqDominoes)
         {
             currentHand.add(d);
