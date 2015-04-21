@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
+import java.util.zip.GZIPInputStream;
 
 import game.gamehelper.R;
 
@@ -81,21 +82,22 @@ public class AnagramLibrary
 
             //android file IO
             String filename[];
-            Scanner scanIn;
+            Scanner scanIn = null;
             ArrayList<String> listOfStrings = new ArrayList<>();
 
             //open the file, throw any exceptions back to caller if something goes wrong.
             try
             {
                 InputStream file = parentInstance.parent.getResources().openRawResource(R.raw.scrabble_words);
-                scanIn = new Scanner(new BufferedInputStream(file));
+                scanIn = new Scanner(new GZIPInputStream(new BufferedInputStream(file)));
             }
             catch (Exception e)
             {
                 e.printStackTrace();
-                //in java, you can't write "throw;"
-                throw e;
             }
+
+            if (scanIn == null)
+                throw new AssertionError("File input failed in AnagramLibrary.");
 
             //scan through the dictionary.
             while (scanIn.hasNext())
@@ -106,6 +108,8 @@ public class AnagramLibrary
                     listOfStrings.add(tempStr);
                 }
             }
+
+            scanIn.close();
 
             return listOfStrings.toArray(new String[listOfStrings.size()]);
         }

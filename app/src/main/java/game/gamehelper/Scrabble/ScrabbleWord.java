@@ -60,6 +60,27 @@ public class ScrabbleWord
             score += 50;
     }
 
+    /**
+     * validates and scores a string.
+     * @param in the string to validate.
+     * @return the score of the string.
+     */
+    public static int findScore(String in) {
+        int[] scoreTable = {1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10};
+        int scoreTemp = 0;
+
+        for (char c : in.toLowerCase().toCharArray())
+        {
+            //validation
+            if (c >= 'a' && c <= 'z' && c < 128)
+            {
+                scoreTemp += scoreTable[c - 'a'];
+            }
+        }
+
+        return scoreTemp;
+    }
+
     @Override
     /**
      * Converts the score to a string, and appends a Bingo notice at the end, if it occurs.
