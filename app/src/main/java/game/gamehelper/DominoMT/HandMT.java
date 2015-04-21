@@ -535,12 +535,24 @@ public class HandMT implements Hand, Parcelable
             runsHistory.push(null);
     }
 
+    /**
+     * Required for Parcelable interface.
+     * Not used.
+     *
+     * @return zero
+     */
     @Override
     public int describeContents()
     {
         return 0;
     }
 
+    /**
+     * Save this domino graph instance to a Parcel.
+     *
+     * @param dest the parcel to write the domino graph to
+     * @param flags additional flags on how to write the parcel (not used)
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags)
     {
@@ -599,6 +611,11 @@ public class HandMT implements Hand, Parcelable
         dest.writeSerializable(tempHistoryType);
     }
 
+    /**
+     * Parcel CREATOR for the Domino class.
+     *
+     * @see android.os.Parcelable.Creator
+     */
     public static Parcelable.Creator CREATOR = new Parcelable.Creator()
     {
         @Override

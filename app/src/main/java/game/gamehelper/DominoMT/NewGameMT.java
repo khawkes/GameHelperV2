@@ -48,10 +48,23 @@ public class NewGameMT extends DialogFragment
 
     private NewGameListener mListener;
 
+    /**
+     * Listener callback for responses from the new game fragment dialog.
+     */
     public interface NewGameListener
     {
+        /**
+         * Callback for the new game fragment positive response.
+         *
+         * @param set the domino set size
+         * @param player the number of players
+         * @param rules tradition or custom rule set.
+         */
         public void onNewGameCreate(int set, int player, int rules);
 
+        /**
+         * Callback for the new game fragment negative (cancel) response.
+         */
         public void onNewGameCancel();
     }
 

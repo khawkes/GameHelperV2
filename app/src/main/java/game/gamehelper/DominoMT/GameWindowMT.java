@@ -47,7 +47,6 @@ import game.gamehelper.ScoreBoard;
  * Window containing a visual representation of a hand, with options
  * to change arrangement
  */
-
 public class GameWindowMT extends ActionBarActivity implements
         ConfirmationFragment.ConfirmationListener,
         DrawDominoListener,
