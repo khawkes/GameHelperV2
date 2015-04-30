@@ -85,7 +85,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/txtBtnMagnitude"
-            android:id="@+id/btnShowHistogram"
+            android:id="@+id/btnShowMagnitude"
             android:layout_alignTop="@id/btnShowGray"
             android:layout_toEndOf="@+id/btnShowGray" />
 
@@ -94,14 +94,14 @@
             android:layout_height="wrap_content"
             android:text="@string/txtBtnPeaks"
             android:id="@+id/btnShowPeaks"
-            android:layout_alignTop="@id/btnShowHistogram"
-            android:layout_toEndOf="@+id/btnShowHistogram" />
+            android:layout_alignTop="@id/btnShowMagnitude"
+            android:layout_toEndOf="@+id/btnShowMagnitude" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/txtBtnEdges"
-            android:id="@+id/btnShowFinal"
+            android:id="@+id/btnShowEdges"
             android:layout_alignTop="@id/btnShowPeaks"
             android:layout_toEndOf="@+id/btnShowPeaks" />
 
