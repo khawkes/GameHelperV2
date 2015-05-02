@@ -18,6 +18,7 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -187,9 +188,32 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         switch (v.getId())
         {
             case R.id.btnTakePicture:
-                createImageFile();
-                dispatchTakePictureIntent();
-                setButtons(false);
+                //if run in debugger... technically not supposed to parse fingerprint
+                if (Build.FINGERPRINT.contains("generic"))
+                {
+                    file = BitmapFactory.decodeResource(v.getResources(), R.drawable.static_1);
+
+                    int longestSide = Math.max(file.getWidth(), file.getHeight());
+                    double scale = longestSide / 1024;
+                    width = (int) (file.getWidth() / scale);
+                    height = (int) (file.getHeight() / scale);
+
+                    file = Bitmap.createScaledBitmap(file, width, height, false);
+                    picture.setImageBitmap(file);
+
+                    //arguments: image, sigma, mask size, adjacent limit, edge search limit, percent
+                    detector = new ObjectFinder(file, 2.55, 50, 25, 2, 25);
+                    detector.processImage();
+                    Log.w("ImageProcessing", "Processing Image Done");
+
+                    setButtons(true);
+                }
+                else
+                {
+                    createImageFile();
+                    dispatchTakePictureIntent();
+                    setButtons(false);
+                }
                 break;
 
             case R.id.btnProcess:
