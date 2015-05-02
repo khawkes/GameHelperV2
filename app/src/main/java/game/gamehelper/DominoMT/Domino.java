@@ -18,6 +18,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import game.gamehelper.R;
 
@@ -275,6 +276,7 @@ public class Domino implements Parcelable
                 side = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888);
                 break;
         }
+        Log.w("Domino", (side.getWidth() + " " + side.getHeight()));
         return side;
     }
 
