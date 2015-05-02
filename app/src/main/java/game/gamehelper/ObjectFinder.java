@@ -223,8 +223,8 @@ public class ObjectFinder
                 {
                     for (int q = -offset; q <= offset; q++)
                     {
-                        sum1 += pic[(i + p) * picHeight + j + q] * xMask[p + maskOffsetY][q + maskOffsetX];
-                        sum2 += pic[(i + p) * picHeight + j + q] * yMask[p + maskOffsetY][q + maskOffsetX];
+                        sum1 += pic[i + p + (j + q) * picWidth] * xMask[p + maskOffsetY][q + maskOffsetX];
+                        sum2 += pic[i + p + (j + q) * picWidth] * yMask[p + maskOffsetY][q + maskOffsetX];
                     }
                 }
                 outPicX[i][j] = sum1;
@@ -339,7 +339,6 @@ public class ObjectFinder
         int[] histogram = new int[256];
         //create histogram of image
         {
-            double[][] ival2 = new double[picWidth][picHeight];
             //byte sized single channel image displayed using alpha channel only
             magnitudeImage = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
 
@@ -349,10 +348,10 @@ public class ObjectFinder
                 for (int j = 0; j < picHeight; j++)
                 {
                     //counts how many pixels are at each value 0-255
-                    ival2[i][j] = (ival[i][j] / maxival) * (255);
-                    histogram[(int) ival2[i][j]] += 1;
+                    final double ival2 = (ival[i][j] / maxival) * (255);
+                    histogram[(int) ival2] += 1;
                     //blurred image
-                    magnitudeImage.setPixel(i, j, getBlack((int) ival2[i][j]));
+                    magnitudeImage.setPixel(i, j, getBlack((int) ival2));
                 }
             }
 
