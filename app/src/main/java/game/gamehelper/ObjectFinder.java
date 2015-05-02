@@ -21,6 +21,7 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.Log;
+import android.util.Pair;
 
 import java.util.ArrayList;
 
@@ -50,16 +51,16 @@ public class ObjectFinder
      * the variable type to byte but minor amounts of accuracy would be lost
      */
 
-    private int[][] pic;
-    private double[][] ival;
-    private double[][] ival2;
+//    private int[] pic;
+//    private double[][] ival;
+//    private double[][] ival2;
     private boolean[][] peaks;
     private boolean[][] edges;
-    private double[][] outpicx;
-    private double[][] outpicy;
-    private double[][] maskx;
-    private double[][] masky;
-    private int[] histogram = new int[256];
+//    private double[][] outpicx;
+//    private double[][] outpicy;
+//    private double[][] maskx;
+//    private double[][] masky;
+//    private int[] histogram = new int[256];
 
     private Bitmap sourceFile;
     private Bitmap bwImage;
@@ -100,10 +101,8 @@ public class ObjectFinder
     //number of pixels that are larger than neighbors
     int peakCount = 0;
 
-    public ObjectFinder(Bitmap file, double sigma, int maskSize, int limit,
-            int checkLimit, double percent)
+    public ObjectFinder(Bitmap file, double sigma, int maskSize, int limit, int checkLimit, double percent)
     {
-
         this.sourceFile = file;
         this.sigma = sigma;
         this.maskSize = maskSize;
@@ -113,141 +112,162 @@ public class ObjectFinder
 
         picWidth = sourceFile.getWidth();
         picHeight = sourceFile.getHeight();
+
+        processImage(picWidth, picHeight);
     }
 
-    public void processImage()
+    /**
+     * Returns a grayscale int array of the original Bitmap.
+     * @param original the original bitmap to convert.
+     * @return the grayscale representation.
+     */
+    public int[] getGrayscale(Bitmap original)
     {
-
-        int i, j, p, q, mr, centx, centy;
-        double maskval, sum1, sum2, maxival = 0, slope = 0, sigsigtwo, twopiesigfour, sigMod;
-
-        pic = new int[picWidth][picHeight];
-        outpicx = new double[picWidth][picHeight];
-        outpicy = new double[picWidth][picHeight];
-        maskx = new double[maskSize][maskSize];
-        masky = new double[maskSize][maskSize];
-        ival = new double[picWidth][picHeight];
-        ival2 = new double[picWidth][picHeight];
-        peaks = new boolean[picWidth][picHeight];
-        edges = new boolean[picWidth][picHeight];
-
-        //image types are described below, large amounts of space are currently wasted
-        //please change if there is something more space efficient
-
-        //byte sized single channel image displayed using alpha channel only
+        //We reserve space for our bitmap.
+        int picWidth = original.getWidth();
+        int picHeight = original.getHeight();
         bwImage = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
-        magnitudeImage = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
 
-        //binary images
-        peaksImage = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
-        cannyEdgesImage = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
-        detectedObjectsImage = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
+        //create the canvas to draw on.
+        Canvas blackAndWhiteCanvas = new Canvas(bwImage);
+        ColorMatrix desaturatedColorMatrix = new ColorMatrix();
+        desaturatedColorMatrix.setSaturation(0);
+        ColorMatrixColorFilter grayscaleFilter = new ColorMatrixColorFilter(desaturatedColorMatrix);
 
-        //create grayscale image
-        Canvas c = new Canvas(bwImage);
-        Paint paint = new Paint();
-        ColorMatrix cm = new ColorMatrix();
-        cm.setSaturation(0);
-        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
-        paint.setColorFilter(f);
-        c.drawBitmap(sourceFile, 0, 0, paint);
+        //apply the filter. Going to change this to be more efficient and do it in a single step.
+        //Y = 0.299R + 0.587G + 0.114B
+        Paint grayscale = new Paint();
+        grayscale.setColorFilter(grayscaleFilter);
+        blackAndWhiteCanvas.drawBitmap(original, 0, 0, grayscale);
+
+        //Copy pixels from bwImage
+        int pic[] = new int[picWidth * picHeight];
+        bwImage.getPixels(pic, 0, bwImage.getWidth(), 0, 0, picWidth, picHeight);
 
         //convert RGB grayscale bitmap to 1 channel int array
-        for (i = 0; i < picWidth; i++)
+        for (int i = 0; i < pic.length; i++)
         {
-            for (j = 0; j < picHeight; j++)
-            {
-                int pixel = bwImage.getPixel(i, j);
-                int red = Color.red(pixel);
-                int blue = Color.blue(pixel);
-                int green = Color.green(pixel);
-                int black = (int) (0.21 * red + 0.72 * green + 0.07 * blue);
-                pic[i][j] = black;
-            }
+            pic[i] = (int) (0.21 * Color.red(pic[i]) + 0.72 * Color.green(pic[i]) + 0.07 * Color.blue(pic[i]));
         }
 
-        //determine how many pixels are in the x percent
-        percent = (picWidth * picWidth - 1) * (percent / 100);
+        //temporary: wipes the image after use
+        bwImage.recycle();
+        bwImage = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_4444);
 
-        //variables for mask calculations
-        sigsigtwo = (sigma * sigma * -2);
-        twopiesigfour = (2 * Math.PI * sigma * sigma * sigma * sigma);
+        return pic;
+    }
 
-        mr = (int) (sigma * 3);
-        centx = (maskSize / 2);
-        centy = (maskSize / 2);
+    /**
+     * Dynamically creates the masks for the Gaussian blur algorithm.
+     * @return Pair(xMask, yMask)
+     */
+    private Pair<double[][], double[][]> getMasksForGaussianBlur()
+    {
+        //constants for mask calculations
+        final double sigsigtwo = (sigma * sigma * -2);
+        final double twopiesigfour = (2 * Math.PI * sigma * sigma * sigma * sigma);
+        final int mr = (int) (sigma * 3);
+        final int centx = (maskSize / 2);
+        final int centy = (maskSize / 2);
+
+        double[][] xMask = new double[maskSize][maskSize];
+        double[][] yMask = new double[maskSize][maskSize];
 
         //part 1
-        for (p = -mr; p <= mr; p++)
+        for (int p = -mr; p <= mr; p++)
         {
-            for (q = -mr; q <= mr; q++)
+            for (int q = -mr; q <= mr; q++)
             {
                 //create x and y masks
+                double maskval;
                 maskval = ((-p / twopiesigfour) * Math.exp(((p * p) + (q * q)) / sigsigtwo));
-                (maskx[p + centy][q + centx]) = maskval;
+                xMask[p + centy][q + centx] = maskval;
 
                 maskval = ((-q / twopiesigfour) * Math.exp(((p * p) + (q * q)) / sigsigtwo));
-                (masky[p + centy][q + centx]) = maskval;
+                yMask[p + centy][q + centx] = maskval;
             }
         }
+
+        return new Pair<>(xMask, yMask);
+    }
+
+    private void processImage(int picWidth, int picHeight)
+    {
+        //gets the grayscale version of the source
+        int[] pic = getGrayscale(sourceFile);
+
+        //constants for blur calculations
+        final int offset = (int) (sigma * 3);
+        final int maskOffsetX = (maskSize / 2);
+        final int maskOffsetY = (maskSize / 2);
+
+        //get masks for blur
+        Pair<double[][], double[][]> masks = getMasksForGaussianBlur();
+        double[][] xMask = masks.first;
+        double[][] yMask = masks.second;
+
+        //clear pair.
+        masks = null;
+
+        double[][] outPicX = new double[picWidth][picHeight];
+        double[][] outPicY = new double[picWidth][picHeight];
 
         //gaussian blur: generate two images with horizontal and vertical blur
-        for (i = mr; i <= (picWidth - 1) - mr; i++)
+        for (int i = offset; i <= (picWidth - 1) - offset; i++)
         {
-            for (j = mr; j <= (picHeight - 1) - mr; j++)
+            for (int j = offset; j <= (picHeight - 1) - offset; j++)
             {
-                sum1 = 0;
-                sum2 = 0;
-                for (p = -mr; p <= mr; p++)
+                double sum1 = 0;
+                double sum2 = 0;
+                for (int p = -offset; p <= offset; p++)
                 {
-                    for (q = -mr; q <= mr; q++)
+                    for (int q = -offset; q <= offset; q++)
                     {
-                        sum1 += pic[i + p][j + q] * maskx[p + centy][q + centx];
-                        sum2 += pic[i + p][j + q] * masky[p + centy][q + centx];
+                        sum1 += pic[(i + p) * picWidth + j + q] * xMask[p + maskOffsetY][q + maskOffsetX];
+                        sum2 += pic[(i + p) * picWidth + j + q] * yMask[p + maskOffsetY][q + maskOffsetX];
                     }
                 }
-                outpicx[i][j] = sum1;
-                outpicy[i][j] = sum2;
+                outPicX[i][j] = sum1;
+                outPicY[i][j] = sum2;
             }
         }
 
+        //cleanup memory
+        pic = null;
+        xMask = null;
+        yMask = null;
+
+        double[][] ival = new double[picWidth][picHeight];
+
+        double maxival = 0;
+
         //gaussian blur: average the pixels from the 2d blur
-        for (i = mr; i < picWidth - mr; i++)
+        for (int i = offset; i < picWidth - offset; i++)
         {
-            for (j = mr; j < picHeight - mr; j++)
+            for (int j = offset; j < picHeight - offset; j++)
             {
-                ival[i][j] = Math.sqrt((double) ((outpicx[i][j] * outpicx[i][j]) +
-                        (outpicy[i][j] * outpicy[i][j])));
+                ival[i][j] = Math.sqrt((double) ((outPicX[i][j] * outPicX[i][j]) +
+                        (outPicY[i][j] * outPicY[i][j])));
 
                 if (ival[i][j] > maxival)
                     maxival = ival[i][j];
             }
         }
 
-        //create histogram
-        for (i = 0; i < picWidth; i++)
-        {
-            for (j = 0; j < picHeight; j++)
-            {
-                //counts how many pixels are at each value 0-255
-                ival2[i][j] = ((double) ival[i][j] / maxival) * (255);
-                histogram[(int) ival2[i][j]] += 1;
-                //blurred image
-                magnitudeImage.setPixel(i, j, getBlack((int) ival2[i][j]));
-            }
-        }
+        peaks = new boolean[picWidth][picHeight];
+        edges = new boolean[picWidth][picHeight];
 
         //Determine if pixels are peaks using the slope of the x and y values of the blurred image
-        for (i = mr; i < picWidth - mr; i++)
+        for (int i = offset; i < picWidth - offset; i++)
         {
-            for (j = mr; j < picHeight - mr; j++)
+            for (int j = offset; j < picHeight - offset; j++)
             {
-                if ((outpicy[i][j] == 0))
+                if ((outPicY[i][j] == 0))
                 {
-                    outpicy[i][j] = .00001;
+                    outPicY[i][j] = .00001;
                 }
 
-                slope = outpicx[i][j] / outpicy[i][j];
+                double slope = outPicX[i][j] / outPicY[i][j];
                 if ((slope <= .4142) && (slope > -.4142))
                 {
                     if ((ival[i][j] > ival[i][j - 1]) && (ival[i][j] > ival[i][j + 1]))
@@ -279,10 +299,16 @@ public class ObjectFinder
             }
         }
 
+        //cleanup memory
+        outPicX = null;
+        outPicY = null;
+
+        peaksImage = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
+
         //print part 2, count possible peaks
-        for (i = 0; i < picWidth; i++)
+        for (int i = 0; i < picWidth; i++)
         {
-            for (j = 0; j < picHeight; j++)
+            for (int j = 0; j < picHeight; j++)
             {
                 peaksImage.setPixel(i, j, getBlack( (peaks[i][j]) ? 255 : 0) );
                 if (peaks[i][j])
@@ -293,22 +319,49 @@ public class ObjectFinder
         //part 4, find high and low thresholds
         high = 0;
 
+        //determine how many pixels are in the x percent
+        percent = (picWidth * picWidth - 1) * (percent / 100);
+
         // negative entered for percent will automatically find a percent to use
         //this formula is in no way perfect, I literally made arbitrary calculations until
         //the generated percent worked well for different pictures
         if (percent < 0)
         {
-            mr /= 3;
-            sigMod = mr * Math.log(mr * mr);
+            final int sigmaInt = offset / 3;
+            final double sigMod = sigmaInt * Math.log(sigmaInt * sigmaInt);
             percent = sigMod > 1 ? sigMod : 1;
-            percent = (percent * peakCount) / (picWidth * picHeight) * 100 - mr * 3.3;
+            percent = (percent * peakCount) / (picWidth * picHeight) * 100 - sigmaInt * 3.3;
             Log.w("DominoDetection", String.format("Using percent: %f\n", percent));
             percent = (percent / 100) * (picWidth * picHeight);
         }
 
+        int[] histogram = new int[256];
+        //create histogram of image
+        {
+            double[][] ival2 = new double[picWidth][picHeight];
+            //byte sized single channel image displayed using alpha channel only
+            magnitudeImage = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
+
+            //create histogram
+            for (int i = 0; i < picWidth; i++)
+            {
+                for (int j = 0; j < picHeight; j++)
+                {
+                    //counts how many pixels are at each value 0-255
+                    ival2[i][j] = (ival[i][j] / maxival) * (255);
+                    histogram[(int) ival2[i][j]] += 1;
+                    //blurred image
+                    magnitudeImage.setPixel(i, j, getBlack((int) ival2[i][j]));
+                }
+            }
+
+            magnitudeImage.recycle();
+            magnitudeImage = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888);
+        }
+
         //starting from 255, add the total number of pixels with each value until it exceeds the
         //threshold then use that index for the high threshold
-        for (i = (255); i >= 0; i--)
+        for (int i = (255); i >= 0; i--)
         {
             high += histogram[i];
             if (high >= percent)
@@ -322,19 +375,21 @@ public class ObjectFinder
         //double thresholding, if the blurred image's pixel is larger than threshold set it
         //as an edge, if it between high and low then check neighbors for pixels that are edges
         //and if found make pixel an edge
-        for (i = 0; i < picWidth; i++)
+        for (int i = 0; i < picWidth; i++)
         {
-            for (j = 0; j < picHeight; j++)
+            for (int j = 0; j < picHeight; j++)
             {
                 stopcheck = 0;
-                checkNeighbors(i, j);
+                checkNeighbors(i, j, ival);
             }
         }
 
+        cannyEdgesImage = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
+
         //write the detected edges to file
-        for (i = 0; i < picWidth; i++)
+        for (int i = 0; i < picWidth; i++)
         {
-            for (j = 0; j < picHeight; j++)
+            for (int j = 0; j < picHeight; j++)
             {
                 cannyEdgesImage.setPixel(i, j, (edges[i][j] ? 255 : 0) << 24);
             }
@@ -388,7 +443,7 @@ public class ObjectFinder
     }
 
 
-    private void checkNeighbors(int i, int j)
+    private void checkNeighbors(int i, int j, double[][] checkArray)
     {
         //determines if a peak will be a final edge using double thresholding
         stopcheck++;
@@ -398,20 +453,20 @@ public class ObjectFinder
             return;
         if (peaks[i][j])
         {
-            if (ival[i][j] > high)
+            if (checkArray[i][j] > high)
             {
                 peaks[i][j] = false;
                 edges[i][j] = true;
-                checkNeighbors(i - 1, j);
-                checkNeighbors(i - 1, j - 1);
-                checkNeighbors(i, j - 1);
-                checkNeighbors(i + 1, j - 1);
-                checkNeighbors(i + 1, j);
-                checkNeighbors(i + 1, j + 1);
-                checkNeighbors(i, j + 1);
-                checkNeighbors(i - 1, j + 1);
+                checkNeighbors(i - 1, j, checkArray);
+//                checkNeighbors(i - 1, j - 1);
+//                checkNeighbors(i, j - 1);
+//                checkNeighbors(i + 1, j - 1);
+//                checkNeighbors(i + 1, j);
+//                checkNeighbors(i + 1, j + 1);
+//                checkNeighbors(i, j + 1);
+//                checkNeighbors(i - 1, j + 1);
             }
-            else if (ival[i][j] < low)
+            else if (checkArray[i][j] < low)
             {
                 peaks[i][j] = false;
             }
@@ -423,6 +478,8 @@ public class ObjectFinder
     //a single object
     public void findShapes()
     {
+        detectedObjectsImage = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
+
         for (int i = 0; i < picWidth; i++)
         {
             for (int j = 0; j < picHeight; j++)

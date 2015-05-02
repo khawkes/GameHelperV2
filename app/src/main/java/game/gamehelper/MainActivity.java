@@ -15,9 +15,11 @@ package game.gamehelper;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -63,7 +65,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             R.id.btnShowCategorizedShapes
     };
 
-    private Bitmap file;
+    private Bitmap bitmapFile;
     private File currentPhotoPath;
     private int width = 0;
     private int height = 0;
@@ -187,9 +189,28 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         switch (v.getId())
         {
             case R.id.btnTakePicture:
-                createImageFile();
-                dispatchTakePictureIntent();
-                setButtons(false);
+                //if run in debugger... technically not supposed to parse fingerprint
+                if (Build.FINGERPRINT.contains("generic"))
+                {
+                    bitmapFile = BitmapFactory.decodeResource(v.getResources(), R.drawable.static_1);
+
+                    Log.w("MainActivity", Integer.toString(bitmapFile.getWidth()));
+                    Log.w("MainActivity", Integer.toString(bitmapFile.getHeight()));
+
+                    picture.setImageBitmap(bitmapFile);
+
+                    //arguments: image, sigma, mask size, adjacent limit, edge search limit, percent
+                    detector = new ObjectFinder(bitmapFile, 2.55, 50, 25, 2, 25);
+
+                    setButtons(true);
+                }
+                //not run in debugger!
+                else
+                {
+                    createImageFile();
+                    dispatchTakePictureIntent();
+                    setButtons(false);
+                }
                 break;
 
             case R.id.btnProcess:
@@ -202,6 +223,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 detector.makeShapes();
                 Log.w("ImageProcessing", "Make Shapes Finished");
 
+                //clear memory.
+//                picture.setImageBitmap(detector.getDetectedObjectsImage().copy(detector.getDetectedObjectsImage().getConfig(), false));
+//                detector.recycleAllImages();
+
                 //classify objects found and process
                 dominoHandler = new DominoHandler(width, height);
                 dominoHandler.readObjectList(detector.getObjectList(), detector.getCornerList());
@@ -211,6 +236,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     //iterate through rectangle list and find circles that are within each side
                     domList = (int[][]) dominoHandler.getObject();
                     countText.setText(Integer.toString(domList.length));
+                    buttons.get(R.id.btnReturn).setEnabled(true);
+                }
+                else
+                {
+                    domList = new int[0][0];
+                    countText.setText(Integer.toString(0));
                     buttons.get(R.id.btnReturn).setEnabled(true);
                 }
                 break;
@@ -247,7 +278,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 break;
             case R.id.btnShowOriginal:
                 //show peaks image
-                picture.setImageBitmap(file);
+                picture.setImageBitmap(bitmapFile);
                 countText.setText("Original");
                 break;
             case R.id.btnShowDetectedShapes:
@@ -279,20 +310,20 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     {
         //read file and scale to 10% (if image is too large the stack will overflow on edge detection)
         //size picked arbitrarily, don't know optimal size
-        file = BitmapFactory.decodeFile(currentPhotoPath.getAbsolutePath());
+        bitmapFile = BitmapFactory.decodeFile(currentPhotoPath.getAbsolutePath());
 
-        int longestSide = Math.max(file.getWidth(), file.getHeight());
-        double scale = longestSide / 1024;
-        width = (int) (file.getWidth() / scale);
-        height = (int) (file.getHeight() / scale);
+        int longestSide = Math.max(bitmapFile.getWidth(), bitmapFile.getHeight());
 
-        file = Bitmap.createScaledBitmap(file, width, height, false);
-        picture.setImageBitmap(file);
+        double scale = longestSide / 1024.0;
+
+        width = (int) (bitmapFile.getWidth() / scale);
+        height = (int) (bitmapFile.getHeight() / scale);
+
+        bitmapFile = Bitmap.createScaledBitmap(bitmapFile, width, height, false);
+        picture.setImageBitmap(bitmapFile);
 
         //arguments: image, sigma, mask size, adjacent limit, edge search limit, percent
-        detector = new ObjectFinder(file, 2.55, 50, 25, 2, 25);
-        detector.processImage();
-        Log.w("ImageProcessing", "Processing Image Done");
+        detector = new ObjectFinder(bitmapFile, 2.55, 50, 25, 2, 25);
 
         setButtons(true);
     }
@@ -313,7 +344,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
         catch (IOException ioe)
         {
-
             // TODO: Display error message to user, cannot process image.
             // Use manual domino entry.
             ioe.printStackTrace();
