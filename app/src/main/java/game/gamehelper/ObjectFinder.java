@@ -150,9 +150,9 @@ public class ObjectFinder
             pic[i] = (int) (0.21 * Color.red(pic[i]) + 0.72 * Color.green(pic[i]) + 0.07 * Color.blue(pic[i]));
         }
 
-        //temporary: wipes the image after use
-        bwImage.recycle();
-        bwImage = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_4444);
+//        //temporary: wipes the image after use
+//        bwImage.recycle();
+//        bwImage = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_4444);
 
         return pic;
     }
@@ -223,8 +223,8 @@ public class ObjectFinder
                 {
                     for (int q = -offset; q <= offset; q++)
                     {
-                        sum1 += pic[(i + p) * picWidth + j + q] * xMask[p + maskOffsetY][q + maskOffsetX];
-                        sum2 += pic[(i + p) * picWidth + j + q] * yMask[p + maskOffsetY][q + maskOffsetX];
+                        sum1 += pic[(i + p) * picHeight + j + q] * xMask[p + maskOffsetY][q + maskOffsetX];
+                        sum2 += pic[(i + p) * picHeight + j + q] * yMask[p + maskOffsetY][q + maskOffsetX];
                     }
                 }
                 outPicX[i][j] = sum1;
@@ -255,7 +255,6 @@ public class ObjectFinder
         }
 
         peaks = new boolean[picWidth][picHeight];
-        edges = new boolean[picWidth][picHeight];
 
         //Determine if pixels are peaks using the slope of the x and y values of the blurred image
         for (int i = offset; i < picWidth - offset; i++)
@@ -303,7 +302,9 @@ public class ObjectFinder
         outPicX = null;
         outPicY = null;
 
+        //Temporarily disabled images
         peaksImage = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
+//        peaksImage = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888);
 
         //print part 2, count possible peaks
         for (int i = 0; i < picWidth; i++)
@@ -355,8 +356,8 @@ public class ObjectFinder
                 }
             }
 
-            magnitudeImage.recycle();
-            magnitudeImage = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888);
+//            magnitudeImage.recycle();
+//            magnitudeImage = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888);
         }
 
         //starting from 255, add the total number of pixels with each value until it exceeds the
@@ -372,6 +373,8 @@ public class ObjectFinder
             }
         }
 
+        //edges is used in checkNeigbors
+        edges = new boolean[picWidth][picHeight];
         //double thresholding, if the blurred image's pixel is larger than threshold set it
         //as an edge, if it between high and low then check neighbors for pixels that are edges
         //and if found make pixel an edge
@@ -384,7 +387,9 @@ public class ObjectFinder
             }
         }
 
+        //temporarily disabled images
         cannyEdgesImage = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
+//        cannyEdgesImage = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888);
 
         //write the detected edges to file
         for (int i = 0; i < picWidth; i++)
