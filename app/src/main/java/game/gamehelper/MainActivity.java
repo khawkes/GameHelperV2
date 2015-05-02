@@ -192,7 +192,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 //if run in debugger... technically not supposed to parse fingerprint
                 if (Build.FINGERPRINT.contains("generic"))
                 {
-                    bitmapFile = BitmapFactory.decodeResource(v.getResources(), R.drawable.static_2);
+                    bitmapFile = BitmapFactory.decodeResource(v.getResources(), R.drawable.set_pic_4);
 
                     int longestSide = Math.max(bitmapFile.getWidth(), bitmapFile.getHeight());
 
