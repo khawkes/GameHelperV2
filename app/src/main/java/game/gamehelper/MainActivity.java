@@ -13,6 +13,7 @@
 
 package game.gamehelper;
 
+import android.app.ActivityManager;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
@@ -192,24 +193,45 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 //if run in debugger... technically not supposed to parse fingerprint
                 if (Build.FINGERPRINT.contains("generic"))
                 {
-                    bitmapFile = BitmapFactory.decodeResource(v.getResources(), R.drawable.set_pic_4);
+                    bitmapFile = BitmapFactory.decodeResource(v.getResources(), R.drawable.set_pic_5);
+                    Log.v("MainActivity", Integer.toString(bitmapFile.getWidth()));
+                    Log.v("MainActivity", Integer.toString(bitmapFile.getHeight()));
 
-                    int longestSide = Math.max(bitmapFile.getWidth(), bitmapFile.getHeight());
+                    //memorystuff!
+                    final int longestSide = Math.max(bitmapFile.getWidth(), bitmapFile.getHeight());
+                    final int totalArea = bitmapFile.getWidth() * bitmapFile.getHeight();
 
-                    double scale = longestSide / 1024.0;
+                    ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
 
-                    width = (int) (bitmapFile.getWidth() / scale);
-                    height = (int) (bitmapFile.getHeight() / scale);
+                    final double heapPercent = (activityManager.getMemoryClass() - 3) / (61.0);
+
+                    Log.v("MainActivity", "Heap percentage available: " + heapPercent);
+
+                    //maximum size of area based on iterative testing
+                    final double totalMax = heapPercent * 1396380;
+
+                    //the scale limit
+                    double lengthScale = Math.sqrt(((double) totalArea) / totalMax);
+
+                    //ensures we don't bloat an image.
+                    if (lengthScale < 1.0)
+                        lengthScale = 1.0;
+
+                    Log.v("MainActivity", "Scaling factor used: " + lengthScale);
+
+                    width = (int) (bitmapFile.getWidth() / lengthScale);
+                    height = (int) (bitmapFile.getHeight() / lengthScale);
+
+                    Log.v("MainActivity", "width: " + width);
+                    Log.v("MainActivity", "height: " + height);
 
                     bitmapFile = Bitmap.createScaledBitmap(bitmapFile, width, height, false);
 
-                    Log.w("MainActivity", Integer.toString(bitmapFile.getWidth()));
-                    Log.w("MainActivity", Integer.toString(bitmapFile.getHeight()));
 
                     picture.setImageBitmap(bitmapFile);
 
                     //arguments: image, sigma, mask size, adjacent limit, edge search limit, percent
-                    detector = new ObjectFinder(bitmapFile, 2.55, 50, 25, 2, 25);
+                    detector = new ObjectFinder(bitmapFile, 2.55, 50, 25, 5, 25);
 
                     setButtons(true);
                 }
@@ -225,16 +247,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             case R.id.btnProcess:
                 //convert bitmap to list of points[]s representing contiguous segments
                 detector.findShapes();
-                Log.w("ImageProcessing", "Find Shapes Finished");
+                Log.v("ImageProcessing", "Find Shapes Finished");
                 picture.setImageBitmap(detector.getDetectedObjectsImage());
 
                 //find corners of point[]s
                 detector.makeShapes();
-                Log.w("ImageProcessing", "Make Shapes Finished");
-
-                //clear memory.
-//                picture.setImageBitmap(detector.getDetectedObjectsImage().copy(detector.getDetectedObjectsImage().getConfig(), false));
-//                detector.recycleAllImages();
+                Log.v("ImageProcessing", "Make Shapes Finished");
 
                 //classify objects found and process
                 dominoHandler = new DominoHandler(width, height);
