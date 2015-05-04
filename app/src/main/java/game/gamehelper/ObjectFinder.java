@@ -54,7 +54,6 @@ public class ObjectFinder
 //    private int[] pic;
 //    private double[][] ival;
 //    private double[][] ival2;
-    private boolean[][] peaks;
     private boolean[][] edges;
 //    private double[][] outpicx;
 //    private double[][] outpicy;
@@ -70,8 +69,7 @@ public class ObjectFinder
     private Bitmap detectedObjectsImage;
 
     //pathfinding limiter
-    private int stopcheck = 0;
-    private int limit = 100;
+    private final int LIMIT;
 
     //list of list of contiguous points
     public ArrayList<ArrayList<Point>> objectList = new ArrayList<>();
@@ -83,17 +81,17 @@ public class ObjectFinder
     public ArrayList<Point> points;
 
     //number of empty spaces object finder can pass over
-    private int checkLimit = 2;
+    private final int checkLimit;
 
-    //overwritten by percent
-    int low = 150;
-    int high = 240;
+    //records high points and low points.
+    int low;
+    int high;
 
     //for determining high and low, set to -1 for automatic detection
     private double percent = 9;
 
     //strength of blur
-    private double sigma = 1.0;
+    private final double sigma;
 
     //size of block for calculating horizontal and vertical blur
     private int maskSize = 20;
@@ -101,12 +99,17 @@ public class ObjectFinder
     //number of pixels that are larger than neighbors
     int peakCount = 0;
 
+    private final int NORTH = 1;
+    private final int SOUTH = -1;
+    private final int EAST = -2;
+    private final int WEST = 2;
+
     public ObjectFinder(Bitmap file, double sigma, int maskSize, int limit, int checkLimit, double percent)
     {
         this.sourceFile = file;
         this.sigma = sigma;
         this.maskSize = maskSize;
-        this.limit = limit;
+        this.LIMIT = limit;
         this.checkLimit = checkLimit;
         this.percent = percent;
 
@@ -149,10 +152,6 @@ public class ObjectFinder
         {
             pic[i] = (int) (0.21 * Color.red(pic[i]) + 0.72 * Color.green(pic[i]) + 0.07 * Color.blue(pic[i]));
         }
-
-//        //temporary: wipes the image after use
-//        bwImage.recycle();
-//        bwImage = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_4444);
 
         return pic;
     }
@@ -254,7 +253,7 @@ public class ObjectFinder
             }
         }
 
-        peaks = new boolean[picWidth][picHeight];
+        boolean[][] peaks = new boolean[picWidth][picHeight];
 
         //Determine if pixels are peaks using the slope of the x and y values of the blurred image
         for (int i = offset; i < picWidth - offset; i++)
@@ -302,9 +301,7 @@ public class ObjectFinder
         outPicX = null;
         outPicY = null;
 
-        //Temporarily disabled images
         peaksImage = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
-//        peaksImage = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888);
 
         //print part 2, count possible peaks
         for (int i = 0; i < picWidth; i++)
@@ -318,7 +315,7 @@ public class ObjectFinder
         }
 
         //part 4, find high and low thresholds
-        high = 0;
+        low = high = 0;
 
         //determine how many pixels are in the x percent
         percent = (picWidth * picWidth - 1) * (percent / 100);
@@ -332,7 +329,7 @@ public class ObjectFinder
             final double sigMod = sigmaInt * Math.log(sigmaInt * sigmaInt);
             percent = sigMod > 1 ? sigMod : 1;
             percent = (percent * peakCount) / (picWidth * picHeight) * 100 - sigmaInt * 3.3;
-            Log.w("DominoDetection", String.format("Using percent: %f\n", percent));
+            Log.v("DominoDetection", String.format("Using percent: %f\n", percent));
             percent = (percent / 100) * (picWidth * picHeight);
         }
 
@@ -354,9 +351,6 @@ public class ObjectFinder
                     magnitudeImage.setPixel(i, j, getBlack((int) ival2));
                 }
             }
-
-//            magnitudeImage.recycle();
-//            magnitudeImage = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888);
         }
 
         //starting from 255, add the total number of pixels with each value until it exceeds the
@@ -381,8 +375,7 @@ public class ObjectFinder
         {
             for (int j = 0; j < picHeight; j++)
             {
-                stopcheck = 0;
-                checkNeighbors(i, j, ival);
+                checkNeighbors(i, j, ival, peaks, LIMIT);
             }
         }
 
@@ -447,11 +440,11 @@ public class ObjectFinder
     }
 
 
-    private void checkNeighbors(int i, int j, double[][] checkArray)
+    private void checkNeighbors(int i, int j, double[][] checkArray, boolean[][] peaks, int numChecksLeft)
     {
         //determines if a peak will be a final edge using double thresholding
-        stopcheck++;
-        if (stopcheck > limit)
+        numChecksLeft--;
+        if (numChecksLeft < 0)
             return;
         if (i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
             return;
@@ -461,14 +454,14 @@ public class ObjectFinder
             {
                 peaks[i][j] = false;
                 edges[i][j] = true;
-                checkNeighbors(i - 1, j, checkArray);
-//                checkNeighbors(i - 1, j - 1);
-//                checkNeighbors(i, j - 1);
-//                checkNeighbors(i + 1, j - 1);
-//                checkNeighbors(i + 1, j);
-//                checkNeighbors(i + 1, j + 1);
-//                checkNeighbors(i, j + 1);
-//                checkNeighbors(i - 1, j + 1);
+                checkNeighbors(i - 1, j, checkArray, peaks, numChecksLeft);
+//                checkNeighbors(i - 1, j - 1, checkArray, peaks, numChecksLeft);
+//                checkNeighbors(i, j - 1, checkArray, peaks, numChecksLeft);
+//                checkNeighbors(i + 1, j - 1, checkArray, peaks, numChecksLeft);
+//                checkNeighbors(i + 1, j, checkArray, peaks, numChecksLeft);
+//                checkNeighbors(i + 1, j + 1, checkArray, peaks, numChecksLeft);
+//                checkNeighbors(i, j + 1, checkArray, peaks, numChecksLeft);
+//                checkNeighbors(i - 1, j + 1, checkArray, peaks, numChecksLeft);
             }
             else if (checkArray[i][j] < low)
             {
@@ -483,6 +476,7 @@ public class ObjectFinder
     public void findShapes()
     {
         detectedObjectsImage = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
+        objectList = new ArrayList<>();
 
         for (int i = 0; i < picWidth; i++)
         {
@@ -490,7 +484,6 @@ public class ObjectFinder
             {
                 if (edges[i][j])
                 {
-                    stopcheck = 0;
                     int pointCount = 1;
                     int pointCount2 = 0;
                     points = new ArrayList<Point>();
@@ -506,10 +499,10 @@ public class ObjectFinder
                         for (int m = k; m < pointCount; m++)
                         {
                             Point p = points.get(m);
-                            checkUp(p.x, p.y - 1, 0);
-                            checkRight(p.x + 1, p.y, 0);
-                            checkLeft(p.x - 1, p.y, 0);
-                            checkDown(p.x, p.y + 1, 0);
+                            seedCheckDirection(p.x, p.y - 1, checkLimit, NORTH);
+                            seedCheckDirection(p.x + 1, p.y, checkLimit, EAST);
+                            seedCheckDirection(p.x - 1, p.y, checkLimit, WEST);
+                            seedCheckDirection(p.x, p.y + 1, checkLimit, SOUTH);
                         }
                         pointCount2 = pointCount;
                         pointCount = points.size();
@@ -537,142 +530,204 @@ public class ObjectFinder
         }
     }
 
-    //traversal functions, check is the number of empty spaces skipped over, checkLimit being how many
-    //pixels this program is allowed to skip
-    private void checkUp(int i, int j, int check)
+    /**
+     * seedCheckDirection "seeds" dumb path checkers to the right and left as it goes up
+     * traversal functions, check is the number of empty spaces skipped over, checkLimit being how many
+     * pixels this program is allowed to skip
+     * @param x x in image.
+     * @param y y in image.
+     * @param numSpacesToCheck how many times it's recursed.
+     */
+    private void seedCheckDirection(int x, int y, int numSpacesToCheck, int DIRECTION)
     {
-        check++;
-        if (check > checkLimit)
+        //recursion limiter.
+        numSpacesToCheck--;
+        if (numSpacesToCheck < 0)
         {
             return;
         }
-        if (i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
+        //prevents image falloff.
+        if (x < 0 || y < 0 || x > (picWidth - 1) || y > (picHeight - 1))
             return;
 
-        if (edges[i][j])
-        {
-            Point point = new Point();
-            point.set(i, j);
-            points.add(point);
-            edges[i][j] = false;
-        }
+        ifEdgesAddPointAtXY(x, y);
 
-        checkUp(i, j - 1, check);
-        checkRight(i + 1, j, check);
-        checkLeft(i - 1, j, check);
+        seedCheckDirection(x, y - 1, numSpacesToCheck, DIRECTION);
+
+        //seeds its dumb checker workers.
+        switch (DIRECTION)
+        {
+            //if going up or down, shoot its workers to the right and left.
+            case NORTH:
+            case SOUTH:
+                checkDirectionDumb(x + 1, y, numSpacesToCheck, EAST);
+                checkDirectionDumb(x - 1, y, numSpacesToCheck, WEST);
+                break;
+            //if going right or left, shoot its workers up and down.
+            case EAST:
+            case WEST:
+                checkDirectionDumb(x, y - 1, numSpacesToCheck, NORTH);
+                checkDirectionDumb(x, y + 1, numSpacesToCheck, SOUTH);
+                break;
+            default:
+                assert false : "incorrect direction specified to seedCheckDirection.";
+        }
     }
 
-    private void checkRight(int i, int j, int check)
+    /**
+     * Adds a point at x, y, if edges is true.
+     * @param x the x of the point to check.
+     * @param y the y of the point to check.
+     */
+    private void ifEdgesAddPointAtXY(int x, int y)
     {
-        check++;
-        if (check > checkLimit)
-        {
-            return;
-        }
-        if (i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
-            return;
-
-        if (edges[i][j])
+        if (edges[x][y])
         {
             Point point = new Point();
-            point.set(i, j);
+            point.set(x, y);
             points.add(point);
-            edges[i][j] = false;
+            edges[x][y] = false;
         }
-
-        checkUp(i, j - 1, check);
-        checkRight(i + 1, j, check);
-        checkDown(i, j + 1, check);
     }
 
-    private void checkDown(int i, int j, int check)
+    /**
+     * CheckDirectionDumb just goes direction, and doesn't look right or left.
+     * traversal functions, check is the number of empty spaces skipped over, checkLimit being how many
+     * pixels this program is allowed to skip
+     * @param x x in image.
+     * @param y y in image.
+     * @param lookLimit limits the number of times it can go looking in a direction.
+     * @param DIRECTION which direction to go
+     */
+    private void checkDirectionDumb(int x, int y, int lookLimit, int DIRECTION)
     {
-        check++;
-        if (check > checkLimit)
-        {
-            return;
-        }
-        if (i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
+        //prevents image falloff.
+        if (x < 0 || y < 0 || x > (picWidth - 1) || y > (picHeight - 1))
             return;
 
-        if (edges[i][j])
+        //picks a dumb checker direction to follow.
+        switch (DIRECTION)
         {
-            Point point = new Point();
-            point.set(i, j);
-            points.add(point);
-            edges[i][j] = false;
+            case NORTH:
+                //goes lookLimit times north.
+                for (int i = 0; i < lookLimit; i++)
+                {
+                    ifEdgesAddPointAtXY(x, y);
+                    y--;
+                    //ensures we don't fall off the image
+                    if (y < 0)
+                        break;
+                }
+                break;
+            case SOUTH:
+                //goes lookLimit times south.
+                for (int i = 0; i < lookLimit; i++)
+                {
+                    ifEdgesAddPointAtXY(x, y);
+                    y++;
+                    //ensures we don't fall off the image
+                    if (y > (picHeight - 1))
+                        break;
+                }
+                break;
+            case EAST:
+                //goes lookLimit times east.
+                for (int i = 0; i < lookLimit; i++)
+                {
+                    ifEdgesAddPointAtXY(x, y);
+                    x++;
+                    //ensures we don't fall off the image
+                    if (x > (picWidth - 1))
+                        break;
+                }
+                break;
+            case WEST:
+                //goes lookLimit times west.
+                for (int i = 0; i < lookLimit; i++)
+                {
+                    ifEdgesAddPointAtXY(x, y);
+                    x--;
+                    //ensures we don't fall off the image
+                    if (x < 0)
+                        break;
+                }
+                break;
         }
-
-        checkDown(i, j + 1, check);
-        checkRight(i + 1, j, check);
-        checkLeft(i - 1, j, check);
     }
 
-    private void checkLeft(int i, int j, int check)
+    final int INIT_POINT = -1;
+
+    //should be placed in a FindRectangle class. It was too complex for Android to know what was going on.
+    private void compareSouthwestPointRectangle(Point compareAgainst, Point current)
     {
-        check++;
-        if (check > checkLimit)
+        //go south, southwest
+        if (current.x == INIT_POINT || (compareAgainst.y > current.y) || (compareAgainst.y == current.y && compareAgainst.x < current.x))
         {
-            return;
+            current.x = compareAgainst.x;
+            current.y = compareAgainst.y;
         }
-        if (i < 0 || j < 0 || i > (picWidth - 1) || j > (picHeight - 1))
-            return;
+    }
 
-        if (edges[i][j])
+    private void compareNorthwestPointRectangle(Point compareAgainst, Point current)
+    {
+        //go west, northwest
+        if (current.x == INIT_POINT || (compareAgainst.x < current.x) || (compareAgainst.x == current.x && compareAgainst.y < current.y))
         {
-            Point point = new Point();
-            point.set(i, j);
-            points.add(point);
-            edges[i][j] = false;
+            current.x = compareAgainst.x;
+            current.y = compareAgainst.y;
         }
+    }
 
-        checkUp(i, j - 1, check);
-        checkDown(i, j + 1, check);
-        checkLeft(i - 1, j, check);
+    private void compareSoutheastPointRectangle(Point compareAgainst, Point current)
+    {
+        //go east, southeast
+        if (current.x == INIT_POINT || (compareAgainst.x > current.x) || (compareAgainst.x == current.x && compareAgainst.y > current.y))
+        {
+            current.x = compareAgainst.x;
+            current.y = compareAgainst.y;
+        }
+    }
+
+    private void compareNortheastPointRectangle(Point compareAgainst, Point current)
+    {
+        //go north, northeast
+        if (current.x == INIT_POINT || (compareAgainst.y < current.y) || (compareAgainst.y == current.y && compareAgainst.x > current.x))
+        {
+            current.x = compareAgainst.x;
+            current.y = compareAgainst.y;
+        }
+    }
+
+    private void lookForRectangle(ArrayList<Point> points, Point southWest, Point northWest, Point southEast, Point northEast)
+    {
+        for (Point j : points)
+        {
+            compareSouthwestPointRectangle(j, southWest);
+            compareNorthwestPointRectangle(j, northWest);
+            compareSoutheastPointRectangle(j, southEast);
+            compareNortheastPointRectangle(j, northEast);
+        }
     }
 
     public void makeShapes()
     {
+        cornerList = new ArrayList<>();
+
+        //iterate through the objects found and find the north south east and west corners of the object
         for (ArrayList<Point> i : objectList)
         {
-            //iterate through the objects found and find the north south east and west corners of the object
             points = new ArrayList<>();
-            Point south = new Point(-1, -1);
-            Point west = new Point(-1, -1);
-            Point east = new Point(-1, -1);
-            Point north = new Point(-1, -1);
-            for (Point j : i)
-            {
+            Point southWest = new Point(INIT_POINT, INIT_POINT);
+            Point northWest = new Point(INIT_POINT, INIT_POINT);
+            Point southEast = new Point(INIT_POINT, INIT_POINT);
+            Point northEast = new Point(INIT_POINT, INIT_POINT);
 
-                if (south.x == -1 || (j.y >= south.y) || (j.y == south.y && j.x < south.x))
-                {
-                    south.x = j.x;
-                    south.y = j.y;
-                }
+            lookForRectangle(i, southWest, northWest, southEast, northEast);
 
-                if (west.x == -1 || (j.x <= west.x) || (j.x == west.x && j.y < west.y))
-                {
-                    west.x = j.x;
-                    west.y = j.y;
-                }
-
-                if (east.x == -1 || (j.x >= east.x) || (j.x == east.x && j.x > east.x))
-                {
-                    east.x = j.x;
-                    east.y = j.y;
-                }
-
-                if (north.x == -1 || (j.y <= north.y) || (j.y == north.y && j.x > north.x))
-                {
-                    north.x = j.x;
-                    north.y = j.y;
-                }
-            }
-
-            points.add(south);
-            points.add(west);
-            points.add(north);
-            points.add(east);
+            points.add(southWest);
+            points.add(northWest);
+            points.add(northEast);
+            points.add(southEast);
             cornerList.add(points);
         }
     }
