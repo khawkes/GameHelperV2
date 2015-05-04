@@ -33,8 +33,8 @@ public class DominoHandler implements ObjectHandler
     ArrayList<Point[]> rectangles = new ArrayList<>();
     //corners of rectangle and midpoints of long sides
     double circleThreshold = .50;
-    double upperAreaThreshold = 3;
-    double lowerAreaThreshold = .125;
+    final double upperAreaThreshold = 3;
+    final double lowerAreaThreshold = .125;
     Bitmap usedShapes;
     Bitmap shapes;
     Canvas canvas = new Canvas();

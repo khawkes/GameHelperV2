@@ -276,7 +276,6 @@ public class Domino implements Parcelable
                 side = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888);
                 break;
         }
-        Log.w("Domino", (side.getWidth() + " " + side.getHeight()));
         return side;
     }
 

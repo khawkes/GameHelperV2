@@ -64,7 +64,7 @@ public class DominoAdapter extends ArrayAdapter<Domino>
         clear();
         this.data = data;
         notifyDataSetChanged();
-        Log.w("dominoadapter", "DominoAdapter dominoes = " + getCount());
+        Log.v("dominoadapter", "DominoAdapter dominoes = " + getCount());
     }
 
     //Updates view for list

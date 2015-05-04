@@ -599,7 +599,7 @@ public class ScoreBoard extends ActionBarActivity implements
     @Override
     protected void onSaveInstanceState(Bundle outState)
     {
-        Log.w("ScoreBoard", "onSaveInstanceState called");
+        Log.v("ScoreBoard", "onSaveInstanceState called");
         outState.putParcelableArrayList("setList", setList);
         outState.putSerializable("playerList", playerList);
         super.onSaveInstanceState(outState);
@@ -609,21 +609,21 @@ public class ScoreBoard extends ActionBarActivity implements
     @Override
     protected void onPause()
     {
-        Log.w("ScoreBoard", "onPause called");
+        Log.v("ScoreBoard", "onPause called");
         super.onPause();
     }
 
     @Override
     protected void onStop()
     {
-        Log.w("ScoreBoard", "onStop called");
+        Log.v("ScoreBoard", "onStop called");
         super.onStop();
     }
 
     @Override
     protected void onDestroy()
     {
-        Log.w("ScoreBoard", "onDestroy called");
+        Log.v("ScoreBoard", "onDestroy called");
         super.onDestroy();
     }
 }

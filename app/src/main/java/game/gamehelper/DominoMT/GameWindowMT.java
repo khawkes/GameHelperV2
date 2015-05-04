@@ -621,7 +621,7 @@ public class GameWindowMT extends ActionBarActivity implements
     //When each domino is clicked, we delete it from the hand, and update the pictures.
     public void onItemClick(AdapterView<?> parent, View view, int position, long id)
     {
-        Log.w("GameWindow", "Clicked " + position);
+        Log.v("GameWindow", "Clicked " + position);
         hand.dominoPlayed(position, windowState);
         updateUI();
     }
@@ -629,7 +629,7 @@ public class GameWindowMT extends ActionBarActivity implements
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
     {
-        Log.w("GameWindow", "Long Clicked " + position);
+        Log.v("GameWindow", "Long Clicked " + position);
 
         Domino sel = hand.getDomino(position, windowState);
         handInformation.putParcelable("overwrite", sel);
